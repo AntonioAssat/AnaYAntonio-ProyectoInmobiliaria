@@ -1,6 +1,10 @@
+namespace AnaYAntonio_ProyectoInmobiliaria.Models
+{
+    
+
 using System.ComponentModel.DataAnnotations;
 
-class Propietario
+public class Propietario
 {
     [Key]
     public int ID_propietario{get; set; }
@@ -13,4 +17,4 @@ class Propietario
     public string Mail{get; set; }
 
 }
-    
+}    
