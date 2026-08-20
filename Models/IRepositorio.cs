@@ -5,5 +5,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         int Alta(T p);
         int Baja(int id);
         int Modificacion(T p);
+        IList<T> ObtenerLista();
     }
 }
