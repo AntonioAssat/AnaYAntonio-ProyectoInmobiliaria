@@ -1,0 +1,33 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Propietario
+<h1>Nuevo propietario</h1>
+
+<form asp-action="Create" method="post">
+
+    <div>
+        <label asp-for="NombreCompleto"></label>
+        <input asp-for="NombreCompleto" />
+        <span asp-validation-for="NombreCompleto"></span>
+    </div>
+
+    <div>
+        <label asp-for="DNI"></label>
+        <input asp-for="DNI" />
+        <span asp-validation-for="DNI"></span>
+    </div>
+
+    <div>
+        <label asp-for="Telefono"></label>
+        <input asp-for="Telefono" />
+        <span asp-validation-for="Telefono"></span>
+    </div>
+
+    <div>
+        <label asp-for="Mail"></label>
+        <input asp-for="Mail" />
+        <span asp-validation-for="Mail"></span>
+    </div>
+
+    <button type="submit">Cargar Inquilino</button>
+</form>
+
+<a asp-action="Index">Volver</a>

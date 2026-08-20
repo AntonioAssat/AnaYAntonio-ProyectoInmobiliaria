@@ -1,0 +1,50 @@
+@model IList<AnaYAntonio_ProyectoInmobiliaria.Models.Propietario>
+
+<h1>Propietarios</h1>
+<a asp-action="Create">Nuevo propietario</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Mail</th>
+            <th>Estado</th>
+            <th>Editar</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var propietario in Model)
+        {
+            <tr>
+                <td>@propietario.ID_propietario</td>
+                <td>@propietario.NombreCompleto</td>
+                <td>@propietario.DNI</td>
+                <td>@propietario.Telefono</td>
+                <td>@propietario.Mail</td>
+                <td>@propietario.Estado</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@propietario.ID_propietario">
+                        Modificar
+                    </a>
+                    @if (propietario.Estado)
+                    {
+                        <form asp-action="Delete" asp-route-id="@propietario.ID_propietario" method="post"
+                              style="display:inline">
+                            <button type="submit">Dar de baja</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Activate" asp-route-id="@propietario.ID_propietario" method="post"
+                              style="display:inline">
+                            <button type="submit">Dar de alta</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

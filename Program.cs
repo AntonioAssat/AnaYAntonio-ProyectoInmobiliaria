@@ -4,8 +4,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//Inquilino 
+// Inquilino
 builder.Services.AddScoped<IRepositorioInquilino, RepositorioInquilino>();
+
+// Propietario
+builder.Services.AddScoped<IRepositorioPropietario, RepositorioPropietario>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
