@@ -108,5 +108,61 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return lista;
         }
+
+        public Propietario ObtenerPorId(int id)
+        {
+            Propietario propietario = null;
+
+            using (var connection = ObtenerConexion())
+            {
+                connection.Open();
+
+                var sql = @"SELECT id_propietario, Nombre, DNI, Telefono, Mail, Estado
+                    FROM Propietario
+                    WHERE id_propietario = @id";
+
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            propietario = new Propietario
+                            {
+                                ID_propietario = reader.GetInt32("id_propietario"),
+                                NombreCompleto = reader.GetString("Nombre"),
+                                DNI = reader.GetString("DNI"),
+                                Telefono = reader.GetString("Telefono"),
+                                Mail = reader.GetString("Mail"),
+                                Estado = reader.GetBoolean("Estado")
+                            };
+                        }
+                    }
+                }
+            }
+
+            return propietario;
+        }
+
+        public int AltaEstado(int id)
+        {
+            using (var connection = ObtenerConexion())
+            {
+                connection.Open();
+
+                var sql = @"UPDATE Propietario
+                    SET Estado = true
+                    WHERE id_propietario = @id";
+
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+
+                    return command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

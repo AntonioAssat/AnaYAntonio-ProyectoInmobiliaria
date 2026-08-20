@@ -1,0 +1,39 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Propietario
+
+<h1>Modificar Propietario</h1>
+
+<form asp-action="Edit" method="post">
+
+    <input asp-for="ID_propietario" type="hidden" />
+
+    <div>
+        <label asp-for="NombreCompleto"></label>
+        <input asp-for="NombreCompleto" />
+        <span asp-validation-for="NombreCompleto"></span>
+    </div>
+
+    <div>
+        <label asp-for="DNI"></label>
+        <input asp-for="DNI" />
+        <span asp-validation-for="DNI"></span>
+    </div>
+
+    <div>
+        <label asp-for="Telefono"></label>
+        <input asp-for="Telefono" />
+        <span asp-validation-for="Telefono"></span>
+    </div>
+
+    <div>
+        <label asp-for="Mail"></label>
+        <input asp-for="Mail" type="email" />
+        <span asp-validation-for="Mail"></span>
+    </div>
+
+    <input asp-for="Estado" type="hidden" />
+
+    <button type="submit">Guardar cambios</button>
+
+</form>
+
+<a asp-action="Index">Volver</a>
