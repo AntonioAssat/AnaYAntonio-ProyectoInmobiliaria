@@ -1,8 +1,11 @@
+using AnaYAntonio_ProyectoInmobiliaria.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//Inquilino 
+builder.Services.AddScoped<IRepositorioInquilino, RepositorioInquilino>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,0 +1,59 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Inquilino
+
+@{
+    ViewData["Title"] = "Nuevo Inquilino";
+}
+
+<h1>Nuevo Inquilino</h1>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+
+        <form asp-action="Create" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="NombreCompleto" class="control-label"></label>
+                <input asp-for="NombreCompleto" class="form-control" />
+                <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DNI" class="control-label"></label>
+                <input asp-for="DNI" class="form-control" />
+                <span asp-validation-for="DNI" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Telefono" class="control-label"></label>
+                <input asp-for="Telefono" class="form-control" />
+                <span asp-validation-for="Telefono" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Mail" class="control-label"></label>
+                <input asp-for="Mail" class="form-control" />
+                <span asp-validation-for="Mail" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Estado" class="control-label"></label>
+                <select asp-for="Estado" class="form-control">
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </select>
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+
+            <div class="mt-3">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Volver</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>

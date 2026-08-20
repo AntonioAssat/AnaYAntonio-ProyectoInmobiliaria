@@ -1,0 +1,59 @@
+@model IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inquilino>
+
+@{
+    ViewData["Title"] = "Inquilinos";
+}
+
+<h1>Inquilinos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo Inquilino</a>
+</p>
+
+@if (ViewBag.Mensaje != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.Mensaje
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre completo</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Mail</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var inquilino in Model)
+        {
+            <tr>
+                <td>@inquilino.ID_inquilino</td>
+                <td>@inquilino.NombreCompleto</td>
+                <td>@inquilino.DNI</td>
+                <td>@inquilino.Telefono</td>
+                <td>@inquilino.Mail</td>
+                <td>@inquilino.Estado</td>
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@inquilino.ID_inquilino"
+                       class="btn btn-warning">
+                        Modificar
+                    </a>
+
+                    <a asp-action="Eliminar"
+                       asp-route-id="@inquilino.ID_inquilino"
+                       class="btn btn-danger">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

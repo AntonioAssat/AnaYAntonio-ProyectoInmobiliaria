@@ -24,6 +24,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             try
             {
                 var lista = repositorio.ObtenerLista();
+                ViewBag.Mensaje = TempData["Mensaje"];
+
                 return View(lista);
             }
             catch (Exception ex)
