@@ -23,7 +23,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                     command.Parameters.AddWithValue("@DNI", p.DNI);
                     command.Parameters.AddWithValue("@Telefono", p.Telefono);
                     command.Parameters.AddWithValue("@Mail", p.Mail);
-                    command.Parameters.AddWithValue("@Estado", p.Estado);
+                    command.Parameters.AddWithValue("@Estado", true);
 
                     return command.ExecuteNonQuery();
                 }
@@ -36,7 +36,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             {
                 connection.Open();
 
-                var sql = @"DELETE FROM Propietario
+                var sql = @"UPDATE Propietario
+                    SET Estado = false
                     WHERE id_propietario = @id";
 
                 using (var command = new MySqlCommand(sql, connection))
