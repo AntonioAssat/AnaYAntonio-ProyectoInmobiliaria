@@ -146,5 +146,22 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return null;
         }
+        // CAMBIAR ESTADO
+        public int AltaEstado(int id)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"UPDATE Inquilino
+                        SET Estado = NOT Estado
+                        WHERE ID_inquilino = @Id";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            comando.Parameters.AddWithValue("@Id", id);
+
+            conexion.Open();
+
+            return comando.ExecuteNonQuery();
+        }
     }
 }
