@@ -8,7 +8,7 @@
 ## 👥 Integrantes del Grupo
 
 - **Antonio Tomas Assat** - GitHub: [AntonioAssat](https://github.com/AntonioAssat)
-- **Ana Paula Quevedo** - GitHub: [Quevedoana]
+- **Ana Paula Quevedo** - GitHub: [Quevedoana](https://github.com/quevedoana)
 
 ---
 
@@ -142,73 +142,10 @@ Para esta primera entrega se implementaron las entidades correspondientes a:
 - **Inquilino**
 
 La aplicación utiliza repositorios para realizar las operaciones de acceso y modificación de los datos almacenados en la base de datos.
+```
+## Diagrama Entidad-Relación
 
-### 📋 Tablas
-
-#### Tabla `Propietario`
-
-Contiene la información correspondiente a los propietarios de los inmuebles.
-
-Los datos principales almacenados son:
-
-- Identificador del propietario.
-- DNI.
-- Nombre completo.
-- Teléfono.
-- Mail.
-
-#### Tabla `Inquilino`
-
-Contiene la información correspondiente a los inquilinos.
-
-Los datos principales almacenados son:
-
-- Identificador del inquilino.
-- Nombre completo.
-- DNI.
-- Teléfono.
-- Mail.
-- Estado.
-
-### 🔌 Conexión a la Base de Datos
-
-La aplicación utiliza una conexión a MySQL mediante una cadena de conexión configurada en ASP.NET Core.
-
-Para el acceso a los datos se utiliza un repositorio base:
-
-`RepositorioBase`
-
-Este repositorio centraliza la configuración de la conexión y permite que los repositorios específicos reutilicen la misma conexión.
-
-Los repositorios implementados son:
-
-- `RepositorioPropietario`
-- `RepositorioInquilino`
-
-Cada integrante del grupo puede utilizar su propia base de datos MySQL local. La estructura debe mantenerse igual para todos los integrantes mediante el script SQL incluido en el repositorio.
-
-### 📄 Script SQL
-
-El repositorio incluye el archivo:
-
-`script.sql`
-
-Este archivo contiene las sentencias necesarias para crear e inicializar la base de datos utilizada por el proyecto.
-
-Para utilizarlo:
-
-1. Abrir **DBeaver**.
-2. Conectarse al servidor MySQL local.
-3. Abrir el archivo `script.sql`.
-4. Ejecutar las sentencias SQL.
-5. Verificar que se hayan creado correctamente la base de datos y las tablas.
-6. Configurar localmente la cadena de conexión correspondiente.
-
-### 🔐 Configuración local
-
-Las credenciales de acceso a MySQL son propias de cada integrante y no deben almacenarse en el repositorio.
-
-De esta forma, ambos integrantes pueden trabajar con sus respectivas bases de datos locales manteniendo la misma estructura y configuración general del proyecto.
+![DER](ER_INMOBILIARIA.drawio.png)
 
 ## 🚀 Instalación y ejecución del proyecto
 
@@ -220,7 +157,7 @@ Para ejecutar el proyecto es necesario tener instalado:
 - MySQL Server
 - DBeaver
 - Git
-
+```
 ### 1. Clonar el repositorio
 
 Clonar el repositorio desde GitHub:
