@@ -18,14 +18,15 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             using var conexion = ObtenerConexion();
 
             var sql = @"INSERT INTO Inquilino
-                        (Nombre, DNI, Telefono, Mail, Estado)
-                        VALUES
-                        (@Nombre, @DNI, @Telefono, @Mail, @Estado);
-                        SELECT LAST_INSERT_ID();";
+                    (Nombre, Apellido, DNI, Telefono, Mail, Estado)
+                    VALUES
+                    (@Nombre, @Apellido, @DNI, @Telefono, @Mail, @Estado);
+                    SELECT LAST_INSERT_ID();";
 
             using var comando = new MySqlCommand(sql, conexion);
 
-            comando.Parameters.AddWithValue("@Nombre", p.NombreCompleto);
+            comando.Parameters.AddWithValue("@Nombre", p.Nombre);
+            comando.Parameters.AddWithValue("@Apellido", p.Apellido);
             comando.Parameters.AddWithValue("@DNI", p.DNI);
             comando.Parameters.AddWithValue("@Telefono", p.Telefono);
             comando.Parameters.AddWithValue("@Mail", p.Mail);
@@ -60,6 +61,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             var sql = @"UPDATE Inquilino
                         SET Nombre = @Nombre,
+                            Apellido = @Apellido,
                             DNI = @DNI,
                             Telefono = @Telefono,
                             Mail = @Mail,
@@ -68,7 +70,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             using var comando = new MySqlCommand(sql, conexion);
 
-            comando.Parameters.AddWithValue("@Nombre", p.NombreCompleto);
+            comando.Parameters.AddWithValue("@Nombre", p.Nombre);
+            comando.Parameters.AddWithValue("@Apellido", p.Apellido);
             comando.Parameters.AddWithValue("@DNI", p.DNI);
             comando.Parameters.AddWithValue("@Telefono", p.Telefono);
             comando.Parameters.AddWithValue("@Mail", p.Mail);
@@ -87,7 +90,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             using var conexion = ObtenerConexion();
 
-            var sql = @"SELECT ID_inquilino, Nombre, DNI,
+            var sql = @"SELECT ID_inquilino, Nombre, Apellido, DNI,
                                Telefono, Mail, Estado
                         FROM Inquilino";
 
@@ -102,7 +105,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                 lista.Add(new Inquilino
                 {
                     ID_inquilino = Convert.ToInt32(reader["ID_inquilino"]),
-                    NombreCompleto = reader["Nombre"].ToString()!,
+                    Nombre = reader["Nombre"].ToString()!,
+                    Apellido = reader["Apellido"].ToString()!,
                     DNI = reader["DNI"].ToString()!,
                     Telefono = reader["Telefono"].ToString()!,
                     Mail = reader["Mail"].ToString()!,
@@ -118,7 +122,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         {
             using var conexion = ObtenerConexion();
 
-            var sql = @"SELECT Id_inquilino, Nombre, DNI,
+            var sql = @"SELECT Id_inquilino, Nombre, Apellido, DNI,
                                Telefono, Mail, Estado
                         FROM Inquilino
                         WHERE Id_inquilino = @Id";
@@ -136,7 +140,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                 return new Inquilino
                 {
                     ID_inquilino = Convert.ToInt32(reader["Id_inquilino"]),
-                    NombreCompleto = reader["Nombre"].ToString()!,
+                    Nombre = reader["Nombre"].ToString()!,
+                    Apellido = reader["Apellido"].ToString()!,
                     DNI = reader["DNI"].ToString()!,
                     Telefono = reader["Telefono"].ToString()!,
                     Mail = reader["Mail"].ToString()!,

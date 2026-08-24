@@ -110,7 +110,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 if (inquilino == null)
                     return NotFound();
 
-                inquilino.NombreCompleto = entidad.NombreCompleto;
+                inquilino.Nombre = entidad.Nombre;
+                inquilino.Apellido = entidad.Apellido;
                 inquilino.DNI = entidad.DNI;
                 inquilino.Telefono = entidad.Telefono;
                 inquilino.Mail = entidad.Mail;
