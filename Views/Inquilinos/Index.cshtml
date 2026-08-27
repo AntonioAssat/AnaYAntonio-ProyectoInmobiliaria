@@ -15,14 +15,16 @@
             </p>
         </div>
 
-        <a asp-action="Create" class="btn btn-primary px-4 py-2 shadow-sm">
+        <a asp-action="Create" class="btn btn-primary px-4 py-2">
             <span class="me-1">+</span> Nuevo Inquilino
         </a>
     </div>
 
     @if (ViewBag.Mensaje != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+        <div class="alert alert-success alert-dismissible fade show mb-4"
+             role="alert">
+
             <strong>¡Operación realizada correctamente!</strong>
             @ViewBag.Mensaje
 
@@ -34,16 +36,20 @@
         </div>
     }
 
-    <!-- Contenedor de la tabla -->
-    <div class="card border-0 shadow-sm">
+    <!-- Tabla -->
+    <div class="card shadow-sm">
 
-        <div class="card-header bg-white border-bottom py-3">
+        <div class="card-header bg-white py-3">
             <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-semibold">Listado de Inquilinos</h5>
+
+                <h5 class="mb-0 fw-semibold">
+                    Listado de Inquilinos
+                </h5>
 
                 <span class="text-muted small">
                     @Model.Count() registro(s)
                 </span>
+
             </div>
         </div>
 
@@ -51,14 +57,14 @@
 
             <table class="table table-hover align-middle mb-0">
 
-                <thead>
-                    <tr class="text-uppercase text-muted small">
-                        <th class="ps-4 py-3">Código</th>
-                        <th class="py-3">Nombre completo</th>
-                        <th class="py-3">DNI</th>
-                        <th class="py-3">Contacto</th>
-                        <th class="py-3">Estado</th>
-                        <th class="py-3 text-end pe-4">Acciones</th>
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Código</th>
+                        <th>Nombre completo</th>
+                        <th>DNI</th>
+                        <th>Contacto</th>
+                        <th>Estado</th>
+                        <th class="text-end pe-4">Acciones</th>
                     </tr>
                 </thead>
 
@@ -67,6 +73,7 @@
                     @foreach (var inquilino in Model)
                     {
                         <tr>
+
                             <!-- Código -->
                             <td class="ps-4">
                                 <span class="text-muted">
@@ -79,9 +86,6 @@
                                 <div class="fw-semibold">
                                     @inquilino.Nombre @inquilino.Apellido
                                 </div>
-                                <small class="text-muted">
-                                    DNI: @inquilino.DNI
-                                </small>
                             </td>
 
                             <!-- DNI -->
@@ -101,13 +105,13 @@
                             <td>
                                 @if (inquilino.Estado)
                                 {
-                                    <span class="badge rounded-pill bg-success px-3 py-2">
+                                    <span class="badge rounded-pill bg-success">
                                         Activo
                                     </span>
                                 }
                                 else
                                 {
-                                    <span class="badge rounded-pill bg-secondary px-3 py-2">
+                                    <span class="badge rounded-pill bg-secondary">
                                         Inactivo
                                     </span>
                                 }
@@ -115,54 +119,52 @@
 
                             <!-- Acciones -->
                             <td class="text-end pe-4">
+
                                 <a asp-action="Edit"
                                    asp-route-id="@inquilino.ID_inquilino"
-                                   class="btn btn-outline-primary btn-sm px-3">
+                                   class="btn btn-outline-primary btn-sm">
                                     Modificar
                                 </a>
 
-                                <a asp-action="Eliminar"
-                                   asp-route-id="@inquilino.ID_inquilino"
-                                   class="btn btn-outline-danger btn-sm px-3 ms-1">
-                                    Eliminar
-                                </a>
+                                @if (inquilino.Estado)
+                                {
+                                    <form asp-action="Baja"
+                                          asp-route-id="@inquilino.ID_inquilino"
+                                          method="post"
+                                          class="d-inline">
+
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm ms-1">
+                                            Dar de baja
+                                        </button>
+
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="AltaEstado"
+                                          asp-route-id="@inquilino.ID_inquilino"
+                                          method="post"
+                                          class="d-inline">
+
+                                        <button type="submit"
+                                                class="btn btn-outline-success btn-sm ms-1">
+                                            Dar de alta
+                                        </button>
+
+                                    </form>
+                                }
+
                             </td>
+
                         </tr>
                     }
 
                 </tbody>
+
             </table>
 
         </div>
-
     </div>
 
 </div>
-<style>
-    body {
-        background-color: #f5f7fa;
-    }
-
-    .card {
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .card-header {
-        border-top: 4px solid #0d6efd;
-    }
-
-    .table thead th {
-        background-color: #f8f9fa;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-    }
-
-    .table tbody tr {
-        transition: background-color 0.2s ease;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f8f9fa;
-    }
-</style>

@@ -42,8 +42,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         {
             using var conexion = ObtenerConexion();
 
-            var sql = @"DELETE FROM Inquilino
-                        WHERE ID_inquilino = @Id";
+            var sql = @"UPDATE Inquilino
+                SET Estado = false
+                WHERE ID_inquilino = @Id";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -66,7 +67,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                             Telefono = @Telefono,
                             Mail = @Mail,
                             Estado = @Estado
-                        WHERE ID_inquilino = @Id";
+                            WHERE ID_inquilino = @Id";
+
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -75,7 +77,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             comando.Parameters.AddWithValue("@DNI", p.DNI);
             comando.Parameters.AddWithValue("@Telefono", p.Telefono);
             comando.Parameters.AddWithValue("@Mail", p.Mail);
-            comando.Parameters.AddWithValue("@Estado", p.Estado);
             comando.Parameters.AddWithValue("@Id", p.ID_inquilino);
 
             conexion.Open();
@@ -151,14 +152,14 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return null;
         }
-        // CAMBIAR ESTADO
+        // DAR DE ALTA NUEVAMENTE
         public int AltaEstado(int id)
         {
             using var conexion = ObtenerConexion();
 
             var sql = @"UPDATE Inquilino
-                        SET Estado = NOT Estado
-                        WHERE Id_inquilino = @Id";
+                SET Estado = true
+                WHERE ID_inquilino = @Id";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -168,5 +169,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return comando.ExecuteNonQuery();
         }
+
+
     }
 }

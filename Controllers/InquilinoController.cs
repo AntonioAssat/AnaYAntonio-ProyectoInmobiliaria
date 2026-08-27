@@ -77,7 +77,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         // MODIFICACIÓN
-        
+
 
         // GET: Inquilinos/Edit/5
         public ActionResult Edit(int id)
@@ -115,7 +115,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 inquilino.DNI = entidad.DNI;
                 inquilino.Telefono = entidad.Telefono;
                 inquilino.Mail = entidad.Mail;
-                inquilino.Estado = entidad.Estado;
+
 
                 repositorio.Modificacion(inquilino);
 
@@ -129,43 +129,41 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 throw;
             }
         }
-        // BAJA
-
-        // GET: Inquilinos/Eliminar/5
-        public ActionResult Eliminar(int id)
-        {
-            try
-            {
-                var entidad = repositorio.ObtenerPorId(id);
-
-                if (entidad == null)
-                    return NotFound();
-
-                return View(entidad);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error en Eliminar");
-                throw;
-            }
-        }
-
-        // POST: Inquilinos/Eliminar/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Eliminar(int id, Inquilino entidad)
+        public ActionResult Baja(int id)
         {
             try
             {
                 repositorio.Baja(id);
 
-                TempData["Mensaje"] = "Eliminación realizada correctamente";
+                TempData["Mensaje"] = "Inquilino dado de baja correctamente";
 
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error en Eliminar");
+                logger.LogError(ex, "Error en Baja");
+                throw;
+            }
+        }
+
+        // DAR DE ALTA NUEVAMENTE
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AltaEstado(int id)
+        {
+            try
+            {
+                repositorio.AltaEstado(id);
+
+                TempData["Mensaje"] = "Inquilino dado de alta correctamente";
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error en AltaEstado");
                 throw;
             }
         }
