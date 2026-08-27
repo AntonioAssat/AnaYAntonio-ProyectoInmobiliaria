@@ -1,50 +1,69 @@
 @model IList<AnaYAntonio_ProyectoInmobiliaria.Models.Propietario>
 
-<h1>Propietarios</h1>
-<a asp-action="Create">Nuevo propietario</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>DNI</th>
-            <th>Teléfono</th>
-            <th>Mail</th>
-            <th>Estado</th>
-            <th>Editar</th>
-        </tr>
-    </thead>
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h1 class="fw-bold mb-1">Propietarios</h1>
+            <p class="text-muted mb-0">Administrá los propietarios registrados.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <span class="me-1">+</span> Nuevo propietario
+        </a>
+    </div>
 
-    <tbody>
-        @foreach (var propietario in Model)
-        {
-            <tr>
-                <td>@propietario.ID_propietario</td>
-                <td>@propietario.NombreCompleto</td>
-                <td>@propietario.DNI</td>
-                <td>@propietario.Telefono</td>
-                <td>@propietario.Mail</td>
-                <td>@propietario.Estado</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@propietario.ID_propietario">
-                        Modificar
-                    </a>
-                    @if (propietario.Estado)
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Nombre</th>
+                        <th>DNI</th>
+                        <th>Teléfono</th>
+                        <th>Mail</th>
+                        <th>Estado</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var propietario in Model)
                     {
-                        <form asp-action="Delete" asp-route-id="@propietario.ID_propietario" method="post"
-                              style="display:inline">
-                            <button type="submit">Dar de baja</button>
-                        </form>
+                        <tr>
+                            <td class="ps-4 fw-semibold">@propietario.ID_propietario</td>
+                            <td class="fw-semibold">@propietario.Nombre @propietario.Apellido</td>
+                            <td>@propietario.DNI</td>
+                            <td>@propietario.Telefono</td>
+                            <td>@propietario.Mail</td>
+                            <td>
+                                @if (propietario.Estado)
+                                {
+                                    <span class="badge rounded-pill text-bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge rounded-pill text-bg-secondary">Inactivo</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4 text-nowrap">
+                                <a asp-action="Edit" asp-route-id="@propietario.ID_propietario"
+                                   class="btn btn-sm btn-outline-primary me-1">Modificar</a>
+                                @if (propietario.Estado)
+                                {
+                                    <form asp-action="Delete" asp-route-id="@propietario.ID_propietario" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Dar de baja</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Activate" asp-route-id="@propietario.ID_propietario" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">Dar de alta</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
                     }
-                    else
-                    {
-                        <form asp-action="Activate" asp-route-id="@propietario.ID_propietario" method="post"
-                              style="display:inline">
-                            <button type="submit">Dar de alta</button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

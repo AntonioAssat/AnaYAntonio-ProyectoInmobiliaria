@@ -1,7 +1,7 @@
 
 CREATE DATABASE IF NOT EXISTS Inmobiliaria;
 
-USE Inmobiliaria;
+USE inmobiliaria;
 
 
 -- ============================================
@@ -10,7 +10,8 @@ USE Inmobiliaria;
 
 CREATE TABLE IF NOT EXISTS Propietario (
     id_propietario INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
+    Nombre VARCHAR(50) NOT NULL,
+    Apellido VARCHAR(50) NOT NULL,
     DNI VARCHAR(20) NOT NULL,
     Telefono VARCHAR(30),
     Mail VARCHAR(100) NOT NULL,
@@ -39,12 +40,12 @@ CREATE TABLE Inquilino (
 -- ============================================
 
 INSERT INTO Propietario
-    (Nombre, DNI, Telefono, Mail, Estado)
+    (Nombre,Apellido, DNI, Telefono, Mail, Estado)
 VALUES
-    ('Ana Gómez', '40123456', '2664123456', 'ana.gomez@gmail.com', TRUE),
-    ('Juan Pérez', '38987654', '2664987654', 'juan.perez@gmail.com', TRUE),
-    ('María Rodríguez', '42567890', '2664567890', 'maria.rodriguez@gmail.com', TRUE),
-    ('Carlos Fernández', '36789012', '2664234567', 'carlos.fernandez@gmail.com', FALSE);
+    ('Ana', 'Gómez', '40123456', '2664123456', 'ana.gomez@gmail.com', TRUE),
+    ('Juan', 'Pérez', '38987654', '2664987654', 'juan.perez@gmail.com', TRUE),
+    ('María', 'Rodríguez', '42567890', '2664567890', 'maria.rodriguez@gmail.com', TRUE),
+    ('Carlos', 'Fernández', '36789012', '2664234567', 'carlos.fernandez@gmail.com', FALSE);
 
 
 -- ============================================
