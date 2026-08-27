@@ -1,61 +1,168 @@
 @model IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inquilino>
 
 @{
-    ViewData["Title"] = "Inquilinos";
+    ViewData["Title"] = "Gestión de Inquilinos";
 }
 
-<h1>Inquilinos</h1>
+<div class="container-fluid py-4">
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nuevo Inquilino</a>
-</p>
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Gestión de Inquilinos</h2>
+            <p class="text-muted mb-0">
+                Administre la información y el estado de los inquilinos registrados.
+            </p>
+        </div>
 
-@if (ViewBag.Mensaje != null)
-{
-    <div class="alert alert-success">
-        @ViewBag.Mensaje
+        <a asp-action="Create" class="btn btn-primary px-4 py-2 shadow-sm">
+            <span class="me-1">+</span> Nuevo Inquilino
+        </a>
     </div>
-}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>DNI</th>
-            <th>Teléfono</th>
-            <th>Mail</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
+    @if (ViewBag.Mensaje != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+            <strong>¡Operación realizada correctamente!</strong>
+            @ViewBag.Mensaje
 
-    <tbody>
-        @foreach (var inquilino in Model)
-        {
-            <tr>
-                <td>@inquilino.ID_inquilino</td>
-                <td>@inquilino.Nombre</td>
-                <td>@inquilino.Apellido</td>
-                <td>@inquilino.DNI</td>
-                <td>@inquilino.Telefono</td>
-                <td>@inquilino.Mail</td>
-                <td>@inquilino.Estado</td>
-                <td>
-                    <a asp-action="Edit"
-                       asp-route-id="@inquilino.ID_inquilino"
-                       class="btn btn-warning">
-                        Modificar
-                    </a>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Cerrar">
+            </button>
+        </div>
+    }
 
-                    <a asp-action="Eliminar"
-                       asp-route-id="@inquilino.ID_inquilino"
-                       class="btn btn-danger">
-                        Eliminar
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Contenedor de la tabla -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-bottom py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-semibold">Listado de Inquilinos</h5>
+
+                <span class="text-muted small">
+                    @Model.Count() registro(s)
+                </span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+                    <tr class="text-uppercase text-muted small">
+                        <th class="ps-4 py-3">Código</th>
+                        <th class="py-3">Nombre completo</th>
+                        <th class="py-3">DNI</th>
+                        <th class="py-3">Contacto</th>
+                        <th class="py-3">Estado</th>
+                        <th class="py-3 text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var inquilino in Model)
+                    {
+                        <tr>
+                            <!-- Código -->
+                            <td class="ps-4">
+                                <span class="text-muted">
+                                    #@inquilino.ID_inquilino
+                                </span>
+                            </td>
+
+                            <!-- Nombre -->
+                            <td>
+                                <div class="fw-semibold">
+                                    @inquilino.Nombre @inquilino.Apellido
+                                </div>
+                                <small class="text-muted">
+                                    DNI: @inquilino.DNI
+                                </small>
+                            </td>
+
+                            <!-- DNI -->
+                            <td>
+                                @inquilino.DNI
+                            </td>
+
+                            <!-- Contacto -->
+                            <td>
+                                <div>@inquilino.Telefono</div>
+                                <small class="text-muted">
+                                    @inquilino.Mail
+                                </small>
+                            </td>
+
+                            <!-- Estado -->
+                            <td>
+                                @if (inquilino.Estado)
+                                {
+                                    <span class="badge rounded-pill bg-success px-3 py-2">
+                                        Activo
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge rounded-pill bg-secondary px-3 py-2">
+                                        Inactivo
+                                    </span>
+                                }
+                            </td>
+
+                            <!-- Acciones -->
+                            <td class="text-end pe-4">
+                                <a asp-action="Edit"
+                                   asp-route-id="@inquilino.ID_inquilino"
+                                   class="btn btn-outline-primary btn-sm px-3">
+                                    Modificar
+                                </a>
+
+                                <a asp-action="Eliminar"
+                                   asp-route-id="@inquilino.ID_inquilino"
+                                   class="btn btn-outline-danger btn-sm px-3 ms-1">
+                                    Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
+
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-top: 4px solid #0d6efd;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+</style>
