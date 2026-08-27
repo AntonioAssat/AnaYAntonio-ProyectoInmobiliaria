@@ -1,21 +1,27 @@
-namespace AnaYAntonio_ProyectoInmobiliaria.Models
-{
-    
-
 using System.ComponentModel.DataAnnotations;
 
-public class Propietario
+namespace AnaYAntonio_ProyectoInmobiliaria.Models
 {
-    [Key]
-    public int ID_propietario{get; set; }
-    [Required]
-    public string DNI{get; set; }
-    [Required]
-    public string NombreCompleto{get; set; }
-    public string Telefono{get; set; }
-    [Required, EmailAddress]
-    public string Mail{get; set; }
+    public class Propietario
+    {
+        [Key]
+        public int ID_propietario { get; set; }
 
-    public bool Estado{get; set; }
+        [Required(ErrorMessage = "El nombre es obligatorio")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "El apellido es obligatorio")]
+        public string Apellido { get; set; }
+
+        [Required(ErrorMessage = "El DNI es obligatorio")]
+        public string DNI { get; set; }
+
+        public string Telefono { get; set; }
+
+        [Required(ErrorMessage = "El mail es obligatorio")]
+        [EmailAddress(ErrorMessage = "Ingrese un mail válido")]
+        public string Mail { get; set; }
+
+        public bool Estado { get; set; }
+    }
 }
-}    
