@@ -1,39 +1,63 @@
 @model AnaYAntonio_ProyectoInmobiliaria.Models.Propietario
 
-<h1>Modificar Propietario</h1>
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="card border-0 shadow rounded-4 overflow-hidden">
+            <div class="card-header bg-primary text-white border-0 p-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div>
+                        <h1 class="h3 mb-1">Modificar propietario</h1>
+                        <p class="mb-0 text-white-50">Actualizá los datos del propietario.</p>
+                    </div>
+                </div>
+            </div>
 
-<form asp-action="Edit" method="post">
+            <div class="card-body p-4 p-md-5">
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <input asp-for="ID_propietario" type="hidden" />
+                    <input asp-for="ID_propietario" type="hidden" />
 
-    <div>
-        <label asp-for="NombreCompleto"></label>
-        <input asp-for="NombreCompleto" />
-        <span asp-validation-for="NombreCompleto"></span>
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Apellido" class="form-label"></label>
+                        <input asp-for="Apellido" class="form-control" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DNI" class="form-label"></label>
+                        <input asp-for="DNI" class="form-control" />
+                        <span asp-validation-for="DNI" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Telefono" class="form-label"></label>
+                        <input asp-for="Telefono" class="form-control" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Mail" class="form-label"></label>
+                        <input asp-for="Mail" type="email" class="form-control" />
+                        <span asp-validation-for="Mail" class="text-danger"></span>
+                    </div>
+
+                    <input asp-for="Estado" type="hidden" />
+
+                    <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2 align-items-sm-center mt-4 pt-3 border-top">
+                            <a asp-action="Index" class="btn btn-outline-secondary">← Volver</a>
+                            <button type="submit" class="btn btn-primary px-4">Modificar propietario</button>
+                        </div>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div>
-        <label asp-for="DNI"></label>
-        <input asp-for="DNI" />
-        <span asp-validation-for="DNI"></span>
-    </div>
 
-    <div>
-        <label asp-for="Telefono"></label>
-        <input asp-for="Telefono" />
-        <span asp-validation-for="Telefono"></span>
-    </div>
-
-    <div>
-        <label asp-for="Mail"></label>
-        <input asp-for="Mail" type="email" />
-        <span asp-validation-for="Mail"></span>
-    </div>
-
-    <input asp-for="Estado" type="hidden" />
-
-    <button type="submit">Guardar cambios</button>
-
-</form>
-
-<a asp-action="Index">Volver</a>
