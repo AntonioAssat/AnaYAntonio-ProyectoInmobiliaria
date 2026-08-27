@@ -22,13 +22,15 @@ CREATE TABLE IF NOT EXISTS Propietario (
 -- TABLA: Inquilino
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS Inquilino (
-    id_inquilino INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
+CREATE TABLE Inquilino (
+    ID_inquilino INT NOT NULL AUTO_INCREMENT,
+    Nombre VARCHAR(50) NOT NULL,
+    Apellido VARCHAR(50) NOT NULL,
     DNI VARCHAR(20) NOT NULL,
     Telefono VARCHAR(30),
     Mail VARCHAR(100) NOT NULL,
-    Estado BOOLEAN NOT NULL DEFAULT TRUE
+    Estado TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (ID_inquilino)
 );
 
 
@@ -50,9 +52,9 @@ VALUES
 -- ============================================
 
 INSERT INTO Inquilino
-    (Nombre, DNI, Telefono, Mail, Estado)
+    (Nombre, Apellido, DNI, Telefono, Mail, Estado)
 VALUES
-    ('Lucía Martínez', '41234567', '2664123451', 'lucia.martinez@gmail.com', TRUE),
-    ('Pedro García', '39876543', '2664987652', 'pedro.garcia@gmail.com', TRUE),
-    ('Sofía López', '43567890', '2664567891', 'sofia.lopez@gmail.com', TRUE),
-    ('Martín Sánchez', '37890123', '2664234568', 'martin.sanchez@gmail.com', FALSE);
+    ('Lucía', 'Martínez', '41234567', '2664123451', 'lucia.martinez@gmail.com', TRUE),
+    ('Pedro', 'García', '39876543', '2664987652', 'pedro.garcia@gmail.com', TRUE),
+    ('Sofía', 'López', '43567890', '2664567891', 'sofia.lopez@gmail.com', TRUE),
+    ('Martín', 'Sánchez', '37890123', '2664234568', 'martin.sanchez@gmail.com', FALSE);
