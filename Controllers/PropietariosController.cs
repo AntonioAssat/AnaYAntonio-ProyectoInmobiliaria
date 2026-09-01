@@ -23,6 +23,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Create(Propietario propietario)
         {
@@ -34,6 +35,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             propietario.Estado = true;
 
             repositorio.Alta(propietario);
+
+            TempData["Mensaje"] = "Propietario registrado correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -60,6 +63,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             repositorio.Modificacion(propietario);
 
+            TempData["Mensaje"] = "Propietario modificado correctamente.";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -67,6 +72,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         public IActionResult Delete(int id)
         {
             repositorio.Baja(id);
+
+            TempData["Mensaje"] = "Propietario dado de baja correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -76,12 +83,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             repositorio.AltaEstado(id);
 
+            TempData["Mensaje"] = "Propietario dado de alta correctamente.";
+
             return RedirectToAction(nameof(Index));
         }
-
-
     }
-
-
-
 }

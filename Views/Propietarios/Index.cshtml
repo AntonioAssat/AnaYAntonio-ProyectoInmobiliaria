@@ -20,6 +20,20 @@
         </a>
     </div>
 
+    <!-- Mensaje de operación realizada -->
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <strong>¡Operación realizada correctamente!</strong> @TempData["Mensaje"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Cerrar">
+            </button>
+        </div>
+    }
+
     <!-- Contenedor de la tabla -->
     <div class="card shadow-sm">
 
