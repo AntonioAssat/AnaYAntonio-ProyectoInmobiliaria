@@ -9,5 +9,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
         [Required]
         public string Nombre { get; set; } 
+
+        [Required]
+        public bool Estado { get; set; }
     }
 }
