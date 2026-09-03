@@ -1,0 +1,222 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Reserva
+
+@{
+    ViewData["Title"] = "Nueva Reserva";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Nueva Reserva</h2>
+        <p class="text-muted mb-0">
+            Registre una nueva reserva de un inmueble.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-semibold">
+                Datos de la Reserva
+            </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <form asp-action="Create" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="row g-3">
+
+                    <!-- INQUILINO -->
+                    <div class="col-md-6">
+
+                        <label asp-for="ID_inquilino"
+                               class="form-label fw-semibold">
+                            Inquilino
+                        </label>
+
+                        <select asp-for="ID_inquilino"
+                                class="form-select">
+
+                            <option value="">Seleccione un inquilino</option>
+
+                            @foreach (var inquilino in ViewBag.Inquilinos)
+                            {
+                                if (inquilino.Estado)
+                                {
+                                    <option value="@inquilino.ID_inquilino">
+                                        @inquilino.Nombre @inquilino.Apellido - DNI: @inquilino.DNI
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="ID_inquilino"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- INMUEBLE -->
+                    <div class="col-md-6">
+
+                        <label asp-for="ID_inmueble"
+                               class="form-label fw-semibold">
+                            Inmueble
+                        </label>
+
+                        <select asp-for="ID_inmueble"
+                                class="form-select"
+                                id="inmuebleSelect">
+
+                            <option value="">Seleccione un inmueble</option>
+
+                            @foreach (var inmueble in ViewBag.Inmuebles)
+                            {
+                                if (inmueble.Estado)
+                                {
+                                    <option value="@inmueble.ID_inmueble"
+                                            data-precio="@inmueble.PrecioPorDia">
+                                        @inmueble.Direccion
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="ID_inmueble"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- FECHA INICIO -->
+                    <div class="col-md-6">
+
+                        <label asp-for="FechaInicio"
+                               class="form-label fw-semibold">
+                            Fecha de inicio
+                        </label>
+
+                        <input asp-for="FechaInicio"
+                               class="form-control"
+                               type="date" />
+
+                        <span asp-validation-for="FechaInicio"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- FECHA FIN -->
+                    <div class="col-md-6">
+
+                        <label asp-for="FechaFin"
+                               class="form-label fw-semibold">
+                            Fecha de finalización
+                        </label>
+
+                        <input asp-for="FechaFin"
+                               class="form-control"
+                               type="date" />
+
+                        <span asp-validation-for="FechaFin"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- MONTO -->
+                    <div class="col-md-6">
+
+                        <label asp-for="MontoPorDia"
+                               class="form-label fw-semibold">
+                            Monto por día
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">$</span>
+
+                            <input asp-for="MontoPorDia"
+                                   class="form-control"
+                                   type="number"
+                                   min="0.01"
+                                   step="0.01"
+                                   id="montoPorDia"
+                                   readonly />
+
+                        </div>
+
+                        <small class="text-muted">
+                            Se completa automáticamente según el inmueble seleccionado.
+                        </small>
+
+                        <span asp-validation-for="MontoPorDia"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary px-4">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary px-4">
+                        Guardar Reserva
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const inmuebleSelect = document.getElementById("inmuebleSelect");
+        const montoPorDia = document.getElementById("montoPorDia");
+
+        function actualizarMonto() {
+
+            const opcionSeleccionada =
+                inmuebleSelect.options[inmuebleSelect.selectedIndex];
+
+            let precio = opcionSeleccionada.getAttribute("data-precio");
+
+            if (precio) {
+                // Convertimos la coma decimal en punto
+                precio = precio.replace(",", ".");
+
+                montoPorDia.value = precio;
+            } else {
+                montoPorDia.value = "";
+            }
+        }
+
+        inmuebleSelect.addEventListener("change", actualizarMonto);
+
+        actualizarMonto();
+    </script>
+}

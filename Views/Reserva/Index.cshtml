@@ -108,11 +108,27 @@
                             </td>
 
                             <td>
-                                @reserva.ID_inquilino
+                                @{
+                                    var inquilino = ((IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inquilino>)ViewBag.Inquilinos)
+                                        .FirstOrDefault(i => i.ID_inquilino == reserva.ID_inquilino);
+                                }
+
+                                @if (inquilino != null)
+                                {
+                                    @($"{inquilino.Nombre} {inquilino.Apellido}")
+                                }
                             </td>
 
                             <td>
-                                @reserva.ID_inmueble
+                                @{
+                                    var inmueble = ((IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inmueble>)ViewBag.Inmuebles)
+                                        .FirstOrDefault(i => i.ID_inmueble == reserva.ID_inmueble);
+                                }
+
+                                @if (inmueble != null)
+                                {
+                                    @inmueble.Direccion
+                                }
                             </td>
 
                             <td>

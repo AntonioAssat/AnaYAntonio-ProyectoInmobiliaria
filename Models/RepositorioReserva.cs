@@ -12,6 +12,51 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         {
         }
 
+        public bool ExisteReservaSuperpuesta(Reserva reserva)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT COUNT(*)
+                        FROM Reserva
+                        WHERE ID_inmueble = @ID_inmueble
+                        AND Estado = 1
+                        AND FechaInicio < @FechaFin
+                        AND FechaFin > @FechaInicio";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            comando.Parameters.AddWithValue("@ID_inmueble", reserva.ID_inmueble);
+            comando.Parameters.AddWithValue("@FechaInicio", reserva.FechaInicio);
+            comando.Parameters.AddWithValue("@FechaFin", reserva.FechaFin);
+
+            conexion.Open();
+
+            return Convert.ToInt32(comando.ExecuteScalar()) > 0;
+        }
+
+        public bool ExisteReservaSuperpuesta(Reserva reserva, int idReservaExcluir)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT COUNT(*)
+                        FROM Reserva
+                        WHERE ID_inmueble = @ID_inmueble
+                        AND Estado = 1
+                        AND ID_reserva <> @ID_reserva
+                        AND FechaInicio < @FechaFin
+                        AND FechaFin > @FechaInicio";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            comando.Parameters.AddWithValue("@ID_inmueble", reserva.ID_inmueble);
+            comando.Parameters.AddWithValue("@ID_reserva", idReservaExcluir);
+            comando.Parameters.AddWithValue("@FechaInicio", reserva.FechaInicio);
+            comando.Parameters.AddWithValue("@FechaFin", reserva.FechaFin);
+
+            conexion.Open();
+
+            return Convert.ToInt32(comando.ExecuteScalar()) > 0;
+        }
         public int Alta(Reserva reserva)
         {
             using var conexion = ObtenerConexion();

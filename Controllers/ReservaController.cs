@@ -23,9 +23,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             var lista = repositorio.ObtenerLista();
 
+            ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+            ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
             return View(lista);
         }
-
         [HttpGet]
         public IActionResult Create()
         {
@@ -35,20 +37,26 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             return View();
         }
 
+        //create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Reserva reserva)
         {
-            if (reserva.FechaInicio >= reserva.FechaFin)
-            {
-                ModelState.AddModelError(
-                    "FechaFin",
-                    "La fecha de finalización debe ser posterior a la fecha de inicio."
-                );
-            }
-
             if (!ModelState.IsValid)
             {
+                ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+                ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+                return View(reserva);
+            }
+
+            // Validación de fechas superpuestas
+            if (repositorio.ExisteReservaSuperpuesta(reserva))
+            {
+                ModelState.AddModelError(
+                    "",
+                    "El inmueble ya tiene una reserva activa en ese período."
+                );
+
                 ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
                 ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
 
@@ -79,7 +87,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             return View(reserva);
         }
-
+        //edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Reserva reserva)
@@ -94,6 +102,20 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             if (!ModelState.IsValid)
             {
+                ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+                ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
+                return View(reserva);
+            }
+
+            // Validar que no exista otra reserva superpuesta
+            if (repositorio.ExisteReservaSuperpuesta(reserva, reserva.ID_reserva))
+            {
+                ModelState.AddModelError(
+                    "",
+                    "El inmueble ya tiene otra reserva activa en ese período."
+                );
+
                 ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
                 ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
 

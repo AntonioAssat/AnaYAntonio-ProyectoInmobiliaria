@@ -1,15 +1,15 @@
 @model AnaYAntonio_ProyectoInmobiliaria.Models.Reserva
 
 @{
-    ViewData["Title"] = "Nueva Reserva";
+    ViewData["Title"] = "Modificar Reserva";
 }
 
 <div class="container py-4">
 
     <div class="mb-4">
-        <h2 class="fw-bold mb-1">Nueva Reserva</h2>
+        <h2 class="fw-bold mb-1">Modificar Reserva</h2>
         <p class="text-muted mb-0">
-            Registre una nueva reserva de un inmueble.
+            Modifique los datos de la reserva seleccionada.
         </p>
     </div>
 
@@ -23,7 +23,9 @@
 
         <div class="card-body p-4">
 
-            <form asp-action="Create" method="post">
+            <form asp-action="Edit" method="post">
+
+                <input type="hidden" asp-for="ID_reserva" />
 
                 <div asp-validation-summary="ModelOnly"
                      class="text-danger mb-3">
@@ -82,7 +84,7 @@
                                 {
                                     <option value="@inmueble.ID_inmueble"
                                             data-precio="@inmueble.PrecioPorDia">
-                                        @inmueble.Direccion - $@inmueble.PrecioPorDia por día
+                                        @inmueble.Direccion
                                     </option>
                                 }
                             }
@@ -176,7 +178,7 @@
 
                     <button type="submit"
                             class="btn btn-primary px-4">
-                        Guardar Reserva
+                        Guardar cambios
                     </button>
 
                 </div>
@@ -195,24 +197,26 @@
     }
 
     <script>
-
         const inmuebleSelect = document.getElementById("inmuebleSelect");
         const montoPorDia = document.getElementById("montoPorDia");
 
-        inmuebleSelect.addEventListener("change", function () {
+        function actualizarMonto() {
 
             const opcionSeleccionada =
                 inmuebleSelect.options[inmuebleSelect.selectedIndex];
 
-            const precio = opcionSeleccionada.getAttribute("data-precio");
+            let precio = opcionSeleccionada.getAttribute("data-precio");
 
             if (precio) {
+                precio = precio.replace(",", ".");
                 montoPorDia.value = precio;
             } else {
                 montoPorDia.value = "";
             }
+        }
 
-        });
+        inmuebleSelect.addEventListener("change", actualizarMonto);
 
+        actualizarMonto();
     </script>
 }
