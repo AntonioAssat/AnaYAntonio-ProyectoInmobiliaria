@@ -2,7 +2,7 @@ using MySql.Data.MySqlClient;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Models
 {
-    public class RepositorioTipoInmueble : RepositorioBase
+    public class RepositorioTipoInmueble : RepositorioBase, IRepositorioTipoInmueble
     {
         public RepositorioTipoInmueble(IConfiguration configuration)
             : base(configuration)
@@ -103,7 +103,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             return res;
         }
 
-        public IList<TipoInmueble> ObtenerLista(int paginaNro = 1, int tamPagina = 10)
+        public IList<TipoInmueble> ObtenerLista()
         {
             var lista = new List<TipoInmueble>();
 
@@ -113,14 +113,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
                 string sql = @"SELECT ID_tipo, Nombre, Estado
                                FROM TipoInmueble
-                               ORDER BY Nombre
-                               LIMIT @Cantidad OFFSET @Offset";
+                               ORDER BY Nombre";
 
                 using (var command = new MySqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@Cantidad", tamPagina);
-                    command.Parameters.AddWithValue("@Offset", (paginaNro - 1) * tamPagina);
-
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())

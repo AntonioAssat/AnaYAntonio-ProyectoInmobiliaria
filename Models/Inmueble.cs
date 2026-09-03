@@ -17,7 +17,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         public int Cupo { get; set; }
 
         [Required]
-        public TipoInmueble tipo { get; set; }
+        public TipoInmueble Tipo { get; set; }
 
         [Required]
         public decimal Coordenadas { get; set; }
