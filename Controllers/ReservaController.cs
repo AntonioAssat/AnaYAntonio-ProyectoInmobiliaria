@@ -42,10 +42,20 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Reserva reserva)
         {
+            // Validar que la fecha de inicio sea anterior a la fecha de finalización
+            if (reserva.FechaInicio >= reserva.FechaFin)
+            {
+                ModelState.AddModelError(
+                    "FechaFin",
+                    "La fecha de finalización debe ser posterior a la fecha de inicio."
+                );
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
                 ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
                 return View(reserva);
             }
 
@@ -71,7 +81,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
         [HttpGet]
         public IActionResult Edit(int id)
         {
