@@ -1,0 +1,166 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Reserva
+
+@{
+    ViewData["Title"] = "Nueva Reserva";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Nueva Reserva</h2>
+        <p class="text-muted mb-0">
+            Registre una nueva reserva de un inmueble.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-semibold">
+                Datos de la Reserva
+            </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <form asp-action="Create" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="row g-3">
+
+                    <!-- INQUILINO -->
+                    <div class="col-md-6">
+
+                        <label asp-for="ID_inquilino"
+                               class="form-label fw-semibold">
+                            Inquilino
+                        </label>
+
+                        <input asp-for="ID_inquilino"
+                               class="form-control"
+                               type="number"
+                               min="1"
+                               placeholder="Ingrese el ID del inquilino" />
+
+                        <span asp-validation-for="ID_inquilino"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- INMUEBLE -->
+                    <div class="col-md-6">
+
+                        <label asp-for="ID_inmueble"
+                               class="form-label fw-semibold">
+                            Inmueble
+                        </label>
+
+                        <input asp-for="ID_inmueble"
+                               class="form-control"
+                               type="number"
+                               min="1"
+                               placeholder="Ingrese el ID del inmueble" />
+
+                        <span asp-validation-for="ID_inmueble"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- FECHA INICIO -->
+                    <div class="col-md-6">
+
+                        <label asp-for="FechaInicio"
+                               class="form-label fw-semibold">
+                            Fecha de inicio
+                        </label>
+
+                        <input asp-for="FechaInicio"
+                               class="form-control"
+                               type="date" />
+
+                        <span asp-validation-for="FechaInicio"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- FECHA FIN -->
+                    <div class="col-md-6">
+
+                        <label asp-for="FechaFin"
+                               class="form-label fw-semibold">
+                            Fecha de finalización
+                        </label>
+
+                        <input asp-for="FechaFin"
+                               class="form-control"
+                               type="date" />
+
+                        <span asp-validation-for="FechaFin"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- MONTO -->
+                    <div class="col-md-6">
+
+                        <label asp-for="MontoPorDia"
+                               class="form-label fw-semibold">
+                            Monto por día
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">$</span>
+
+                            <input asp-for="MontoPorDia"
+                                   class="form-control"
+                                   type="number"
+                                   min="0.01"
+                                   step="0.01"
+                                   placeholder="0.00" />
+
+                        </div>
+
+                        <span asp-validation-for="MontoPorDia"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary px-4">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary px-4">
+                        Guardar Reserva
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
