@@ -39,11 +39,22 @@
                             Inquilino
                         </label>
 
-                        <input asp-for="ID_inquilino"
-                               class="form-control"
-                               type="number"
-                               min="1"
-                               placeholder="Ingrese el ID del inquilino" />
+                        <select asp-for="ID_inquilino"
+                                class="form-select">
+
+                            <option value="">Seleccione un inquilino</option>
+
+                            @foreach (var inquilino in ViewBag.Inquilinos)
+                            {
+                                if (inquilino.Estado)
+                                {
+                                    <option value="@inquilino.ID_inquilino">
+                                        @inquilino.Nombre @inquilino.Apellido - DNI: @inquilino.DNI
+                                    </option>
+                                }
+                            }
+
+                        </select>
 
                         <span asp-validation-for="ID_inquilino"
                               class="text-danger">
@@ -59,11 +70,24 @@
                             Inmueble
                         </label>
 
-                        <input asp-for="ID_inmueble"
-                               class="form-control"
-                               type="number"
-                               min="1"
-                               placeholder="Ingrese el ID del inmueble" />
+                        <select asp-for="ID_inmueble"
+                                class="form-select"
+                                id="inmuebleSelect">
+
+                            <option value="">Seleccione un inmueble</option>
+
+                            @foreach (var inmueble in ViewBag.Inmuebles)
+                            {
+                                if (inmueble.Estado)
+                                {
+                                    <option value="@inmueble.ID_inmueble"
+                                            data-precio="@inmueble.PrecioPorDia">
+                                        @inmueble.Direccion - $@inmueble.PrecioPorDia por día
+                                    </option>
+                                }
+                            }
+
+                        </select>
 
                         <span asp-validation-for="ID_inmueble"
                               class="text-danger">
@@ -124,9 +148,14 @@
                                    type="number"
                                    min="0.01"
                                    step="0.01"
-                                   placeholder="0.00" />
+                                   id="montoPorDia"
+                                   readonly />
 
                         </div>
+
+                        <small class="text-muted">
+                            Se completa automáticamente según el inmueble seleccionado.
+                        </small>
 
                         <span asp-validation-for="MontoPorDia"
                               class="text-danger">
@@ -160,7 +189,30 @@
 </div>
 
 @section Scripts {
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+
+        const inmuebleSelect = document.getElementById("inmuebleSelect");
+        const montoPorDia = document.getElementById("montoPorDia");
+
+        inmuebleSelect.addEventListener("change", function () {
+
+            const opcionSeleccionada =
+                inmuebleSelect.options[inmuebleSelect.selectedIndex];
+
+            const precio = opcionSeleccionada.getAttribute("data-precio");
+
+            if (precio) {
+                montoPorDia.value = precio;
+            } else {
+                montoPorDia.value = "";
+            }
+
+        });
+
+    </script>
 }

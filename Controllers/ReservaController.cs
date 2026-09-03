@@ -6,10 +6,17 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
     public class ReservaController : Controller
     {
         private readonly IRepositorioReserva repositorio;
+        private readonly IRepositorioInquilino repositorioInquilino;
+        private readonly IRepositorioInmueble repositorioInmueble;
 
-        public ReservaController(IRepositorioReserva repositorio)
+        public ReservaController(
+            IRepositorioReserva repositorio,
+            IRepositorioInquilino repositorioInquilino,
+            IRepositorioInmueble repositorioInmueble)
         {
             this.repositorio = repositorio;
+            this.repositorioInquilino = repositorioInquilino;
+            this.repositorioInmueble = repositorioInmueble;
         }
 
         public IActionResult Index()
@@ -19,12 +26,17 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             return View(lista);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+            ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(Reserva reserva)
         {
             if (reserva.FechaInicio >= reserva.FechaFin)
@@ -37,6 +49,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             if (!ModelState.IsValid)
             {
+                ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+                ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
                 return View(reserva);
             }
 
@@ -49,6 +64,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public IActionResult Edit(int id)
         {
             var reserva = repositorio.ObtenerPorId(id);
@@ -58,10 +74,14 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return NotFound();
             }
 
+            ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+            ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
             return View(reserva);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(Reserva reserva)
         {
             if (reserva.FechaInicio >= reserva.FechaFin)
@@ -74,6 +94,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             if (!ModelState.IsValid)
             {
+                ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+                ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
                 return View(reserva);
             }
 
@@ -85,6 +108,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
             repositorio.Baja(id);
@@ -95,6 +119,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Activate(int id)
         {
             repositorio.AltaEstado(id);
