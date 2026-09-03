@@ -37,7 +37,7 @@ CREATE TABLE `inmueble` (
   KEY `FK_Inmueble_Tipo` (`ID_tipo`),
   CONSTRAINT `FK_Inmueble_Propietario` FOREIGN KEY (`ID_propietario`) REFERENCES `propietario` (`id_propietario`),
   CONSTRAINT `FK_Inmueble_Tipo` FOREIGN KEY (`ID_tipo`) REFERENCES `tipoinmueble` (`ID_tipo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,6 +46,7 @@ CREATE TABLE `inmueble` (
 
 LOCK TABLES `inmueble` WRITE;
 /*!40000 ALTER TABLE `inmueble` DISABLE KEYS */;
+INSERT INTO `inmueble` VALUES (1,1,'San Martin 1030',2,2,153.0000000,120000.00,25.00,1);
 /*!40000 ALTER TABLE `inmueble` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +95,7 @@ CREATE TABLE `propietario` (
   `Mail` varchar(100) NOT NULL,
   `Estado` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_propietario`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +104,7 @@ CREATE TABLE `propietario` (
 
 LOCK TABLES `propietario` WRITE;
 /*!40000 ALTER TABLE `propietario` DISABLE KEYS */;
-INSERT INTO `propietario` VALUES (1,'Ana','Gómez','40123456','2664123456','ana.gomez@gmail.com',1),(2,'Juan','Pérez','38987654','2664987654','juan.perez@gmail.com',1),(3,'María','Rodríguez','42567890','2664567890','maria.rodriguez@gmail.com',1),(4,'Carlos','Fernández','36789012','2664234567','carlos.fernandez@gmail.com',0),(8,'maria','sanchez','44854789','3511234567','maria@gmail.com',1),(9,'Brianna','Lucero','45896231','3511234567','lucero@gmail.com',1);
+INSERT INTO `propietario` VALUES (1,'Ana','Gómez','40123456','2664123456','ana.gomez@gmail.com',1),(2,'Juan','Pérez','38987654','2664987654','juan.perez@gmail.com',1),(3,'María','Rodríguez','42567890','2664567890','maria.rodriguez@gmail.com',1),(4,'Carlos','Fernández','36789012','2664234567','carlos.fernandez@gmail.com',0),(8,'maria','sanchez','44854789','3511234567','maria@gmail.com',1),(9,'Brianna','Lucero','45896231','3511234567','lucero@gmail.com',1),(10,'Luciana','Ramos','36985210','2665232628','luli@gmail.com',1);
 /*!40000 ALTER TABLE `propietario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,8 +118,9 @@ DROP TABLE IF EXISTS `tipoinmueble`;
 CREATE TABLE `tipoinmueble` (
   `ID_tipo` int NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(255) NOT NULL,
+  `estado` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID_tipo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,6 +129,7 @@ CREATE TABLE `tipoinmueble` (
 
 LOCK TABLES `tipoinmueble` WRITE;
 /*!40000 ALTER TABLE `tipoinmueble` DISABLE KEYS */;
+INSERT INTO `tipoinmueble` VALUES (1,'Departamento',1),(2,'Casa',0),(3,'Local',1);
 /*!40000 ALTER TABLE `tipoinmueble` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,4 +146,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-03 16:13:06
+-- Dump completed on 2026-09-03 18:55:06
