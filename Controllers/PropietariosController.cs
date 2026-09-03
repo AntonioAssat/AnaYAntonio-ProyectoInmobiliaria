@@ -15,20 +15,22 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         public IActionResult Index()
         {
             var lista = repositorio.ObtenerLista();
-
             return View(lista);
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult Create(string? returnUrl)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Propietario propietario)
+        public IActionResult Create(Propietario propietario, string? returnUrl)
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.ReturnUrl = returnUrl;
                 return View(propietario);
             }
 
@@ -38,9 +40,15 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             TempData["Mensaje"] = "Propietario registrado correctamente.";
 
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public IActionResult Edit(int id)
         {
             var propietario = repositorio.ObtenerPorId(id);

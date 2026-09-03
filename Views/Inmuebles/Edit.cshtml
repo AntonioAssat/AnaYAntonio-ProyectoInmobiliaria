@@ -25,7 +25,8 @@
                 <div class="card-body p-4 p-md-5">
 
                     <div asp-validation-summary="ModelOnly"
-                         class="text-danger mb-3"></div>
+                         class="text-danger mb-3">
+                    </div>
 
                     <form asp-action="Edit"
                           method="post"
@@ -34,35 +35,57 @@
                         <input type="hidden"
                                asp-for="ID_inmueble" />
 
+
+                        <!-- PROPIETARIO -->
+
                         <div class="col-12">
 
                             <label class="form-label fw-semibold">
                                 Propietario
                             </label>
 
-                            <select name="Duenio.ID_propietario"
-                                    class="form-select">
+                            <div class="input-group">
 
-                                @foreach (var propietario in ViewBag.Propietarios)
-                                {
-                                    if (propietario.ID_propietario == Model.Duenio.ID_propietario)
-                                    {
-                                        <option value="@propietario.ID_propietario"
-                                                selected>
-                                            @propietario.Nombre @propietario.Apellido
-                                        </option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@propietario.ID_propietario">
-                                            @propietario.Nombre @propietario.Apellido
-                                        </option>
-                                    }
-                                }
+                                <select name="DuenioId"
+                                        class="form-select">
 
-                            </select>
+                                    <option value="">
+                                        Seleccioná un propietario
+                                    </option>
+
+                                    @foreach (var propietario in ViewBag.Propietarios)
+                                    {
+                                        if (Model.Duenio != null &&
+                                            propietario.ID_propietario == Model.Duenio.ID_propietario)
+                                        {
+                                            <option value="@propietario.ID_propietario"
+                                                    selected>
+                                                @propietario.Nombre @propietario.Apellido
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@propietario.ID_propietario">
+                                                @propietario.Nombre @propietario.Apellido
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+
+                                <a asp-controller="Propietarios"
+                                   asp-action="Create"
+                                   asp-route-returnUrl="/Inmuebles/Edit/@Model.ID_inmueble"
+                                   class="btn btn-outline-primary">
+                                    + Nuevo propietario
+                                </a>
+
+                            </div>
 
                         </div>
+
+
+                        <!-- TIPO DE INMUEBLE -->
 
                         <div class="col-12">
 
@@ -70,47 +93,72 @@
                                 Tipo de inmueble
                             </label>
 
-                            <select name="Tipo.ID_tipo"
-                                    class="form-select">
+                            <div class="input-group">
 
-                                @foreach (var tipo in ViewBag.Tipos)
-                                {
-                                    if (tipo.ID_tipo == Model.Tipo.ID_tipo)
-                                    {
-                                        <option value="@tipo.ID_tipo"
-                                                selected>
-                                            @tipo.Nombre
-                                        </option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@tipo.ID_tipo">
-                                            @tipo.Nombre
-                                        </option>
-                                    }
-                                }
+                                <select name="TipoId"
+                                        class="form-select">
 
-                            </select>
+                                    <option value="">
+                                        Seleccioná un tipo
+                                    </option>
+
+                                    @foreach (var tipo in ViewBag.Tipos)
+                                    {
+                                        if (Model.Tipo != null &&
+                                            tipo.ID_tipo == Model.Tipo.ID_tipo)
+                                        {
+                                            <option value="@tipo.ID_tipo"
+                                                    selected>
+                                                @tipo.Nombre
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@tipo.ID_tipo">
+                                                @tipo.Nombre
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+
+                                <a asp-controller="TipoInmuebles"
+                                   asp-action="Create"
+                                   asp-route-returnUrl="/Inmuebles/Edit/@Model.ID_inmueble"
+                                   class="btn btn-outline-primary">
+                                    + Nuevo tipo
+                                </a>
+
+                            </div>
 
                         </div>
+
+
+                        <!-- DIRECCIÓN -->
 
                         <div class="col-12">
 
                             <label asp-for="Direccion"
-                                   class="form-label fw-semibold"></label>
+                                   class="form-label fw-semibold">
+                            </label>
 
                             <input asp-for="Direccion"
                                    class="form-control" />
 
                             <span asp-validation-for="Direccion"
-                                  class="text-danger small d-block mt-1"></span>
+                                  class="text-danger small d-block mt-1">
+                            </span>
 
                         </div>
+
+
+                        <!-- CUPO -->
 
                         <div class="col-md-6">
 
                             <label asp-for="Cupo"
-                                   class="form-label fw-semibold"></label>
+                                   class="form-label fw-semibold">
+                            </label>
 
                             <input asp-for="Cupo"
                                    type="number"
@@ -118,14 +166,19 @@
                                    class="form-control" />
 
                             <span asp-validation-for="Cupo"
-                                  class="text-danger small d-block mt-1"></span>
+                                  class="text-danger small d-block mt-1">
+                            </span>
 
                         </div>
+
+
+                        <!-- COORDENADAS -->
 
                         <div class="col-md-6">
 
                             <label asp-for="Coordenadas"
-                                   class="form-label fw-semibold"></label>
+                                   class="form-label fw-semibold">
+                            </label>
 
                             <input asp-for="Coordenadas"
                                    type="number"
@@ -133,9 +186,13 @@
                                    class="form-control" />
 
                             <span asp-validation-for="Coordenadas"
-                                  class="text-danger small d-block mt-1"></span>
+                                  class="text-danger small d-block mt-1">
+                            </span>
 
                         </div>
+
+
+                        <!-- PRECIO POR DÍA -->
 
                         <div class="col-md-6">
 
@@ -151,9 +208,13 @@
                                    class="form-control" />
 
                             <span asp-validation-for="PrecioPorDia"
-                                  class="text-danger small d-block mt-1"></span>
+                                  class="text-danger small d-block mt-1">
+                            </span>
 
                         </div>
+
+
+                        <!-- PORCENTAJE DE RESERVA -->
 
                         <div class="col-md-6">
 
@@ -171,14 +232,20 @@
                                        max="100"
                                        class="form-control" />
 
-                                <span class="input-group-text">%</span>
+                                <span class="input-group-text">
+                                    %
+                                </span>
 
                             </div>
 
                             <span asp-validation-for="PorcentajeReserva"
-                                  class="text-danger small d-block mt-1"></span>
+                                  class="text-danger small d-block mt-1">
+                            </span>
 
                         </div>
+
+
+                        <!-- BOTONES -->
 
                         <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2 align-items-sm-center mt-4 pt-3 border-top">
 
