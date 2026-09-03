@@ -8,7 +8,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         public int ID_inmueble { get; set; }
 
         [Required]
-        public int ID_propietario { get; set; }
+        public Propietario Duenio { get; set; }
 
         [Required]
         public string Direccion { get; set; } = "";
@@ -17,7 +17,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         public int Cupo { get; set; }
 
         [Required]
-        public int ID_tipo { get; set; }
+        public TipoInmueble tipo { get; set; }
 
         [Required]
         public decimal Coordenadas { get; set; }
