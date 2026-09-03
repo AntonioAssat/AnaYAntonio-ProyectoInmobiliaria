@@ -117,8 +117,6 @@ DROP TABLE IF EXISTS `tipoinmueble`;
 CREATE TABLE `tipoinmueble` (
   `ID_tipo` int NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(255) NOT NULL,
-  `Estado` tinyint(1) NOT NULL DEFAULT '1',
-
   PRIMARY KEY (`ID_tipo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

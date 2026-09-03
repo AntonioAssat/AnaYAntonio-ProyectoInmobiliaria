@@ -15,22 +15,23 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         public IActionResult Index()
         {
             var lista = repositorio.ObtenerLista();
-
             return View(lista);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(string? returnUrl)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(TipoInmueble tipo)
+        public IActionResult Create(TipoInmueble tipo, string? returnUrl)
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.ReturnUrl = returnUrl;
                 return View(tipo);
             }
 
@@ -39,6 +40,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             repositorio.Alta(tipo);
 
             TempData["Mensaje"] = "Tipo de inmueble creado correctamente.";
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
             return RedirectToAction(nameof(Index));
         }
