@@ -62,9 +62,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             using var conexion = ObtenerConexion();
 
             var sql = @"INSERT INTO Reserva
-                        (ID_inquilino, ID_inmueble, FechaInicio, FechaFin, MontoPorDia, Estado)
+                        (ID_inquilino, ID_inmueble, FechaInicio, FechaFin,
+                        FechaFinEfectiva, MontoPorDia, Estado)
                         VALUES
-                        (@ID_inquilino, @ID_inmueble, @FechaInicio, @FechaFin, @MontoPorDia, @Estado);
+                        (@ID_inquilino, @ID_inmueble, @FechaInicio, @FechaFin,
+                        @FechaFinEfectiva, @MontoPorDia, @Estado);
                         SELECT LAST_INSERT_ID();";
 
             using var comando = new MySqlCommand(sql, conexion);
@@ -73,6 +75,14 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             comando.Parameters.AddWithValue("@ID_inmueble", reserva.ID_inmueble);
             comando.Parameters.AddWithValue("@FechaInicio", reserva.FechaInicio);
             comando.Parameters.AddWithValue("@FechaFin", reserva.FechaFin);
+
+            comando.Parameters.AddWithValue(
+                "@FechaFinEfectiva",
+                reserva.FechaFinEfectiva.HasValue
+                    ? reserva.FechaFinEfectiva.Value
+                    : DBNull.Value
+            );
+
             comando.Parameters.AddWithValue("@MontoPorDia", reserva.MontoPorDia);
             comando.Parameters.AddWithValue("@Estado", reserva.Estado);
 
@@ -135,6 +145,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                                ID_inmueble,
                                FechaInicio,
                                FechaFin,
+                               FechaFinEfectiva,
                                MontoPorDia,
                                Estado
                         FROM Reserva";
@@ -154,6 +165,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                     ID_inmueble = Convert.ToInt32(reader["ID_inmueble"]),
                     FechaInicio = Convert.ToDateTime(reader["FechaInicio"]),
                     FechaFin = Convert.ToDateTime(reader["FechaFin"]),
+                    FechaFinEfectiva =
+                        reader["FechaFinEfectiva"] == DBNull.Value
+                            ? null
+                            : Convert.ToDateTime(reader["FechaFinEfectiva"]),
                     MontoPorDia = Convert.ToDecimal(reader["MontoPorDia"]),
                     Estado = Convert.ToBoolean(reader["Estado"])
                 });
@@ -167,12 +182,13 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             using var conexion = ObtenerConexion();
 
             var sql = @"SELECT ID_reserva,
-                               ID_inquilino,
-                               ID_inmueble,
-                               FechaInicio,
-                               FechaFin,
-                               MontoPorDia,
-                               Estado
+                            ID_inquilino,
+                            ID_inmueble,
+                            FechaInicio,
+                            FechaFin,
+                            FechaFinEfectiva,
+                            MontoPorDia,
+                            Estado
                         FROM Reserva
                         WHERE ID_reserva = @Id";
 
@@ -193,6 +209,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                     ID_inmueble = Convert.ToInt32(reader["ID_inmueble"]),
                     FechaInicio = Convert.ToDateTime(reader["FechaInicio"]),
                     FechaFin = Convert.ToDateTime(reader["FechaFin"]),
+                    FechaFinEfectiva =
+                        reader["FechaFinEfectiva"] == DBNull.Value
+                            ? null
+                            : Convert.ToDateTime(reader["FechaFinEfectiva"]),
                     MontoPorDia = Convert.ToDecimal(reader["MontoPorDia"]),
                     Estado = Convert.ToBoolean(reader["Estado"])
                 };
@@ -201,6 +221,32 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             return null;
         }
 
+        public int FinalizarAnticipadamente(
+            int idReserva,
+            DateTime fechaFinEfectiva)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"UPDATE Reserva
+                        SET FechaFinEfectiva = @FechaFinEfectiva
+                        WHERE ID_reserva = @IdReserva";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            comando.Parameters.AddWithValue(
+                "@FechaFinEfectiva",
+                fechaFinEfectiva
+            );
+
+            comando.Parameters.AddWithValue(
+                "@IdReserva",
+                idReserva
+            );
+
+            conexion.Open();
+
+            return comando.ExecuteNonQuery();
+        }
         public int AltaEstado(int id)
         {
             using var conexion = ObtenerConexion();

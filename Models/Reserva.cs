@@ -19,6 +19,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         [Required(ErrorMessage = "La fecha de finalización es obligatoria.")]
         public DateTime FechaFin { get; set; }
 
+        [DataType(DataType.Date)]
+        public DateTime? FechaFinEfectiva { get; set; }
+
         [Required(ErrorMessage = "El monto por día es obligatorio.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El monto por día debe ser mayor a 0.")]
         public decimal MontoPorDia { get; set; }

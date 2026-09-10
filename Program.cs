@@ -19,6 +19,9 @@ builder.Services.AddScoped<IRepositorioInmueble, RepositorioInmueble>();
 // TipoInmueble
 builder.Services.AddScoped<IRepositorioTipoInmueble, RepositorioTipoInmueble>();
 
+// Pago
+builder.Services.AddScoped<IRepositorioPago, RepositorioPago>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

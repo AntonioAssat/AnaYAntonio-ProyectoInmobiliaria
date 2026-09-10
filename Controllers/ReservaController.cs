@@ -8,15 +8,18 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         private readonly IRepositorioReserva repositorio;
         private readonly IRepositorioInquilino repositorioInquilino;
         private readonly IRepositorioInmueble repositorioInmueble;
+        private readonly IRepositorioPago repositorioPago;
 
         public ReservaController(
             IRepositorioReserva repositorio,
             IRepositorioInquilino repositorioInquilino,
-            IRepositorioInmueble repositorioInmueble)
+            IRepositorioInmueble repositorioInmueble,
+            IRepositorioPago repositorioPago)
         {
             this.repositorio = repositorio;
             this.repositorioInquilino = repositorioInquilino;
             this.repositorioInmueble = repositorioInmueble;
+            this.repositorioPago = repositorioPago;
         }
 
         public IActionResult Index()
@@ -138,17 +141,171 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public IActionResult FinalizarAnticipadamente(int id)
+        {
+            var reserva = repositorio.ObtenerPorId(id);
+
+            if (reserva == null)
+            {
+                return NotFound();
+            }
+
+            if (!reserva.Estado)
+            {
+                TempData["Mensaje"] =
+                    "No se puede finalizar una reserva que está inactiva.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(reserva);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult FinalizarAnticipadamente(
+            int id,
+            DateTime fechaFinEfectiva)
+        {
+            var reserva = repositorio.ObtenerPorId(id);
+
+            if (reserva == null)
+            {
+                return NotFound();
+            }
+
+            if (!reserva.Estado)
+            {
+                TempData["Mensaje"] =
+                    "La reserva ya se encuentra inactiva.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Validar que la fecha efectiva esté dentro
+            // del período original de la reserva.
+            if (fechaFinEfectiva < reserva.FechaInicio ||
+                fechaFinEfectiva > reserva.FechaFin)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "La fecha de finalización efectiva debe estar dentro del período de la reserva."
+                );
+
+                return View(reserva);
+            }
+
+            // Duración total de la reserva
+            var totalDias =
+                (reserva.FechaFin - reserva.FechaInicio).Days;
+
+            // Días que realmente se utilizaron
+            var diasCumplidos =
+                (fechaFinEfectiva - reserva.FechaInicio).Days;
+
+            // Días que quedaron pendientes
+            var diasRestantes =
+                (reserva.FechaFin - fechaFinEfectiva).Days;
+
+            // Determinar porcentaje de multa
+            decimal porcentajeMulta;
+
+            if (diasCumplidos < totalDias / 2.0)
+            {
+                porcentajeMulta = 0.50m;
+            }
+            else
+            {
+                porcentajeMulta = 0.25m;
+            }
+
+            // Importe correspondiente a los días restantes
+            var importeRestante =
+                diasRestantes * reserva.MontoPorDia;
+
+            // Calcular multa
+            var multa =
+                importeRestante * porcentajeMulta;
+
+            // Crear el pago correspondiente a la multa
+            var pago = new Pago
+            {
+                ID_reserva = reserva.ID_reserva,
+                FechaPago = DateTime.Today,
+                Monto = multa,
+                Concepto =
+                    $"Multa por finalización anticipada ({porcentajeMulta * 100}%)",
+                Estado = true
+            };
+
+            repositorioPago.Alta(pago);
+
+            // Registrar la fecha real de finalización
+            repositorio.FinalizarAnticipadamente(
+                reserva.ID_reserva,
+                fechaFinEfectiva
+            );
+
+            // Finalizar la reserva
+            repositorio.Baja(reserva.ID_reserva);
+
+            TempData["Mensaje"] =
+                $"Reserva finalizada anticipadamente. " +
+                $"Multa generada: ${multa:N2}.";
+
+            return RedirectToAction(nameof(Index));
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            repositorio.Baja(id);
+            var reserva = repositorio.ObtenerPorId(id);
 
-            TempData["Mensaje"] = "Reserva dada de baja correctamente.";
+            if (reserva == null)
+            {
+                return NotFound();
+            }
+
+            if (!reserva.Estado)
+            {
+                TempData["Mensaje"] =
+                    "La reserva ya se encuentra inactiva.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            var hoy = DateTime.Today;
+
+            // La reserva todavía no comenzó:
+            // se puede cancelar normalmente.
+            if (hoy < reserva.FechaInicio)
+            {
+                repositorio.Baja(id);
+
+                TempData["Mensaje"] =
+                    "La reserva fue cancelada correctamente.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // La reserva ya terminó según la fecha original.
+            if (hoy >= reserva.FechaFin)
+            {
+                repositorio.Baja(id);
+
+                TempData["Mensaje"] =
+                    "La reserva fue finalizada correctamente.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // La reserva está actualmente en curso.
+            // No permitimos darla de baja directamente.
+            TempData["Mensaje"] =
+                "La reserva se encuentra en curso. Para finalizarla antes de la fecha prevista, utilice la opción 'Finalizar anticipadamente'.";
 
             return RedirectToAction(nameof(Index));
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Activate(int id)

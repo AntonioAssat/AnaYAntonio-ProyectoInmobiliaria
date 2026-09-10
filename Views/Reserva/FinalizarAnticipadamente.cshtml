@@ -1,0 +1,228 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Reserva
+
+@{
+    ViewData["Title"] = "Finalizar Reserva Anticipadamente";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">
+            Finalizar Reserva Anticipadamente
+        </h2>
+
+        <p class="text-muted mb-0">
+            Seleccione la fecha en la que finaliza efectivamente la reserva.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-semibold">
+                Datos de la Reserva
+            </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Fecha de inicio
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.FechaInicio.ToString("dd/MM/yyyy")"
+                           readonly />
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Fecha de finalización original
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.FechaFin.ToString("dd/MM/yyyy")"
+                           readonly />
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Monto por día
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">$</span>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Model.MontoPorDia.ToString("N2")"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <form id="formFinalizar"
+                  asp-action="FinalizarAnticipadamente"
+                  method="post">
+
+                <input type="hidden"
+                       name="id"
+                       value="@Model.ID_reserva" />
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Fecha efectiva de finalización
+                        </label>
+
+                        <input type="date"
+                               name="fechaFinEfectiva"
+                               id="fechaFinEfectiva"
+                               class="form-control"
+                               min="@Model.FechaInicio.ToString("yyyy-MM-dd")"
+                               max="@Model.FechaFin.ToString("yyyy-MM-dd")"
+                               required />
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <div id="resultadoMulta"
+                     class="alert alert-warning"
+                     style="display: none;">
+
+                    <h5 class="mb-3">
+                        Cálculo de la multa
+                    </h5>
+
+                    <p class="mb-1">
+                        <strong>Días restantes:</strong>
+                        <span id="diasRestantes"></span>
+                    </p>
+
+                    <p class="mb-1">
+                        <strong>Porcentaje de multa:</strong>
+                        <span id="porcentajeMulta"></span>
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Multa a pagar:</strong>
+                        $<span id="montoMulta"></span>
+                    </p>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary px-4">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-danger px-4">
+                        Finalizar Reserva
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        const fechaInicio =
+            new Date("@Model.FechaInicio.ToString("yyyy-MM-dd")");
+
+        const fechaFin =
+            new Date("@Model.FechaFin.ToString("yyyy-MM-dd")");
+
+        const montoPorDia =
+            parseFloat("@Model.MontoPorDia.ToString(System.Globalization.CultureInfo.InvariantCulture)");
+
+        const fechaFinInput =
+            document.getElementById("fechaFinEfectiva");
+
+        const resultadoMulta =
+            document.getElementById("resultadoMulta");
+
+        fechaFinInput.addEventListener("change", function () {
+
+            const fechaEfectiva =
+                new Date(this.value);
+
+            if (!this.value) {
+                resultadoMulta.style.display = "none";
+                return;
+            }
+
+            const totalDias =
+                (fechaFin - fechaInicio) /
+                (1000 * 60 * 60 * 24);
+
+            const diasCumplidos =
+                (fechaEfectiva - fechaInicio) /
+                (1000 * 60 * 60 * 24);
+
+            const diasRestantes =
+                (fechaFin - fechaEfectiva) /
+                (1000 * 60 * 60 * 24);
+
+            let porcentaje;
+
+            if (diasCumplidos < totalDias / 2) {
+                porcentaje = 50;
+            }
+            else {
+                porcentaje = 25;
+            }
+
+            const importeRestante =
+                diasRestantes * montoPorDia;
+
+            const multa =
+                importeRestante * porcentaje / 100;
+
+            document.getElementById("diasRestantes").textContent =
+                diasRestantes;
+
+            document.getElementById("porcentajeMulta").textContent =
+                porcentaje + "%";
+
+            document.getElementById("montoMulta").textContent =
+                multa.toFixed(2);
+
+            resultadoMulta.style.display = "block";
+
+        });
+
+    </script>
+
+}

@@ -5,5 +5,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         bool ExisteReservaSuperpuesta(Reserva reserva);
 
         bool ExisteReservaSuperpuesta(Reserva reserva, int idReservaExcluir);
+
+        int FinalizarAnticipadamente(int idReserva, DateTime fechaFinEfectiva);
     }
 }
