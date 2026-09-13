@@ -8,22 +8,31 @@
 
     <!-- ENCABEZADO -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
         <div>
-            <h1 class="h2 mb-1">Inmuebles</h1>
+            <h1 class="h2 mb-1">
+                Inmuebles
+            </h1>
+
             <p class="text-muted mb-0">
                 Administración de los inmuebles de la inmobiliaria.
             </p>
         </div>
 
-        <a asp-action="Create" class="btn btn-primary">
+        <a asp-action="Create"
+           class="btn btn-primary">
             + Nuevo inmueble
         </a>
+
     </div>
+
 
     <!-- MENSAJE -->
     @if (TempData["Mensaje"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert">
+
             @TempData["Mensaje"]
 
             <button type="button"
@@ -31,8 +40,10 @@
                     data-bs-dismiss="alert"
                     aria-label="Cerrar">
             </button>
+
         </div>
     }
+
 
     <!-- CARDS -->
     @if (Model != null && Model.Count > 0)
@@ -60,6 +71,7 @@
                                  style="height: 230px;">
 
                                 <div class="text-center text-muted">
+
                                     <div class="fs-1 mb-2">
                                         🏠
                                     </div>
@@ -67,10 +79,12 @@
                                     <div>
                                         Sin imágenes
                                     </div>
+
                                 </div>
 
                             </div>
                         }
+
 
                         <!-- CONTENIDO -->
                         <div class="card-body p-4">
@@ -79,6 +93,7 @@
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
 
                                 <div>
+
                                     <h2 class="h5 mb-1">
                                         @inmueble.Direccion
                                     </h2>
@@ -86,7 +101,9 @@
                                     <span class="text-muted small">
                                         @inmueble.Tipo.Nombre
                                     </span>
+
                                 </div>
+
 
                                 @if (inmueble.Estado)
                                 {
@@ -103,6 +120,7 @@
 
                             </div>
 
+
                             <!-- PROPIETARIO -->
                             <div class="mb-3">
 
@@ -116,6 +134,7 @@
                                 </div>
 
                             </div>
+
 
                             <!-- DATOS -->
                             <div class="row g-3 mb-3">
@@ -132,6 +151,7 @@
 
                                 </div>
 
+
                                 <div class="col-6">
 
                                     <div class="small text-muted">
@@ -145,6 +165,7 @@
                                 </div>
 
                             </div>
+
 
                             <!-- PRECIO -->
                             <div class="border-top pt-3">
@@ -161,17 +182,29 @@
 
                         </div>
 
+
                         <!-- ACCIONES -->
                         <div class="card-footer bg-white border-0 px-4 pb-4">
 
+                            <!-- VER DETALLE -->
+                            <a asp-action="Details"
+                               asp-route-id="@inmueble.ID_inmueble"
+                               class="btn btn-primary w-100 mb-2">
+                                Ver detalle
+                            </a>
+
+
                             <div class="d-flex gap-2">
 
+                                <!-- EDITAR -->
                                 <a asp-action="Edit"
                                    asp-route-id="@inmueble.ID_inmueble"
                                    class="btn btn-outline-primary btn-sm flex-grow-1">
                                     Editar
                                 </a>
 
+
+                                <!-- BAJA / ALTA -->
                                 @if (inmueble.Estado)
                                 {
                                     <form asp-action="Baja"
@@ -214,6 +247,7 @@
     }
     else
     {
+        <!-- SIN INMUEBLES -->
         <div class="card border-0 shadow rounded-4">
 
             <div class="card-body text-center py-5">
@@ -230,7 +264,8 @@
                     Todavía no se registraron inmuebles en el sistema.
                 </p>
 
-                <a asp-action="Create" class="btn btn-primary">
+                <a asp-action="Create"
+                   class="btn btn-primary">
                     + Nuevo inmueble
                 </a>
 

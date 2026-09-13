@@ -154,6 +154,21 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var inmueble = repositorio.ObtenerPorId(id);
+
+            if (inmueble == null)
+            {
+                return NotFound();
+            }
+
+            inmueble.Imagenes = repositorioImagen
+                .BuscarPorInmueble(inmueble.ID_inmueble);
+
+            return View(inmueble);
+        }
 
         [HttpGet]
         public IActionResult Edit(int id)

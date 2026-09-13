@@ -1,0 +1,290 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Inmueble
+
+@{
+    ViewData["Title"] = "Detalle del Inmueble";
+}
+
+<div class="container py-5">
+
+    <!-- ENCABEZADO -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+        <div>
+            <h1 class="h2 mb-1">
+                Detalle del inmueble
+            </h1>
+
+            <p class="text-muted mb-0">
+                Información completa del inmueble.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                ← Volver
+            </a>
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.ID_inmueble"
+               class="btn btn-primary">
+                Editar
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- IMÁGENES -->
+    <div class="card border-0 shadow rounded-4 overflow-hidden mb-4">
+
+        @if (Model.Imagenes != null && Model.Imagenes.Count > 0)
+        {
+            <!-- IMAGEN PRINCIPAL -->
+            <div class="bg-light">
+
+                <img src="@Model.Imagenes[0].Url"
+                     alt="Imagen de @Model.Direccion"
+                     class="w-100"
+                     style="height: 450px; object-fit: cover;" />
+
+            </div>
+
+
+            <!-- RESTO DE IMÁGENES -->
+            @if (Model.Imagenes.Count > 1)
+            {
+                <div class="p-3">
+
+                    <div class="row g-3">
+
+                        @foreach (var imagen in Model.Imagenes.Skip(1))
+                        {
+                            <div class="col-6 col-md-3">
+
+                                <img src="@imagen.Url"
+                                     alt="Imagen de @Model.Direccion"
+                                     class="img-fluid rounded-3 w-100"
+                                     style="height: 150px; object-fit: cover;" />
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="bg-light d-flex align-items-center justify-content-center"
+                 style="height: 350px;">
+
+                <div class="text-center text-muted">
+
+                    <div class="fs-1 mb-3">
+                        🏠
+                    </div>
+
+                    <div>
+                        Este inmueble no tiene imágenes cargadas.
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- INFORMACIÓN PRINCIPAL -->
+        <div class="col-12 col-lg-8">
+
+            <div class="card border-0 shadow rounded-4 h-100">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+
+                        <div>
+
+                            <h2 class="h3 mb-2">
+                                @Model.Direccion
+                            </h2>
+
+                            <span class="badge text-bg-primary">
+                                @Model.Tipo.Nombre
+                            </span>
+
+                        </div>
+
+                        @if (Model.Estado)
+                        {
+                            <span class="badge text-bg-success">
+                                Activo
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-secondary">
+                                Inactivo
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <!-- PROPIETARIO -->
+                    <div class="border-top pt-4 mb-4">
+
+                        <div class="small text-muted mb-1">
+                            Propietario
+                        </div>
+
+                        <div class="fs-5 fw-semibold">
+                            @Model.Duenio.Nombre @Model.Duenio.Apellido
+                        </div>
+
+                    </div>
+
+
+                    <!-- DATOS -->
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+
+                            <div class="small text-muted mb-1">
+                                Capacidad
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.Cupo personas
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="small text-muted mb-1">
+                                Precio por día
+                            </div>
+
+                            <div class="fs-4 fw-bold">
+                                $ @Model.PrecioPorDia.ToString("N2")
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="small text-muted mb-1">
+                                Porcentaje de reserva
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.PorcentajeReserva.ToString("N2")%
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="small text-muted mb-1">
+                                Coordenadas
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.Coordenadas
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESUMEN -->
+        <div class="col-12 col-lg-4">
+
+            <div class="card border-0 shadow rounded-4 h-100">
+
+                <div class="card-body p-4">
+
+                    <h3 class="h5 mb-4">
+                        Resumen
+                    </h3>
+
+
+                    <div class="mb-4">
+
+                        <div class="small text-muted">
+                            Tipo de inmueble
+                        </div>
+
+                        <div class="fw-semibold">
+                            @Model.Tipo.Nombre
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <div class="small text-muted">
+                            Capacidad
+                        </div>
+
+                        <div class="fw-semibold">
+                            @Model.Cupo personas
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <div class="small text-muted">
+                            Imágenes
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(Model.Imagenes?.Count ?? 0)
+                        </div>
+
+                    </div>
+
+
+                    <div class="border-top pt-4">
+
+                        <div class="small text-muted mb-1">
+                            Precio por día
+                        </div>
+
+                        <div class="fs-3 fw-bold">
+                            $ @Model.PrecioPorDia.ToString("N2")
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
