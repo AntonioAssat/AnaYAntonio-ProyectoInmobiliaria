@@ -205,5 +205,50 @@ VALUES
 (10, 6, 1, '2027-01-05 14:00:00', '2027-01-10 10:00:00', 120000.00, 0);
 
 -- ------------------------------------------------------
--- Dump completed
+-- Imagenes table structure
 -- ------------------------------------------------------
+CREATE TABLE Imagenes (
+    Id INT NOT NULL AUTO_INCREMENT,
+    InmuebleId INT NOT NULL,
+    Url VARCHAR(500) NOT NULL,
+    PRIMARY KEY (Id),
+    CONSTRAINT FK_Imagenes_Inmueble
+        FOREIGN KEY (InmuebleId)
+        REFERENCES Inmueble(ID_inmueble)
+);
+-- -----------------------------------------------------
+-- Pago table structure
+-- -----------------------------------------------------
+CREATE TABLE Pago (
+    ID_pago INT NOT NULL AUTO_INCREMENT,
+    ID_reserva INT NOT NULL,
+    FechaPago DATE NOT NULL,
+    Monto DECIMAL(10,2) NOT NULL,
+    Estado TINYINT(1) NOT NULL DEFAULT 1,
+
+    PRIMARY KEY (ID_pago),
+
+    CONSTRAINT FK_Pago_Reserva
+        FOREIGN KEY (ID_reserva)
+        REFERENCES Reserva(ID_reserva)
+);
+-- -----------------------------------------------------
+-- Usuario table structure
+-- -----------------------------------------------------
+CREATE TABLE Usuario (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+
+    Nombre VARCHAR(100) NOT NULL,
+
+    Apellido VARCHAR(100) NOT NULL,
+
+    Email VARCHAR(150) NOT NULL UNIQUE,
+
+    Clave VARCHAR(255) NOT NULL,
+
+    Avatar VARCHAR(255) NULL,
+
+    Rol INT NOT NULL,
+
+    Estado BOOLEAN NOT NULL DEFAULT TRUE
+);

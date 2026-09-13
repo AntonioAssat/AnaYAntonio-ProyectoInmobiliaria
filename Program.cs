@@ -48,6 +48,8 @@ builder.Services.AddScoped<IRepositorioPago, RepositorioPago>();
 //Usuario
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 
+// Imagen
+builder.Services.AddScoped<IRepositorioImagen, RepositorioImagen>();
 
 var app = builder.Build();
 

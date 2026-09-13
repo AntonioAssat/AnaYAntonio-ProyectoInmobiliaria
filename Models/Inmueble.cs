@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Models
 {
@@ -27,6 +29,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
         [Required]
         public decimal PorcentajeReserva { get; set; }
+
+        public IFormFile? PortadaFile { get; set; }
+
+        [ForeignKey(nameof(Imagen.InmuebleId))]
+        public IList<Imagen> Imagenes { get; set; } = new List<Imagen>();
 
         public bool Estado { get; set; }
     }
