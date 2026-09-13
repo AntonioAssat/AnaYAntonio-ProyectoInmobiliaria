@@ -13,6 +13,7 @@
             <div class="card border-0 shadow rounded-4 overflow-hidden">
 
                 <div class="card-header bg-primary text-white border-0 p-4">
+
                     <div>
                         <h1 class="h3 mb-1">Nuevo inmueble</h1>
 
@@ -20,6 +21,7 @@
                             Completá los datos para registrar un inmueble.
                         </p>
                     </div>
+
                 </div>
 
                 <div class="card-body p-4 p-md-5">
@@ -30,6 +32,7 @@
 
                     <form asp-action="Create"
                           method="post"
+                          enctype="multipart/form-data"
                           class="row g-3">
 
                         <!-- PROPIETARIO -->
@@ -62,7 +65,9 @@
                                    asp-action="Create"
                                    asp-route-returnUrl="/Inmuebles/Create"
                                    class="btn btn-outline-primary">
+
                                     + Nuevo propietario
+
                                 </a>
 
                             </div>
@@ -100,7 +105,9 @@
                                    asp-action="Create"
                                    asp-route-returnUrl="/Inmuebles/Create"
                                    class="btn btn-outline-primary">
+
                                     + Nuevo tipo
+
                                 </a>
 
                             </div>
@@ -175,7 +182,9 @@
 
                             <label asp-for="PrecioPorDia"
                                    class="form-label fw-semibold">
+
                                 Precio por día
+
                             </label>
 
                             <input asp-for="PrecioPorDia"
@@ -198,7 +207,9 @@
 
                             <label asp-for="PorcentajeReserva"
                                    class="form-label fw-semibold">
+
                                 Porcentaje de reserva
+
                             </label>
 
                             <div class="input-group">
@@ -224,18 +235,43 @@
                         </div>
 
 
+                        <!-- IMÁGENES -->
+
+                        <div class="col-12">
+
+                            <label class="form-label fw-semibold">
+                                Imágenes del inmueble
+                            </label>
+
+                            <input type="file"
+                                   name="imagenes"
+                                   class="form-control"
+                                   multiple
+                                   accept="image/*" />
+
+                            <div class="form-text">
+                                Podés seleccionar varias imágenes.
+                            </div>
+
+                        </div>
+
+
                         <!-- BOTONES -->
 
                         <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2 align-items-sm-center mt-4 pt-3 border-top">
 
                             <a asp-action="Index"
                                class="btn btn-outline-secondary">
+
                                 ← Volver
+
                             </a>
 
                             <button type="submit"
                                     class="btn btn-primary px-4">
+
                                 Cargar inmueble
+
                             </button>
 
                         </div>
@@ -243,13 +279,19 @@
                     </form>
 
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
 
 @section Scripts {
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
 }

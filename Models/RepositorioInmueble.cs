@@ -10,69 +10,85 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         }
 
         public int Alta(Inmueble inmueble)
+{
+    using (var connection = new MySqlConnection(connectionString))
+    {
+        connection.Open();
+
+        var sql = @"INSERT INTO Inmueble
+                    (
+                        ID_propietario,
+                        Direccion,
+                        Cupo,
+                        ID_tipo,
+                        Coordenadas,
+                        PrecioPorDia,
+                        PorcentajeReserva,
+                        Estado
+                    )
+                    VALUES
+                    (
+                        @ID_propietario,
+                        @Direccion,
+                        @Cupo,
+                        @ID_tipo,
+                        @Coordenadas,
+                        @PrecioPorDia,
+                        @PorcentajeReserva,
+                        @Estado
+                    );
+
+                    SELECT LAST_INSERT_ID();";
+
+        using (var command = new MySqlCommand(sql, connection))
         {
-            int res = -1;
+            command.Parameters.AddWithValue(
+                "@ID_propietario",
+                inmueble.Duenio.ID_propietario
+            );
 
-            using (var connection = new MySqlConnection(connectionString))
-            {
-                connection.Open();
+            command.Parameters.AddWithValue(
+                "@Direccion",
+                inmueble.Direccion
+            );
 
-                string sql = @"INSERT INTO Inmueble
-                               (ID_propietario, Direccion, Cupo, ID_tipo,
-                                Coordenadas, PrecioPorDia, PorcentajeReserva, Estado)
-                               VALUES
-                               (@ID_propietario, @Direccion, @Cupo, @ID_tipo,
-                                @Coordenadas, @PrecioPorDia, @PorcentajeReserva, @Estado);
-                               SELECT LAST_INSERT_ID();";
+            command.Parameters.AddWithValue(
+                "@Cupo",
+                inmueble.Cupo
+            );
 
-                using (var command = new MySqlCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue(
-                        "@ID_propietario",
-                        inmueble.Duenio.ID_propietario
-                    );
+            command.Parameters.AddWithValue(
+                "@ID_tipo",
+                inmueble.Tipo.ID_tipo
+            );
 
-                    command.Parameters.AddWithValue(
-                        "@Direccion",
-                        inmueble.Direccion
-                    );
+            command.Parameters.AddWithValue(
+                "@Coordenadas",
+                inmueble.Coordenadas
+            );
 
-                    command.Parameters.AddWithValue(
-                        "@Cupo",
-                        inmueble.Cupo
-                    );
+            command.Parameters.AddWithValue(
+                "@PrecioPorDia",
+                inmueble.PrecioPorDia
+            );
 
-                    command.Parameters.AddWithValue(
-                        "@ID_tipo",
-                        inmueble.Tipo.ID_tipo
-                    );
+            command.Parameters.AddWithValue(
+                "@PorcentajeReserva",
+                inmueble.PorcentajeReserva
+            );
 
-                    command.Parameters.AddWithValue(
-                        "@Coordenadas",
-                        inmueble.Coordenadas
-                    );
+            command.Parameters.AddWithValue(
+                "@Estado",
+                inmueble.Estado
+            );
 
-                    command.Parameters.AddWithValue(
-                        "@PrecioPorDia",
-                        inmueble.PrecioPorDia
-                    );
+            inmueble.ID_inmueble =
+                Convert.ToInt32(command.ExecuteScalar());
 
-                    command.Parameters.AddWithValue(
-                        "@PorcentajeReserva",
-                        inmueble.PorcentajeReserva
-                    );
-
-                    command.Parameters.AddWithValue(
-                        "@Estado",
-                        inmueble.Estado
-                    );
-
-                    res = Convert.ToInt32(command.ExecuteScalar());
-                }
-            }
-
-            return res;
+            return inmueble.ID_inmueble;
         }
+    }
+}
 
         public int Baja(int id)
         {

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AnaYAntonio_ProyectoInmobiliaria.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 {
@@ -10,20 +11,30 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         private readonly IRepositorioInmueble repositorio;
         private readonly IRepositorioPropietario repositorioPropietario;
         private readonly IRepositorioTipoInmueble repositorioTipo;
+        private readonly IRepositorioImagen repositorioImagen;
 
         public InmueblesController(
             IRepositorioInmueble repositorio,
             IRepositorioPropietario repositorioPropietario,
-            IRepositorioTipoInmueble repositorioTipo)
+            IRepositorioTipoInmueble repositorioTipo,
+            IRepositorioImagen repositorioImagen)
         {
             this.repositorio = repositorio;
             this.repositorioPropietario = repositorioPropietario;
             this.repositorioTipo = repositorioTipo;
+            this.repositorioImagen = repositorioImagen;
         }
 
         public IActionResult Index()
         {
             var lista = repositorio.ObtenerLista();
+
+            foreach (var inmueble in lista)
+            {
+                inmueble.Imagenes = repositorioImagen
+                    .BuscarPorInmueble(inmueble.ID_inmueble);
+            }
+
             return View(lista);
         }
 
@@ -43,10 +54,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(
+        public async Task<IActionResult> Create(
             Inmueble inmueble,
             int DuenioId,
-            int TipoId)
+            int TipoId,
+            List<IFormFile> imagenes)
         {
             ModelState.Remove("Duenio");
             ModelState.Remove("Duenio.DNI");
@@ -54,7 +66,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             ModelState.Remove("Duenio.Nombre");
             ModelState.Remove("Duenio.Apellido");
             ModelState.Remove("Duenio.Telefono");
-
             ModelState.Remove("Tipo");
             ModelState.Remove("Tipo.Nombre");
 
@@ -98,6 +109,47 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             repositorio.Alta(inmueble);
 
+            if (imagenes != null && imagenes.Count > 0)
+            {
+                string path = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "Uploads",
+                    "Inmuebles",
+                    inmueble.ID_inmueble.ToString()
+                );
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                foreach (var file in imagenes)
+                {
+                    if (file.Length > 0)
+                    {
+                        var extension = Path.GetExtension(file.FileName);
+                        var nombreArchivo = $"{Guid.NewGuid()}{extension}";
+                        var rutaArchivo = Path.Combine(path, nombreArchivo);
+
+                        using (var stream = new FileStream(
+                            rutaArchivo,
+                            FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var imagen = new Imagen
+                        {
+                            InmuebleId = inmueble.ID_inmueble,
+                            Url = $"/Uploads/Inmuebles/{inmueble.ID_inmueble}/{nombreArchivo}"
+                        };
+
+                        repositorioImagen.Alta(imagen);
+                    }
+                }
+            }
+
             TempData["Mensaje"] = "Inmueble creado correctamente.";
 
             return RedirectToAction(nameof(Index));
@@ -113,6 +165,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return NotFound();
             }
 
+            inmueble.Imagenes = repositorioImagen
+                .BuscarPorInmueble(inmueble.ID_inmueble);
+
             ViewBag.Propietarios = repositorioPropietario.ObtenerLista()
                 .Where(p => p.Estado)
                 .ToList();
@@ -126,10 +181,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(
+        public async Task<IActionResult> Edit(
             Inmueble inmueble,
             int DuenioId,
-            int TipoId)
+            int TipoId,
+            List<IFormFile> imagenes)
         {
             ModelState.Remove("Duenio");
             ModelState.Remove("Duenio.DNI");
@@ -137,12 +193,14 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             ModelState.Remove("Duenio.Nombre");
             ModelState.Remove("Duenio.Apellido");
             ModelState.Remove("Duenio.Telefono");
-
             ModelState.Remove("Tipo");
             ModelState.Remove("Tipo.Nombre");
 
             if (!ModelState.IsValid)
             {
+                inmueble.Imagenes = repositorioImagen
+                    .BuscarPorInmueble(inmueble.ID_inmueble);
+
                 ViewBag.Propietarios = repositorioPropietario.ObtenerLista()
                     .Where(p => p.Estado)
                     .ToList();
@@ -154,7 +212,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return View(inmueble);
             }
 
-            var inmuebleExistente = repositorio.ObtenerPorId(inmueble.ID_inmueble);
+            var inmuebleExistente = repositorio.ObtenerPorId(
+                inmueble.ID_inmueble);
 
             if (inmuebleExistente == null)
             {
@@ -167,6 +226,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             if (propietario == null || !propietario.Estado ||
                 tipo == null || !tipo.Estado)
             {
+                inmueble.Imagenes = repositorioImagen
+                    .BuscarPorInmueble(inmueble.ID_inmueble);
+
                 ViewBag.Propietarios = repositorioPropietario.ObtenerLista()
                     .Where(p => p.Estado)
                     .ToList();
@@ -192,9 +254,90 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             repositorio.Modificacion(inmuebleExistente);
 
+            // AGREGAR NUEVAS IMÁGENES
+            if (imagenes != null && imagenes.Count > 0)
+            {
+                string path = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "Uploads",
+                    "Inmuebles",
+                    inmueble.ID_inmueble.ToString()
+                );
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                foreach (var file in imagenes)
+                {
+                    if (file.Length > 0)
+                    {
+                        var extension = Path.GetExtension(file.FileName);
+                        var nombreArchivo = $"{Guid.NewGuid()}{extension}";
+                        var rutaArchivo = Path.Combine(path, nombreArchivo);
+
+                        using (var stream = new FileStream(
+                            rutaArchivo,
+                            FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var imagen = new Imagen
+                        {
+                            InmuebleId = inmueble.ID_inmueble,
+                            Url = $"/Uploads/Inmuebles/{inmueble.ID_inmueble}/{nombreArchivo}"
+                        };
+
+                        repositorioImagen.Alta(imagen);
+                    }
+                }
+            }
+
             TempData["Mensaje"] = "Inmueble modificado correctamente.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // ELIMINAR IMAGEN
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EliminarImagen(int id)
+        {
+            var imagen = repositorioImagen.ObtenerPorId(id);
+
+            if (imagen == null)
+            {
+                return NotFound();
+            }
+
+            // Eliminar archivo físico
+            if (!string.IsNullOrEmpty(imagen.Url))
+            {
+                var rutaArchivo = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    imagen.Url.TrimStart('/')
+                        .Replace("/", Path.DirectorySeparatorChar.ToString())
+                );
+
+                if (System.IO.File.Exists(rutaArchivo))
+                {
+                    System.IO.File.Delete(rutaArchivo);
+                }
+            }
+
+            // Eliminar registro de la base de datos
+            repositorioImagen.Baja(id);
+
+            TempData["Mensaje"] = "Imagen eliminada correctamente.";
+
+            return RedirectToAction(
+                nameof(Edit),
+                new { id = imagen.InmuebleId }
+            );
         }
 
         [HttpPost]
