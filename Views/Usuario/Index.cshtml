@@ -1,0 +1,255 @@
+@model IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Usuario>
+
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
+
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-top: 4px solid #0d6efd;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Gestión de Usuarios
+            </h2>
+
+            <p class="text-muted mb-0">
+                Administre los usuarios del sistema.
+            </p>
+
+        </div>
+
+        <a asp-action="Create"
+           class="btn btn-primary px-4 py-2">
+
+            <span class="me-1">+</span>
+            Nuevo Usuario
+
+        </a>
+
+    </div>
+
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4"
+             role="alert">
+
+            <strong>¡Operación realizada correctamente!</strong>
+
+            @TempData["Mensaje"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Cerrar">
+            </button>
+
+        </div>
+    }
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0 fw-semibold">
+                    Listado de Usuarios
+                </h5>
+
+                <span class="text-muted small">
+                    @Model.Count() usuario(s)
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="ps-4">
+                            Código
+                        </th>
+
+                        <th>
+                            Nombre
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Rol
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @foreach (var usuario in Model)
+                    {
+                        <tr>
+
+                            <td class="ps-4">
+
+                                <span class="text-muted">
+                                    #@usuario.Id
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    @usuario.Nombre @usuario.Apellido
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                @usuario.Email
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge rounded-pill bg-primary">
+
+                                    @usuario.RolNombre
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                @if (usuario.Estado)
+                                {
+                                    <span class="badge rounded-pill bg-success">
+                                        Activo
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge rounded-pill bg-secondary">
+                                        Inactivo
+                                    </span>
+                                }
+
+                            </td>
+
+
+                            <td class="text-end pe-4">
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@usuario.Id"
+                                   class="btn btn-outline-primary btn-sm">
+
+                                    Modificar
+
+                                </a>
+
+
+                                @if (usuario.Estado)
+                                {
+                                    <form asp-action="Delete"
+                                          asp-route-id="@usuario.Id"
+                                          method="post"
+                                          class="d-inline">
+
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm ms-1">
+
+                                            Dar de baja
+
+                                        </button>
+
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Activate"
+                                          asp-route-id="@usuario.Id"
+                                          method="post"
+                                          class="d-inline">
+
+                                        <button type="submit"
+                                                class="btn btn-outline-success btn-sm ms-1">
+
+                                            Dar de alta
+
+                                        </button>
+
+                                    </form>
+                                }
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AnaYAntonio_ProyectoInmobiliaria.Models;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 {
+    [Authorize]
     public class ReservaController : Controller
     {
         private readonly IRepositorioReserva repositorio;

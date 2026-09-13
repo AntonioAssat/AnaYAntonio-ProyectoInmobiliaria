@@ -1,8 +1,10 @@
-using AnaYAntonio_ProyectoInmobiliaria.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using AnaYAntonio_ProyectoInmobiliaria.Models;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 {
+    [Authorize]
     public class InmueblesController : Controller
     {
         private readonly IRepositorioInmueble repositorio;
