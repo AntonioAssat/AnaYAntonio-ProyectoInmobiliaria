@@ -4,7 +4,7 @@
     ViewData["Title"] = "Inmuebles";
 }
 
-<div class="container py-5">
+<div id="app" class="container py-5">
 
     <!-- ENCABEZADO -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
@@ -19,8 +19,7 @@
             </p>
         </div>
 
-        <a asp-action="Create"
-           class="btn btn-primary">
+        <a asp-action="Create" class="btn btn-primary">
             + Nuevo inmueble
         </a>
 
@@ -30,8 +29,7 @@
     <!-- MENSAJE -->
     @if (TempData["Mensaje"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show"
-             role="alert">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
 
             @TempData["Mensaje"]
 
@@ -58,7 +56,7 @@
 
                         <!-- IMAGEN -->
                         @if (inmueble.Imagenes != null &&
-                             inmueble.Imagenes.Count > 0)
+                            inmueble.Imagenes.Count > 0)
                         {
                             <img src="@inmueble.Imagenes[0].Url"
                                  alt="Imagen de @inmueble.Direccion"
@@ -103,7 +101,6 @@
                                     </span>
 
                                 </div>
-
 
                                 @if (inmueble.Estado)
                                 {
@@ -190,7 +187,9 @@
                             <a asp-action="Details"
                                asp-route-id="@inmueble.ID_inmueble"
                                class="btn btn-primary w-100 mb-2">
+
                                 Ver detalle
+
                             </a>
 
 
@@ -200,35 +199,43 @@
                                 <a asp-action="Edit"
                                    asp-route-id="@inmueble.ID_inmueble"
                                    class="btn btn-outline-primary btn-sm flex-grow-1">
+
                                     Editar
+
                                 </a>
 
 
                                 <!-- BAJA / ALTA -->
                                 @if (inmueble.Estado)
                                 {
-                                    <form asp-action="Baja"
+                                    <form v-if="esAdministrador"
+                                          asp-action="Baja"
                                           asp-route-id="@inmueble.ID_inmueble"
                                           method="post"
                                           class="flex-grow-1">
 
                                         <button type="submit"
                                                 class="btn btn-outline-danger btn-sm w-100">
+
                                             Dar de baja
+
                                         </button>
 
                                     </form>
                                 }
                                 else
                                 {
-                                    <form asp-action="AltaEstado"
+                                    <form v-if="esAdministrador"
+                                          asp-action="AltaEstado"
                                           asp-route-id="@inmueble.ID_inmueble"
                                           method="post"
                                           class="flex-grow-1">
 
                                         <button type="submit"
                                                 class="btn btn-outline-success btn-sm w-100">
+
                                             Dar de alta
+
                                         </button>
 
                                     </form>
@@ -264,8 +271,7 @@
                     Todavía no se registraron inmuebles en el sistema.
                 </p>
 
-                <a asp-action="Create"
-                   class="btn btn-primary">
+                <a asp-action="Create" class="btn btn-primary">
                     + Nuevo inmueble
                 </a>
 
@@ -275,3 +281,19 @@
     }
 
 </div>
+
+
+<!-- VUE 3 -->
+<script src="https://unpkg.com/vue@3"></script>
+
+<script>
+    Vue.createApp({
+
+        data() {
+            return {
+                esAdministrador: @(User.IsInRole("Administrador").ToString().ToLower())
+            };
+        }
+
+    }).mount('#app');
+</script>
