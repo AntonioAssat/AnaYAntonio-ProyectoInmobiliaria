@@ -1,0 +1,74 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Usuario
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body text-center">
+
+                    <h2 class="mb-4">Mi Perfil</h2>
+
+                    @if (!string.IsNullOrEmpty(Model.Avatar))
+                    {
+                        <img src="@Model.Avatar"
+                             alt="Avatar"
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                             style="width: 150px; height: 150px; font-size: 50px;">
+                            @Model.Nombre.Substring(0, 1).ToUpper()
+                        </div>
+                    }
+
+                    <h4>@Model.Nombre @Model.Apellido</h4>
+
+                    <hr />
+
+                    <div class="text-start">
+
+                        <p>
+                            <strong>Nombre:</strong>
+                            @Model.Nombre
+                        </p>
+
+                        <p>
+                            <strong>Apellido:</strong>
+                            @Model.Apellido
+                        </p>
+
+                        <p>
+                            <strong>Email:</strong>
+                            @Model.Email
+                        </p>
+
+                        <p>
+                            <strong>Rol:</strong>
+                            @Model.RolNombre
+                        </p>
+
+                    </div>
+
+                    <div class="mt-4">
+                        <a asp-controller="Usuario"
+                           asp-action="EditPerfil"
+                           class="btn btn-primary">
+                            Editar perfil
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

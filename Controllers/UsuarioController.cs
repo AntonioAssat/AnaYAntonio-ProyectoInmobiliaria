@@ -128,6 +128,171 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             );
         }
 
+// PERFIL PROPIO
+// Cualquier usuario autenticado puede ver su propio perfil
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Perfil()
+        {
+            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(claimId, out int id))
+            {
+                return Unauthorized();
+            }
+
+            var usuario = repositorio.ObtenerPorId(id);
+
+            if (usuario == null || !usuario.Estado)
+            {
+                return NotFound();
+            }
+
+            return View(usuario);
+        }
+    
+        // EDITAR PERFIL PROPIO
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditPerfil()
+        {
+            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(claimId, out int id))
+            {
+                return Unauthorized();
+            }
+
+            var usuario = repositorio.ObtenerPorId(id);
+
+            if (usuario == null || !usuario.Estado)
+            {
+                return NotFound();
+            }
+
+            return View(usuario);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPerfil(Usuario usuario, [FromServices] IWebHostEnvironment environment)
+        {
+            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(claimId, out int id))
+            {
+                return Unauthorized();
+            }
+
+            // Buscamos el usuario real
+            var usuarioActual = repositorio.ObtenerPorId(id);
+
+            if (usuarioActual == null || !usuarioActual.Estado)
+            {
+                return NotFound();
+            }
+
+            // El usuario solamente puede modificar su propio perfil
+            usuario.Id = id;
+
+            // No puede modificar su rol
+            usuario.Rol = usuarioActual.Rol;
+
+            // Conservamos el estado
+            usuario.Estado = usuarioActual.Estado;
+
+            // CONTRASEÑA
+            ModelState.Remove(nameof(usuario.Clave));
+            if (string.IsNullOrWhiteSpace(usuario.Clave))
+            {
+                usuario.Clave = usuarioActual.Clave;
+
+                // La contraseña no se está modificando.
+                // Eliminamos el error de validación generado por [Required].
+                ModelState.Remove("Clave");
+            }
+            else
+            {
+                usuario.Clave = PasswordHelper.HashPassword(usuario.Clave);
+            }
+
+            // AVATAR
+            if (usuario.AvatarFile != null &&
+                usuario.AvatarFile.Length > 0)
+            {
+                string path = Path.Combine(
+                    environment.WebRootPath,
+                    "Uploads",
+                    "Usuarios",
+                    id.ToString()
+                );
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string extension =
+                    Path.GetExtension(usuario.AvatarFile.FileName);
+
+                string nombreArchivo =
+                    $"{Guid.NewGuid()}{extension}";
+
+                string rutaArchivo =
+                    Path.Combine(path, nombreArchivo);
+
+                using (var stream = new FileStream(
+                    rutaArchivo,
+                    FileMode.Create))
+                {
+                    await usuario.AvatarFile.CopyToAsync(stream);
+                }
+
+                // Eliminar avatar anterior si existe
+                if (!string.IsNullOrWhiteSpace(usuarioActual.Avatar))
+                {
+                    string avatarAnterior = Path.Combine(
+                        environment.WebRootPath,
+                        usuarioActual.Avatar
+                            .TrimStart('/')
+                            .Replace(
+                                "/",
+                                Path.DirectorySeparatorChar.ToString()
+                            )
+                    );
+
+                    if (System.IO.File.Exists(avatarAnterior))
+                    {
+                        System.IO.File.Delete(avatarAnterior);
+                    }
+                }
+
+                // Guardamos la ruta en la base de datos
+                usuario.Avatar =
+                    $"/Uploads/Usuarios/{id}/{nombreArchivo}";
+            }
+            else
+            {
+                // Si no seleccionó una imagen nueva,
+                // mantenemos el avatar actual
+                usuario.Avatar = usuarioActual.Avatar;
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(usuario);
+            }
+
+            repositorio.Modificacion(usuario);
+
+            TempData["Mensaje"] =
+                "Perfil modificado correctamente.";
+
+            return RedirectToAction(nameof(Perfil));
+        }
         // GESTIÓN DE USUARIOS
         // SOLO ADMINISTRADOR
 
