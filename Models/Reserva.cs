@@ -27,5 +27,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         public decimal MontoPorDia { get; set; }
 
         public bool Estado { get; set; }
+
     }
 }
