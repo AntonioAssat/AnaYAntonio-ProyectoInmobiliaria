@@ -62,6 +62,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                         SET Nombre = @Nombre,
                             Apellido = @Apellido,
                             Email = @Email,
+                            Clave = @Clave,
                             Avatar = @Avatar,
                             Rol = @Rol
                         WHERE Id = @Id";
@@ -71,6 +72,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             comando.Parameters.AddWithValue("@Nombre", usuario.Nombre);
             comando.Parameters.AddWithValue("@Apellido", usuario.Apellido);
             comando.Parameters.AddWithValue("@Email", usuario.Email);
+            comando.Parameters.AddWithValue("@Clave", usuario.Clave);
             comando.Parameters.AddWithValue("@Avatar", usuario.Avatar);
             comando.Parameters.AddWithValue("@Rol", usuario.Rol);
             comando.Parameters.AddWithValue("@Id", usuario.Id);
