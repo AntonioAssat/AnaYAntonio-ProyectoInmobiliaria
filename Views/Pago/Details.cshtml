@@ -1,0 +1,111 @@
+@model AnaYAntonio_ProyectoInmobiliaria.Models.Pago
+
+@{
+    ViewData["Title"] = "Detalle del Pago";
+    var auditoria = ViewBag.Auditoria as IList<AnaYAntonio_ProyectoInmobiliaria.Models.Auditoria>;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h3 class="mb-0">Detalle del Pago</h3>
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Código del pago</dt>
+                        <dd class="col-sm-8">@Model.ID_pago</dd>
+
+                        <dt class="col-sm-4">Reserva</dt>
+                        <dd class="col-sm-8">@Model.ID_reserva</dd>
+
+                        <dt class="col-sm-4">Concepto</dt>
+                        <dd class="col-sm-8">@Model.Concepto</dd>
+
+                        <dt class="col-sm-4">Fecha de pago</dt>
+                        <dd class="col-sm-8">
+                            @Model.FechaPago.ToString("dd/MM/yyyy")
+                        </dd>
+
+                        <dt class="col-sm-4">Monto</dt>
+                        <dd class="col-sm-8">
+                            $ @Model.Monto.ToString("N2")
+                        </dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Estado)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Anulado</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <hr />
+
+                        <h4 class="mb-3">Auditoría</h4>
+
+                        @if (auditoria != null && auditoria.Count > 0)
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Acción</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var registro in auditoria)
+                                        {
+                                            <tr>
+                                                <td>
+                                                     @registro.NombreUsuario
+                                                </td>
+
+                                                <td>
+                                                    @registro.Accion
+                                                </td>
+
+                                                <td>
+                                                    @registro.Fecha.ToString("dd/MM/yyyy HH:mm")
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                No hay registros de auditoría para este pago.
+                            </div>
+                        }
+                    }
+
+                    <div class="mt-4">
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+                            Volver
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

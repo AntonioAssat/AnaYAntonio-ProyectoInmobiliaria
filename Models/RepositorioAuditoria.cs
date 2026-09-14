@@ -73,16 +73,19 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             using var conexion = ObtenerConexion();
 
-            var sql = @"SELECT ID_auditoria,
-                               ID_usuario,
-                               Entidad,
-                               ID_entidad,
-                               Accion,
-                               Fecha
-                        FROM Auditoria
-                        WHERE Entidad = @Entidad
-                          AND ID_entidad = @ID_entidad
-                        ORDER BY Fecha DESC";
+            var sql = @"SELECT a.ID_auditoria,
+                            a.ID_usuario,
+                            a.Entidad,
+                            a.ID_entidad,
+                            a.Accion,
+                            a.Fecha,
+                            CONCAT(u.Nombre, ' ', u.Apellido) AS NombreUsuario
+                        FROM Auditoria a
+                        INNER JOIN Usuario u
+                            ON a.ID_usuario = u.Id
+                        WHERE a.Entidad = @Entidad
+                        AND a.ID_entidad = @ID_entidad
+                        ORDER BY a.Fecha DESC";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -102,7 +105,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                     Entidad = reader.GetString("Entidad"),
                     ID_entidad = reader.GetInt32("ID_entidad"),
                     Accion = reader.GetString("Accion"),
-                    Fecha = reader.GetDateTime("Fecha")
+                    Fecha = reader.GetDateTime("Fecha"),
+                    NombreUsuario = reader.GetString("NombreUsuario")
                 });
             }
 

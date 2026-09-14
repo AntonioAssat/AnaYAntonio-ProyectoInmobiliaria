@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AnaYAntonio_ProyectoInmobiliaria.Models;
+using System.Security.Claims;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 {
@@ -9,13 +10,16 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
     {
         private readonly IRepositorioPago repositorioPago;
         private readonly IRepositorioReserva repositorioReserva;
+        private readonly IRepositorioAuditoria repositorioAuditoria;
 
         public PagoController(
             IRepositorioPago repositorioPago,
-            IRepositorioReserva repositorioReserva)
+            IRepositorioReserva repositorioReserva,
+            IRepositorioAuditoria repositorioAuditoria)
         {
             this.repositorioPago = repositorioPago;
             this.repositorioReserva = repositorioReserva;
+            this.repositorioAuditoria = repositorioAuditoria;
         }
 
         // LISTADO DE PAGOS
@@ -51,7 +55,23 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             pago.Estado = true;
 
-            repositorioPago.Alta(pago);
+            var idPago = repositorioPago.Alta(pago);
+
+            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (int.TryParse(claimId, out int idUsuario))
+            {
+                var auditoria = new Auditoria
+                {
+                    ID_usuario = idUsuario,
+                    Entidad = "Pago",
+                    ID_entidad = idPago,
+                    Accion = "Creación",
+                    Fecha = DateTime.Now
+                };
+
+                repositorioAuditoria.Alta(auditoria);
+            }
 
             TempData["Mensaje"] = "Pago registrado correctamente.";
 
@@ -108,12 +128,58 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // MOSTRAR DETALLE DEL PAGO
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var pago = repositorioPago.ObtenerPorId(id);
+
+            if (pago == null)
+            {
+                return NotFound();
+            }
+
+            if (User.IsInRole("Administrador"))
+            {
+                ViewBag.Auditoria =
+                    repositorioAuditoria.ObtenerPorEntidad("Pago", id);
+            }
+
+            return View(pago);
+        }
+
         // DAR DE BAJA
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            repositorioPago.Baja(id);
+            var pago = repositorioPago.ObtenerPorId(id);
+
+            if (pago == null)
+            {
+                return NotFound();
+            }
+
+            var resultado = repositorioPago.Baja(id);
+
+            if (resultado > 0)
+            {
+                var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (int.TryParse(claimId, out int idUsuario))
+                {
+                    var auditoria = new Auditoria
+                    {
+                        ID_usuario = idUsuario,
+                        Entidad = "Pago",
+                        ID_entidad = id,
+                        Accion = "Anulación",
+                        Fecha = DateTime.Now
+                    };
+
+                    repositorioAuditoria.Alta(auditoria);
+                }
+            }
 
             TempData["Mensaje"] = "Pago dado de baja correctamente.";
 
