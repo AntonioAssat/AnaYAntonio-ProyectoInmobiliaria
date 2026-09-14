@@ -77,14 +77,29 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         // GUARDAR MODIFICACIÓN
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Pago pago)
+        public IActionResult Edit(int ID_pago, string Concepto)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(Concepto))
             {
-                ViewBag.Reservas = repositorioReserva.ObtenerLista();
+                ModelState.AddModelError("Concepto", "El concepto es obligatorio.");
 
-                return View(pago);
+                var pagoError = repositorioPago.ObtenerPorId(ID_pago);
+
+                if (pagoError == null)
+                {
+                    return NotFound();
+                }
+
+                pagoError.Concepto = Concepto;
+
+                return View(pagoError);
             }
+
+            var pago = new Pago
+            {
+                ID_pago = ID_pago,
+                Concepto = Concepto
+            };
 
             repositorioPago.Modificacion(pago);
 
