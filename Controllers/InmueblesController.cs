@@ -354,7 +354,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 new { id = imagen.InmuebleId }
             );
         }
-
+        [Authorize(Policy = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Baja(int id)

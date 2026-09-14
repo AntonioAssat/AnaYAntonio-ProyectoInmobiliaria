@@ -131,6 +131,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 throw;
             }
         }
+
+        [Authorize(Policy = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Baja(int id)

@@ -78,6 +78,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Policy = "Administrador")]
         [HttpPost]
         public IActionResult Delete(int id)
         {
