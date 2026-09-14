@@ -86,6 +86,152 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // RENOVAR / EXTENDER RESERVA
+        // La reserva original NO se modifica.
+        // Se crea una nueva reserva.
+   
+
+        [HttpGet]
+        public IActionResult Renovar(int id)
+        {
+            var reserva = repositorio.ObtenerPorId(id);
+
+            if (reserva == null)
+            {
+                return NotFound();
+            }
+
+            if (!reserva.Estado)
+            {
+                TempData["Mensaje"] =
+                    "No se puede renovar una reserva que está inactiva.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            var inquilinos =
+                repositorioInquilino.ObtenerLista();
+
+            var inmuebles =
+                repositorioInmueble.ObtenerLista();
+
+            var inquilino =
+                inquilinos.FirstOrDefault(
+                    i => i.ID_inquilino == reserva.ID_inquilino
+                );
+
+            var inmueble =
+                inmuebles.FirstOrDefault(
+                    i => i.ID_inmueble == reserva.ID_inmueble
+                );
+
+            ViewBag.InquilinoNombre =
+                inquilino != null
+                    ? $"{inquilino.Nombre} {inquilino.Apellido}"
+                    : "No encontrado";
+
+            ViewBag.InmuebleDireccion =
+                inmueble != null
+                    ? inmueble.Direccion
+                    : "No encontrado";
+
+            return View(reserva);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Renovar(Reserva reserva)
+        {
+            // Buscamos la reserva original
+            var reservaOriginal =
+                repositorio.ObtenerPorId(reserva.ID_reserva);
+
+            if (reservaOriginal == null)
+            {
+                return NotFound();
+            }
+
+            if (!reservaOriginal.Estado)
+            {
+                TempData["Mensaje"] =
+                    "No se puede renovar una reserva que está inactiva.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // ========================================================
+            // CONSERVAMOS INQUILINO E INMUEBLE DE LA RESERVA ORIGINAL
+            // ========================================================
+
+            reserva.ID_inquilino =
+                reservaOriginal.ID_inquilino;
+
+            reserva.ID_inmueble =
+                reservaOriginal.ID_inmueble;
+
+            // ========================================================
+            // VALIDAR FECHAS
+            // ========================================================
+
+            if (reserva.FechaInicio >= reserva.FechaFin)
+            {
+                ModelState.AddModelError(
+                    "FechaFin",
+                    "La fecha de finalización debe ser posterior a la fecha de inicio."
+                );
+            }
+
+            // La renovación debe comenzar después
+            // de la reserva original.
+            if (reserva.FechaInicio < reservaOriginal.FechaFin)
+            {
+                ModelState.AddModelError(
+                    "FechaInicio",
+                    "La nueva reserva debe comenzar después de la fecha de finalización de la reserva original."
+                );
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(reserva);
+            }
+
+            // ========================================================
+            // VALIDAR SUPERPOSICIÓN
+            // ========================================================
+
+            if (repositorio.ExisteReservaSuperpuesta(reserva))
+            {
+                ModelState.AddModelError(
+                    "",
+                    "El inmueble ya tiene una reserva activa en ese período."
+                );
+
+                return View(reserva);
+            }
+
+            // ========================================================
+            // CREAR NUEVA RESERVA
+            // ========================================================
+
+            var nuevaReserva = new Reserva
+            {
+                ID_inquilino = reservaOriginal.ID_inquilino,
+                ID_inmueble = reservaOriginal.ID_inmueble,
+                FechaInicio = reserva.FechaInicio,
+                FechaFin = reserva.FechaFin,
+                MontoPorDia = reserva.MontoPorDia,
+                Estado = true
+            };
+
+            repositorio.Alta(nuevaReserva);
+
+            TempData["Mensaje"] =
+                "Reserva renovada correctamente. Se creó una nueva reserva sin modificar la original.";
+
+            return RedirectToAction(nameof(Index));
+        }
         [HttpGet]
         public IActionResult Edit(int id)
         {

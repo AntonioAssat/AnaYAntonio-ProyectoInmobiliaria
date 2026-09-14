@@ -170,6 +170,11 @@
 
                                 @if (reserva.Estado)
                                 {
+                                    <a asp-action="Renovar"
+                                        asp-route-id="@reserva.ID_reserva"
+                                        class="btn btn-outline-info btn-sm ms-1">
+                                            Renovar
+                                    </a>
                                     <a asp-action="FinalizarAnticipadamente"
                                         asp-route-id="@reserva.ID_reserva"
                                         class="btn btn-outline-warning btn-sm ms-1">
