@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AnaYAntonio_ProyectoInmobiliaria.Models;
+using System.Security.Claims;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 {
@@ -12,16 +13,20 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         private readonly IRepositorioInmueble repositorioInmueble;
         private readonly IRepositorioPago repositorioPago;
 
+        private readonly IRepositorioAuditoria repositorioAuditoria;
+
         public ReservaController(
             IRepositorioReserva repositorio,
             IRepositorioInquilino repositorioInquilino,
             IRepositorioInmueble repositorioInmueble,
-            IRepositorioPago repositorioPago)
+            IRepositorioPago repositorioPago,
+            IRepositorioAuditoria repositorioAuditoria)
         {
             this.repositorio = repositorio;
             this.repositorioInquilino = repositorioInquilino;
             this.repositorioInmueble = repositorioInmueble;
             this.repositorioPago = repositorioPago;
+            this.repositorioAuditoria = repositorioAuditoria;
         }
 
         public IActionResult Index()
@@ -30,6 +35,22 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
             ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
+            if (User.IsInRole("Administrador"))
+            {
+                var auditorias = new Dictionary<int, IList<Auditoria>>();
+
+                foreach (var reserva in lista)
+                {
+                    auditorias[reserva.ID_reserva] =
+                        repositorioAuditoria.ObtenerPorEntidad(
+                            "Reserva",
+                            reserva.ID_reserva
+                        );
+                }
+
+                ViewBag.Auditorias = auditorias;
+            }
 
             return View(lista);
         }
@@ -80,7 +101,20 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             reserva.Estado = true;
 
-            repositorio.Alta(reserva);
+            var idReserva = repositorio.Alta(reserva);
+
+            var idUsuario = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            repositorioAuditoria.Alta(new Auditoria
+            {
+                ID_usuario = idUsuario,
+                Entidad = "Reserva",
+                ID_entidad = idReserva,
+                Accion = "CREACION",
+                Fecha = DateTime.Now
+            });
 
             TempData["Mensaje"] = "Reserva registrada correctamente.";
 
@@ -90,7 +124,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         // RENOVAR / EXTENDER RESERVA
         // La reserva original NO se modifica.
         // Se crea una nueva reserva.
-   
+
 
         [HttpGet]
         public IActionResult Renovar(int id)
@@ -232,6 +266,26 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var reserva = repositorio.ObtenerPorId(id);
+
+            if (reserva == null)
+            {
+                return NotFound();
+            }
+
+            if (User.IsInRole("Administrador"))
+            {
+                ViewBag.Auditoria =
+                    repositorioAuditoria.ObtenerPorEntidad("Reserva", id);
+            }
+
+            return View(reserva);
+        }
+
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -396,6 +450,19 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             // Finalizar la reserva
             repositorio.Baja(reserva.ID_reserva);
+
+            var idUsuario = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!
+            );
+
+            repositorioAuditoria.Alta(new Auditoria
+            {
+                ID_usuario = idUsuario,
+                Entidad = "Reserva",
+                ID_entidad = reserva.ID_reserva,
+                Accion = "FINALIZACION",
+                Fecha = DateTime.Now
+            });
 
             TempData["Mensaje"] =
                 $"Reserva finalizada anticipadamente. " +

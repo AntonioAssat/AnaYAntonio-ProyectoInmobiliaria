@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Gestión de Reservas";
+
+    var auditorias = ViewBag.Auditorias
+        as Dictionary<int, IList<AnaYAntonio_ProyectoInmobiliaria.Models.Auditoria>>;
 }
 
 <style>
@@ -31,9 +34,17 @@
     .table tbody tr:hover {
         background-color: #f8f9fa;
     }
+
+    .auditoria-row {
+        background-color: #f8f9fa;
+    }
+
+    .auditoria-container {
+        padding: 20px 30px;
+    }
 </style>
 
-<div class="container-fluid py-4">
+<div id="app" class="container-fluid py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -162,25 +173,39 @@
 
                             <td class="text-end pe-4">
 
+                                @if (User.IsInRole("Administrador"))
+                                {
+                                    <button type="button"
+                                            class="btn btn-outline-secondary btn-sm"
+                                            v-on:click="alternarAuditoria(@reserva.ID_reserva)">
+
+                                        {{ reservaAbierta === @reserva.ID_reserva
+                                            ? 'Ocultar auditoría'
+                                            : 'Auditoría' }}
+
+                                    </button>
+                                }
+
                                 <a asp-action="Edit"
                                    asp-route-id="@reserva.ID_reserva"
-                                   class="btn btn-outline-primary btn-sm">
+                                   class="btn btn-outline-primary btn-sm ms-1">
                                     Modificar
                                 </a>
 
                                 @if (reserva.Estado)
                                 {
                                     <a asp-action="Renovar"
-                                        asp-route-id="@reserva.ID_reserva"
-                                        class="btn btn-outline-info btn-sm ms-1">
-                                            Renovar
+                                       asp-route-id="@reserva.ID_reserva"
+                                       class="btn btn-outline-info btn-sm ms-1">
+                                        Renovar
                                     </a>
+
                                     <a asp-action="FinalizarAnticipadamente"
-                                        asp-route-id="@reserva.ID_reserva"
-                                        class="btn btn-outline-warning btn-sm ms-1">
-                                            Finalizar anticipadamente
+                                       asp-route-id="@reserva.ID_reserva"
+                                       class="btn btn-outline-warning btn-sm ms-1">
+                                        Finalizar anticipadamente
                                     </a>
-                                    
+
                                     <form asp-action="Delete"
                                           asp-route-id="@reserva.ID_reserva"
                                           method="post"
@@ -211,6 +236,96 @@
                             </td>
 
                         </tr>
+
+                        @if (User.IsInRole("Administrador") &&
+                            auditorias != null &&
+                            auditorias.ContainsKey(reserva.ID_reserva))
+                        {
+                            <tr v-if="reservaAbierta === @reserva.ID_reserva"
+                                class="auditoria-row">
+
+                                <td colspan="8">
+
+                                    <div class="auditoria-container">
+
+                                        <h6 class="fw-bold mb-3">
+                                            Auditoría de la reserva #@reserva.ID_reserva
+                                        </h6>
+
+                                        @{
+                                            var registros = auditorias[reserva.ID_reserva];
+                                        }
+
+                                        @if (registros.Any())
+                                        {
+                                            <div class="table-responsive">
+
+                                                <table class="table table-sm table-bordered mb-0">
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Usuario</th>
+                                                            <th>Acción</th>
+                                                            <th>Fecha</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+
+                                                        @foreach (var registro in registros)
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+                                                                    Usuario #@registro.NombreUsuario
+                                                                </td>
+
+                                                                <td>
+                                                                    @if (registro.Accion == "CREACION")
+                                                                    {
+                                                                        <span class="badge bg-success">
+                                                                            Creación
+                                                                        </span>
+                                                                    }
+                                                                    else if (registro.Accion == "FINALIZACION")
+                                                                    {
+                                                                        <span class="badge bg-warning text-dark">
+                                                                            Finalización
+                                                                        </span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @registro.Accion
+                                                                    }
+                                                                </td>
+
+                                                                <td>
+                                                                    @registro.Fecha.ToString("dd/MM/yyyy HH:mm:ss")
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-muted mb-0">
+                                                No hay registros de auditoría para esta reserva.
+                                            </p>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
                     }
 
                 </tbody>
@@ -221,3 +336,25 @@
     </div>
 
 </div>
+
+<script src="https://unpkg.com/vue@3"></script>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                reservaAbierta: null
+            };
+        },
+
+        methods: {
+            alternarAuditoria(id) {
+                if (this.reservaAbierta === id) {
+                    this.reservaAbierta = null;
+                } else {
+                    this.reservaAbierta = id;
+                }
+            }
+        }
+    }).mount('#app');
+</script>
