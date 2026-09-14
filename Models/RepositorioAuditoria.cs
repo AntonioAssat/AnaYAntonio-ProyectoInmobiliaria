@@ -4,6 +4,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 {
     public class RepositorioAuditoria : RepositorioBase, IRepositorioAuditoria
     {
+        public RepositorioAuditoria(IConfiguration configuration)
+            : base(configuration)
+        {
+        }
         public int Alta(Auditoria auditoria)
         {
             using var conexion = ObtenerConexion();
