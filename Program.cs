@@ -54,6 +54,9 @@ builder.Services.AddScoped<IRepositorioImagen, RepositorioImagen>();
 //auditoria
 builder.Services.AddScoped<IRepositorioAuditoria, RepositorioAuditoria>();
 
+//Informes
+builder.Services.AddScoped<IRepositorioInformes, RepositorioInformes>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

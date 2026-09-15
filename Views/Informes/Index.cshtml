@@ -1,0 +1,1890 @@
+@model IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inmueble>
+
+@using System.Text.Json
+@using AnaYAntonio_ProyectoInmobiliaria.Models
+
+@{
+    ViewData["Title"] = "Informes";
+
+    // ============================================================
+    // DATOS PARA INFORME 1
+    // ============================================================
+
+    var inmueblesJson = JsonSerializer.Serialize(
+        Model.Select(i => new
+        {
+            id = i.ID_inmueble,
+            direccion = i.Direccion,
+            cupo = i.Cupo,
+            precioPorDia = i.PrecioPorDia,
+            estado = i.Estado,
+
+            idPropietario = i.Duenio?.ID_propietario ?? 0,
+
+            propietario = i.Duenio != null
+                ? $"{i.Duenio.Nombre} {i.Duenio.Apellido}"
+                : "Sin propietario",
+
+            tipo = i.Tipo != null
+                ? i.Tipo.Nombre
+                : "Sin tipo"
+        })
+    );
+
+
+    // ============================================================
+    // PROPIETARIOS
+    // ============================================================
+
+    var propietarios = ViewBag.Propietarios as IEnumerable<Propietario>;
+
+    var propietariosJson = JsonSerializer.Serialize(
+        propietarios?.Select(p => new
+        {
+            id = p.ID_propietario,
+            nombre = $"{p.Nombre} {p.Apellido}"
+        }) ?? Enumerable.Empty<object>()
+    );
+}
+
+
+<div id="app" class="container mt-4">
+
+    <h2 class="mb-4">
+        Informes
+    </h2>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+
+            <!-- ================================================= -->
+            <!-- SELECTOR DE INFORME -->
+            <!-- ================================================= -->
+
+            <div class="mb-4">
+
+                <label class="form-label fw-bold">
+                    Seleccionar informe
+                </label>
+
+                <select v-model="informeSeleccionado"
+                        class="form-select">
+
+                    <option value="1">
+                        Informe 1 - Inmuebles + dueño
+                    </option>
+
+                    <option value="2">
+                        Informe 2 - Inmuebles por propietario
+                    </option>
+
+                    <option value="3">
+                        Informe 3 - Inmuebles más reservados
+                    </option>
+
+                    <option value="4">
+                        Informe 4 - Inmuebles sin reservas
+                    </option>
+
+                    <option value="5">
+                        Informe 5 - Reservas vigentes
+                    </option>
+
+                    <option value="6">
+                        Informe 6 - Reservas que terminan
+                    </option>
+
+                    <option value="7">
+                        Informe 7 - Pagos de una reserva
+                    </option>
+
+                    <option value="8">
+                        Informe 8 - Inmuebles disponibles por fechas
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 1 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '1'">
+
+                <h4 class="mb-3">
+                    Informe 1 - Inmuebles + dueño
+                </h4>
+
+                <p class="text-muted">
+                    Muestra todos los inmuebles junto con su propietario.
+                    La disponibilidad corresponde al estado del inmueble.
+                </p>
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Estado
+                    </label>
+
+                    <select v-model="filtroEstado"
+                            class="form-select">
+
+                        <option value="todos">
+                            Todos
+                        </option>
+
+                        <option value="disponibles">
+                            Disponibles
+                        </option>
+
+                        <option value="noDisponibles">
+                            No disponibles
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>ID</th>
+                                <th>Dirección</th>
+                                <th>Dueño</th>
+                                <th>Tipo</th>
+                                <th>Cupo</th>
+                                <th>Precio por día</th>
+                                <th>Estado</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr v-for="inmueble in inmueblesFiltrados"
+                                :key="inmueble.id">
+
+                                <td>
+                                    {{ inmueble.id }}
+                                </td>
+
+                                <td>
+                                    {{ inmueble.direccion }}
+                                </td>
+
+                                <td>
+                                    {{ inmueble.propietario }}
+                                </td>
+
+                                <td>
+                                    {{ inmueble.tipo }}
+                                </td>
+
+                                <td>
+                                    {{ inmueble.cupo }}
+                                </td>
+
+                                <td>
+                                    $ {{ Number(inmueble.precioPorDia).toLocaleString('es-AR') }}
+                                </td>
+
+                                <td>
+
+                                    <span v-if="inmueble.estado"
+                                          class="badge bg-success">
+
+                                        Disponible
+
+                                    </span>
+
+                                    <span v-else
+                                          class="badge bg-danger">
+
+                                        No disponible
+
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr v-if="inmueblesFiltrados.length === 0">
+
+                                <td colspan="7"
+                                    class="text-center text-muted">
+
+                                    No hay inmuebles para el filtro seleccionado.
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 2 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '2'">
+
+                <h4 class="mb-3">
+                    Informe 2 - Inmuebles por propietario
+                </h4>
+
+                <p class="text-muted">
+                    Seleccione un propietario para consultar sus inmuebles.
+                </p>
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Propietario
+                    </label>
+
+                    <select v-model="propietarioSeleccionado"
+                            class="form-select">
+
+                        <option value="">
+                            Seleccione un propietario
+                        </option>
+
+                        <option v-for="propietario in propietarios"
+                                :key="propietario.id"
+                                :value="String(propietario.id)">
+
+                            {{ propietario.nombre }}
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button class="btn btn-primary mb-4"
+                        v-if="propietarioSeleccionado !== ''"
+                        v-on:click="buscarInforme2">
+
+                    Buscar inmuebles
+
+                </button>
+
+
+                <div v-if="cargando"
+                     class="alert alert-info">
+
+                    Cargando resultados...
+
+                </div>
+
+
+                <div v-if="resultadoInforme2 !== null && !cargando">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-hover">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Dirección</th>
+                                    <th>Tipo</th>
+                                    <th>Cupo</th>
+                                    <th>Precio por día</th>
+                                    <th>Estado</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr v-for="inmueble in resultadoInforme2"
+                                    :key="inmueble.id">
+
+                                    <td>
+                                        {{ inmueble.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.direccion }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.tipo }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.cupo }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ Number(inmueble.precioPorDia).toLocaleString('es-AR') }}
+                                    </td>
+
+                                    <td>
+
+                                        <span v-if="inmueble.estado"
+                                              class="badge bg-success">
+
+                                            Disponible
+
+                                        </span>
+
+                                        <span v-else
+                                              class="badge bg-danger">
+
+                                            No disponible
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr v-if="resultadoInforme2.length === 0">
+
+                                    <td colspan="6"
+                                        class="text-center text-muted">
+
+                                        Este propietario no tiene inmuebles registrados.
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 3 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '3'">
+
+                <h4 class="mb-3">
+                    Informe 3 - Inmuebles más reservados
+                </h4>
+
+                <p class="text-muted">
+                    Inmuebles ordenados por cantidad de reservas
+                    durante los últimos 365 días.
+                </p>
+
+
+                <button class="btn btn-primary mb-4"
+                        v-on:click="buscarInforme3">
+
+                    Buscar informe
+
+                </button>
+
+
+                <div v-if="cargando"
+                     class="alert alert-info">
+
+                    Cargando resultados...
+
+                </div>
+
+
+                <div v-if="resultadoInforme3 !== null && !cargando">
+
+                    <div v-if="resultadoInforme3.length === 0"
+                         class="alert alert-warning">
+
+                        No hay reservas registradas durante los últimos 365 días.
+
+                    </div>
+
+
+                    <div v-else
+                         class="table-responsive">
+
+                        <table class="table table-bordered table-hover">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Dirección</th>
+                                    <th>Dueño</th>
+                                    <th>Tipo</th>
+                                    <th>Cupo</th>
+                                    <th>Precio por día</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr v-for="inmueble in resultadoInforme3"
+                                    :key="inmueble.id">
+
+                                    <td>
+                                        {{ inmueble.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.direccion }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.propietario }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.tipo }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.cupo }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ Number(inmueble.precioPorDia).toLocaleString('es-AR') }}
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 4 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '4'">
+
+                <h4 class="mb-3">
+                    Informe 4 - Inmuebles sin reservas
+                </h4>
+
+                <p class="text-muted">
+                    Muestra los inmuebles que no tuvieron reservas
+                    durante la cantidad de días indicada.
+                </p>
+
+
+                <div class="row mb-4">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Cantidad de días
+                        </label>
+
+                        <input type="number"
+                               v-model.number="diasInforme4"
+                               min="1"
+                               class="form-control">
+
+                    </div>
+
+                </div>
+
+
+                <button class="btn btn-primary mb-4"
+                        v-on:click="buscarInforme4">
+
+                    Buscar informe
+
+                </button>
+
+
+                <div v-if="cargando"
+                     class="alert alert-info">
+
+                    Cargando resultados...
+
+                </div>
+
+
+                <div v-if="resultadoInforme4 !== null && !cargando">
+
+                    <div v-if="resultadoInforme4.length === 0"
+                         class="alert alert-warning">
+
+                        No se encontraron inmuebles sin reservas
+                        durante el período seleccionado.
+
+                    </div>
+
+
+                    <div v-else
+                         class="table-responsive">
+
+                        <table class="table table-bordered table-hover">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Dirección</th>
+                                    <th>Dueño</th>
+                                    <th>Tipo</th>
+                                    <th>Estado</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr v-for="inmueble in resultadoInforme4"
+                                    :key="inmueble.id">
+
+                                    <td>
+                                        {{ inmueble.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.direccion }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.propietario }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.tipo }}
+                                    </td>
+
+                                    <td>
+
+                                        <span v-if="inmueble.estado"
+                                              class="badge bg-success">
+
+                                            Disponible
+
+                                        </span>
+
+                                        <span v-else
+                                              class="badge bg-danger">
+
+                                            No disponible
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 5 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '5'">
+
+                <h4 class="mb-3">
+                    Informe 5 - Reservas vigentes
+                </h4>
+
+                <p class="text-muted">
+                    Seleccione el período para consultar las reservas
+                    vigentes.
+                </p>
+
+
+                <div class="row mb-4">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Fecha desde
+                        </label>
+
+                        <input type="date"
+                               v-model="fechaInicioInforme5"
+                               class="form-control">
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Fecha hasta
+                        </label>
+
+                        <input type="date"
+                               v-model="fechaFinInforme5"
+                               class="form-control">
+
+                    </div>
+
+                </div>
+
+
+                <button class="btn btn-primary mb-4"
+                        v-on:click="buscarInforme5">
+
+                    Buscar reservas
+
+                </button>
+
+
+                <div v-if="cargando"
+                     class="alert alert-info">
+
+                    Cargando resultados...
+
+                </div>
+
+
+                <div v-if="resultadoInforme5 !== null && !cargando">
+
+                    <div v-if="resultadoInforme5.length === 0"
+                         class="alert alert-warning">
+
+                        No hay reservas vigentes para las fechas seleccionadas.
+
+                    </div>
+
+
+                    <div v-else
+                         class="table-responsive">
+
+                        <table class="table table-bordered table-hover">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>Reserva</th>
+                                    <th>Inquilino</th>
+                                    <th>Inmueble</th>
+                                    <th>Fecha inicio</th>
+                                    <th>Fecha fin</th>
+                                    <th>Monto por día</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr v-for="reserva in resultadoInforme5"
+                                    :key="reserva.id">
+
+                                    <td>
+                                        #{{ reserva.id }}
+                                    </td>
+
+                                    <td>
+                                        #{{ reserva.idInquilino }}
+                                    </td>
+
+                                    <td>
+                                        #{{ reserva.idInmueble }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.fechaInicio }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.fechaFin }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ Number(reserva.montoPorDia).toLocaleString('es-AR') }}
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 6 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '6'">
+
+                <h4 class="mb-3">
+                    Informe 6 - Reservas que terminan
+                </h4>
+
+                <p class="text-muted">
+                    Muestra las reservas que terminan dentro del
+                    plazo indicado.
+                </p>
+
+
+                <div class="row mb-4">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Terminan dentro de
+                        </label>
+
+                        <div class="input-group">
+
+                            <input type="number"
+                                   v-model.number="diasInforme6"
+                                   min="1"
+                                   class="form-control">
+
+                            <span class="input-group-text">
+                                días
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button class="btn btn-primary mb-4"
+                        v-on:click="buscarInforme6">
+
+                    Buscar reservas
+
+                </button>
+
+
+                <div v-if="cargando"
+                     class="alert alert-info">
+
+                    Cargando resultados...
+
+                </div>
+
+
+                <div v-if="resultadoInforme6 !== null && !cargando">
+
+                    <div v-if="resultadoInforme6.length === 0"
+                         class="alert alert-warning">
+
+                        No hay reservas que terminen dentro
+                        del plazo indicado.
+
+                    </div>
+
+
+                    <div v-else
+                         class="table-responsive">
+
+                        <table class="table table-bordered table-hover">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>Reserva</th>
+                                    <th>Inquilino</th>
+                                    <th>Inmueble</th>
+                                    <th>Inicio</th>
+                                    <th>Fin</th>
+                                    <th>Monto por día</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr v-for="reserva in resultadoInforme6"
+                                    :key="reserva.id">
+
+                                    <td>
+                                        #{{ reserva.id }}
+                                    </td>
+
+                                    <td>
+                                        #{{ reserva.idInquilino }}
+                                    </td>
+
+                                    <td>
+                                        #{{ reserva.idInmueble }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.fechaInicio }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.fechaFin }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ Number(reserva.montoPorDia).toLocaleString('es-AR') }}
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 7 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '7'">
+
+                <h4 class="mb-3">
+                    Informe 7 - Pagos de una reserva
+                </h4>
+
+                <p class="text-muted">
+                    Busque una reserva para consultar sus pagos.
+                </p>
+
+
+                <!-- Búsqueda de reservas -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Buscar reserva
+                    </label>
+
+                    <div class="d-flex gap-2"
+                        style="max-width: 600px;">
+
+                        <input type="text"
+                            v-model="textoBusquedaReserva"
+                            class="form-control"
+                            placeholder="Ingrese ID de reserva, inquilino o inmueble">
+
+                        <button class="btn btn-primary"
+                                v-on:click="buscarReservasInforme7">
+
+                            Buscar
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Resultados de búsqueda -->
+
+                <div v-if="reservasEncontradas.length > 0"
+                    class="mb-4">
+
+                    <label class="form-label">
+                        Seleccione una reserva
+                    </label>
+
+                    <select class="form-select"
+                            v-model.number="idReservaInforme7"
+                            style="max-width: 600px;">
+
+                        <option :value="null">
+                            -- Seleccione una reserva --
+                        </option>
+
+                        <option v-for="reserva in reservasEncontradas"
+                                :key="reserva.id"
+                                :value="reserva.id">
+
+                            Reserva #{{ reserva.id }}
+                            - Inquilino #{{ reserva.idInquilino }}
+                            - Inmueble #{{ reserva.idInmueble }}
+                            - {{ reserva.fechaInicio }}
+                            hasta {{ reserva.fechaFin }}
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div v-if="busquedaRealizada &&
+                        reservasEncontradas.length === 0"
+                    class="alert alert-warning">
+
+                    No se encontraron reservas con ese criterio.
+
+                </div>
+
+
+                <!-- Consultar pagos -->
+
+                <button class="btn btn-primary mb-4"
+                        v-if="idReservaInforme7"
+                        v-on:click="buscarInforme7">
+
+                    Consultar pagos
+
+                </button>
+
+
+                <div v-if="cargando"
+                    class="alert alert-info">
+
+                    Cargando resultados...
+
+                </div>
+
+
+                <!-- Pagos -->
+
+                <div v-if="resultadoInforme7 !== null && !cargando">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <h5>
+                            Pagos de la reserva #{{ idReservaInforme7 }}
+                        </h5>
+
+
+                        <a class="btn btn-success"
+                        :href="'/Pago/Create?idReserva=' + idReservaInforme7">
+
+                            + Nuevo pago
+
+                        </a>
+
+                    </div>
+
+
+                    <div v-if="resultadoInforme7.length === 0"
+                        class="alert alert-warning">
+
+                        Esta reserva no tiene pagos registrados.
+
+                    </div>
+
+
+                    <div v-else
+                        class="table-responsive">
+
+                        <table class="table table-bordered table-hover">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Concepto</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr v-for="pago in resultadoInforme7"
+                                    :key="pago.id">
+
+                                    <td>
+                                        {{ pago.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ pago.concepto }}
+                                    </td>
+
+                                    <td>
+                                        {{ pago.fechaPago }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ Number(pago.monto).toLocaleString('es-AR') }}
+                                    </td>
+
+                                    <td>
+
+                                        <span v-if="pago.estado"
+                                            class="badge bg-success">
+
+                                            Realizado
+
+                                        </span>
+
+                                        <span v-else
+                                            class="badge bg-danger">
+
+                                            Anulado
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- INFORME 8 -->
+            <!-- ================================================= -->
+
+            <div v-if="informeSeleccionado === '8'">
+
+                <h4 class="mb-3">
+                    Informe 8 - Inmuebles disponibles por fechas
+                </h4>
+
+                <p class="text-muted">
+                    Seleccione las fechas de la posible reserva
+                    para encontrar inmuebles que no estén ocupados.
+                </p>
+
+
+                <div class="row mb-4">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Fecha de inicio
+                        </label>
+
+                        <input type="date"
+                               v-model="fechaInicioInforme8"
+                               class="form-control">
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Fecha de fin
+                        </label>
+
+                        <input type="date"
+                               v-model="fechaFinInforme8"
+                               class="form-control">
+
+                    </div>
+
+                </div>
+
+
+                <button class="btn btn-primary mb-4"
+                        v-on:click="buscarInforme8">
+
+                    Buscar inmuebles
+
+                </button>
+
+
+                <div v-if="cargando"
+                     class="alert alert-info">
+
+                    Cargando resultados...
+
+                </div>
+
+
+                <div v-if="resultadoInforme8 !== null && !cargando">
+
+                    <div v-if="resultadoInforme8.length === 0"
+                         class="alert alert-warning">
+
+                        No hay inmuebles disponibles para esas fechas.
+
+                    </div>
+
+
+                    <div v-else
+                         class="table-responsive">
+
+                        <table class="table table-bordered table-hover">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Dirección</th>
+                                    <th>Dueño</th>
+                                    <th>Tipo</th>
+                                    <th>Cupo</th>
+                                    <th>Precio por día</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr v-for="inmueble in resultadoInforme8"
+                                    :key="inmueble.id">
+
+                                    <td>
+                                        {{ inmueble.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.direccion }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.propietario }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.tipo }}
+                                    </td>
+
+                                    <td>
+                                        {{ inmueble.cupo }}
+                                    </td>
+
+                                    <td>
+                                        $ {{ Number(inmueble.precioPorDia).toLocaleString('es-AR') }}
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+
+        const { createApp } = Vue;
+
+
+        createApp({
+
+            data() {
+
+                return {
+
+                    // =========================================
+                    // GENERAL
+                    // =========================================
+
+                    informeSeleccionado: '1',
+
+                    cargando: false,
+
+
+                    // =========================================
+                    // INFORME 1
+                    // =========================================
+
+                    filtroEstado: 'todos',
+
+                    inmuebles: @Html.Raw(inmueblesJson),
+
+
+                    // =========================================
+                    // PROPIETARIOS
+                    // =========================================
+
+                    propietarios: @Html.Raw(propietariosJson),
+
+                    propietarioSeleccionado: '',
+
+
+                    // =========================================
+                    // INFORME 2
+                    // =========================================
+
+                    resultadoInforme2: null,
+
+
+                    // =========================================
+                    // INFORME 3
+                    // =========================================
+
+                    resultadoInforme3: null,
+
+
+                    // =========================================
+                    // INFORME 4
+                    // =========================================
+
+                    diasInforme4: 30,
+
+                    resultadoInforme4: null,
+
+
+                    // =========================================
+                    // INFORME 5
+                    // =========================================
+
+                    fechaInicioInforme5: '',
+
+                    fechaFinInforme5: '',
+
+                    resultadoInforme5: null,
+
+
+                    // =========================================
+                    // INFORME 6
+                    // =========================================
+
+                    diasInforme6: 7,
+
+                    resultadoInforme6: null,
+
+
+                    // =========================================
+                    // INFORME 7
+                    // =========================================
+
+                    textoBusquedaReserva: '',
+
+                    reservasEncontradas: [],
+
+                    busquedaRealizada: false,
+
+                    idReservaInforme7: '',
+
+                    resultadoInforme7: null,
+
+
+                    // =========================================
+                    // INFORME 8
+                    // =========================================
+
+                    fechaInicioInforme8: '',
+
+                    fechaFinInforme8: '',
+
+                    resultadoInforme8: null
+
+                };
+
+            },
+
+
+            computed: {
+
+                // =========================================
+                // INFORME 1
+                // =========================================
+
+                inmueblesFiltrados() {
+
+                    if (this.filtroEstado === 'disponibles') {
+
+                        return this.inmuebles.filter(
+                            inmueble => inmueble.estado === true
+                        );
+
+                    }
+
+
+                    if (this.filtroEstado === 'noDisponibles') {
+
+                        return this.inmuebles.filter(
+                            inmueble => inmueble.estado === false
+                        );
+
+                    }
+
+
+                    return this.inmuebles;
+
+                }
+
+            },
+
+
+            methods: {
+
+                // =========================================
+                // INFORME 2
+                // =========================================
+
+                async buscarInforme2() {
+
+                    if (!this.propietarioSeleccionado) {
+
+                        return;
+
+                    }
+
+
+                    this.cargando = true;
+
+                    this.resultadoInforme2 = null;
+
+
+                    try {
+
+                        const respuesta = await fetch(
+                            `/Informes/Informe2?idPropietario=${this.propietarioSeleccionado}`
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudo obtener el informe.'
+                            );
+
+                        }
+
+
+                        this.resultadoInforme2 =
+                            await respuesta.json();
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                },
+
+
+                // =========================================
+                // INFORME 3
+                // =========================================
+
+                async buscarInforme3() {
+
+                    this.cargando = true;
+
+                    this.resultadoInforme3 = null;
+
+
+                    try {
+
+                        const respuesta = await fetch(
+                            '/Informes/Informe3'
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudo obtener el informe.'
+                            );
+
+                        }
+
+
+                        this.resultadoInforme3 =
+                            await respuesta.json();
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                },
+
+
+                // =========================================
+                // INFORME 4
+                // =========================================
+
+                async buscarInforme4() {
+
+                    if (!this.diasInforme4 ||
+                        this.diasInforme4 <= 0) {
+
+                        alert(
+                            'Ingrese una cantidad de días válida.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    this.cargando = true;
+
+                    this.resultadoInforme4 = null;
+
+
+                    try {
+
+                        const respuesta = await fetch(
+                            `/Informes/Informe4?dias=${this.diasInforme4}`
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudo obtener el informe.'
+                            );
+
+                        }
+
+
+                        this.resultadoInforme4 =
+                            await respuesta.json();
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                },
+
+
+                // =========================================
+                // INFORME 5
+                // =========================================
+
+                async buscarInforme5() {
+
+                    if (!this.fechaInicioInforme5 ||
+                        !this.fechaFinInforme5) {
+
+                        alert(
+                            'Seleccione ambas fechas.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (this.fechaInicioInforme5 >
+                        this.fechaFinInforme5) {
+
+                        alert(
+                            'La fecha de inicio no puede ser posterior a la fecha de fin.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    this.cargando = true;
+
+                    this.resultadoInforme5 = null;
+
+
+                    try {
+
+                        const respuesta = await fetch(
+                            `/Informes/Informe5?fechaInicio=${this.fechaInicioInforme5}&fechaFin=${this.fechaFinInforme5}`
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudo obtener el informe.'
+                            );
+
+                        }
+
+
+                        this.resultadoInforme5 =
+                            await respuesta.json();
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                },
+
+
+                // =========================================
+                // INFORME 6
+                // =========================================
+
+                async buscarInforme6() {
+
+                    if (!this.diasInforme6 ||
+                        this.diasInforme6 <= 0) {
+
+                        alert(
+                            'Ingrese una cantidad de días válida.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    this.cargando = true;
+
+                    this.resultadoInforme6 = null;
+
+
+                    try {
+
+                        const respuesta = await fetch(
+                            `/Informes/Informe6?dias=${this.diasInforme6}`
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudo obtener el informe.'
+                            );
+
+                        }
+
+
+                        this.resultadoInforme6 =
+                            await respuesta.json();
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                },
+
+
+                // =========================================
+                // INFORME 7
+                // =========================================
+
+                async buscarInforme7() {
+
+                    if (!this.idReservaInforme7 ||
+                        this.idReservaInforme7 <= 0) {
+
+                        alert('Seleccione una reserva válida.');
+
+                        return;
+                    }
+
+
+                    this.cargando = true;
+
+                    this.resultadoInforme7 = null;
+
+
+                    try {
+
+                        const respuesta = await fetch(
+                            `/Informes/Informe7?idReserva=${this.idReservaInforme7}`
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudieron obtener los pagos de la reserva.'
+                            );
+
+                        }
+
+
+                        this.resultadoInforme7 =
+                            await respuesta.json();
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                },
+                async buscarReservasInforme7() {
+
+                    if (!this.textoBusquedaReserva ||
+                        !this.textoBusquedaReserva.trim()) {
+
+                        alert('Ingrese un criterio de búsqueda.');
+
+                        return;
+                    }
+
+
+                    this.cargando = true;
+
+                    this.reservasEncontradas = [];
+
+                    this.busquedaRealizada = false;
+
+                    this.idReservaInforme7 = '';
+
+                    this.resultadoInforme7 = null;
+
+
+                    try {
+
+                        const texto = encodeURIComponent(
+                            this.textoBusquedaReserva.trim()
+                        );
+
+
+                        const respuesta = await fetch(
+                            `/Informes/BuscarReservas?texto=${texto}`
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudieron buscar las reservas.'
+                            );
+
+                        }
+
+
+                        this.reservasEncontradas =
+                            await respuesta.json();
+
+                        this.busquedaRealizada = true;
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                },
+
+                // =========================================
+                // INFORME 8
+                // =========================================
+
+                async buscarInforme8() {
+
+                    if (!this.fechaInicioInforme8 ||
+                        !this.fechaFinInforme8) {
+
+                        alert(
+                            'Seleccione ambas fechas.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (this.fechaInicioInforme8 >=
+                        this.fechaFinInforme8) {
+
+                        alert(
+                            'La fecha de inicio debe ser anterior a la fecha de fin.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    this.cargando = true;
+
+                    this.resultadoInforme8 = null;
+
+
+                    try {
+
+                        const respuesta = await fetch(
+                            `/Informes/Informe8?fechaInicio=${this.fechaInicioInforme8}&fechaFin=${this.fechaFinInforme8}`
+                        );
+
+
+                        if (!respuesta.ok) {
+
+                            throw new Error(
+                                'No se pudo obtener el informe.'
+                            );
+
+                        }
+
+
+                        this.resultadoInforme8 =
+                            await respuesta.json();
+
+                    }
+
+                    catch (error) {
+
+                        alert(error.message);
+
+                    }
+
+                    finally {
+
+                        this.cargando = false;
+
+                    }
+
+                }
+
+            }
+
+        }).mount('#app');
+
+    </script>
+
+}
