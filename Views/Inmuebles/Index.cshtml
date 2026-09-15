@@ -2,13 +2,17 @@
 
 @{
     ViewData["Title"] = "Inmuebles";
+
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int cantidadPaginas = ViewBag.CantidadPaginas ?? 0;
+    int cantidadTotal = ViewBag.CantidadTotal ?? 0;
+    string buscar = ViewBag.Buscar ?? "";
 }
 
 <div id="app" class="container py-5">
 
     <!-- ENCABEZADO -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-
         <div>
             <h1 class="h2 mb-1">
                 Inmuebles
@@ -22,14 +26,14 @@
         <a asp-action="Create" class="btn btn-primary">
             + Nuevo inmueble
         </a>
-
     </div>
 
 
     <!-- MENSAJE -->
     @if (TempData["Mensaje"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert">
 
             @TempData["Mensaje"]
 
@@ -38,7 +42,61 @@
                     data-bs-dismiss="alert"
                     aria-label="Cerrar">
             </button>
+        </div>
+    }
 
+
+    <!-- BUSCADOR -->
+    <div class="card border-0 shadow rounded-4 mb-4">
+        <div class="card-body p-4">
+
+            <form asp-action="Index"
+                  method="get"
+                  class="row g-3 align-items-end">
+
+                <div class="col-12 col-md-9">
+
+                    <label for="buscar"
+                           class="form-label fw-semibold">
+                        Buscar inmueble
+                    </label>
+
+                    <input type="text"
+                           id="buscar"
+                           name="buscar"
+                           value="@buscar"
+                           class="form-control"
+                           placeholder="Dirección, propietario o tipo de inmueble..." />
+
+                </div>
+
+                <div class="col-12 col-md-3 d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary flex-grow-1">
+                         Buscar
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- CANTIDAD DE RESULTADOS -->
+    @if (cantidadTotal > 0)
+    {
+        <div class="text-muted mb-3">
+            Se encontraron
+            <strong>@cantidadTotal</strong>
+            inmueble(s).
         </div>
     }
 
@@ -56,7 +114,7 @@
 
                         <!-- IMAGEN -->
                         @if (inmueble.Imagenes != null &&
-                            inmueble.Imagenes.Count > 0)
+                             inmueble.Imagenes.Count > 0)
                         {
                             <img src="@inmueble.Imagenes[0].Url"
                                  alt="Imagen de @inmueble.Direccion"
@@ -254,7 +312,7 @@
     }
     else
     {
-        <!-- SIN INMUEBLES -->
+        <!-- SIN RESULTADOS -->
         <div class="card border-0 shadow rounded-4">
 
             <div class="card-body text-center py-5">
@@ -263,21 +321,125 @@
                     🏠
                 </div>
 
-                <h2 class="h5">
-                    No hay inmuebles registrados
-                </h2>
+                @if (!string.IsNullOrWhiteSpace(buscar))
+                {
+                    <h2 class="h5">
+                        No se encontraron inmuebles
+                    </h2>
 
-                <p class="text-muted mb-4">
-                    Todavía no se registraron inmuebles en el sistema.
-                </p>
+                    <p class="text-muted mb-4">
+                        No hay inmuebles que coincidan con
+                        "<strong>@buscar</strong>".
+                    </p>
 
-                <a asp-action="Create" class="btn btn-primary">
-                    + Nuevo inmueble
-                </a>
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        Limpiar búsqueda
+
+                    </a>
+                }
+                else
+                {
+                    <h2 class="h5">
+                        No hay inmuebles registrados
+                    </h2>
+
+                    <p class="text-muted mb-4">
+                        Todavía no se registraron inmuebles en el sistema.
+                    </p>
+
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+
+                        + Nuevo inmueble
+
+                    </a>
+                }
 
             </div>
 
         </div>
+    }
+
+
+    <!-- PAGINACIÓN -->
+    @if (cantidadPaginas > 1)
+    {
+        <nav aria-label="Paginación de inmuebles"
+             class="mt-5">
+
+            <ul class="pagination justify-content-center">
+
+
+                <!-- ANTERIOR -->
+                <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+
+                    @if (paginaActual > 1)
+                    {
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-buscar="@buscar"
+                           asp-route-pagina="@(paginaActual - 1)">
+
+                            ← Anterior
+
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-link">
+                            ← Anterior
+                        </span>
+                    }
+
+                </li>
+
+
+                <!-- NÚMEROS -->
+                @for (int i = 1; i <= cantidadPaginas; i++)
+                {
+                    <li class="page-item @(i == paginaActual ? "active" : "")">
+
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-buscar="@buscar"
+                           asp-route-pagina="@i">
+
+                            @i
+
+                        </a>
+
+                    </li>
+                }
+
+
+                <!-- SIGUIENTE -->
+                <li class="page-item @(paginaActual >= cantidadPaginas ? "disabled" : "")">
+
+                    @if (paginaActual < cantidadPaginas)
+                    {
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-buscar="@buscar"
+                           asp-route-pagina="@(paginaActual + 1)">
+
+                            Siguiente →
+
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-link">
+                            Siguiente →
+                        </span>
+                    }
+
+                </li>
+
+            </ul>
+
+        </nav>
     }
 
 </div>
@@ -287,13 +449,20 @@
 <script src="https://unpkg.com/vue@3"></script>
 
 <script>
+
     Vue.createApp({
 
         data() {
+
             return {
-                esAdministrador: @(User.IsInRole("Administrador").ToString().ToLower())
+
+                esAdministrador:
+                    @(User.IsInRole("Administrador").ToString().ToLower())
+
             };
+
         }
 
     }).mount('#app');
+
 </script>

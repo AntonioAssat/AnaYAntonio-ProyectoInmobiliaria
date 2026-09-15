@@ -10,12 +10,12 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         }
 
         public int Alta(Inmueble inmueble)
-{
-    using (var connection = new MySqlConnection(connectionString))
-    {
-        connection.Open();
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
 
-        var sql = @"INSERT INTO Inmueble
+                var sql = @"INSERT INTO Inmueble
                     (
                         ID_propietario,
                         Direccion,
@@ -40,55 +40,55 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
                     SELECT LAST_INSERT_ID();";
 
-        using (var command = new MySqlCommand(sql, connection))
-        {
-            command.Parameters.AddWithValue(
-                "@ID_propietario",
-                inmueble.Duenio.ID_propietario
-            );
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue(
+                        "@ID_propietario",
+                        inmueble.Duenio.ID_propietario
+                    );
 
-            command.Parameters.AddWithValue(
-                "@Direccion",
-                inmueble.Direccion
-            );
+                    command.Parameters.AddWithValue(
+                        "@Direccion",
+                        inmueble.Direccion
+                    );
 
-            command.Parameters.AddWithValue(
-                "@Cupo",
-                inmueble.Cupo
-            );
+                    command.Parameters.AddWithValue(
+                        "@Cupo",
+                        inmueble.Cupo
+                    );
 
-            command.Parameters.AddWithValue(
-                "@ID_tipo",
-                inmueble.Tipo.ID_tipo
-            );
+                    command.Parameters.AddWithValue(
+                        "@ID_tipo",
+                        inmueble.Tipo.ID_tipo
+                    );
 
-            command.Parameters.AddWithValue(
-                "@Coordenadas",
-                inmueble.Coordenadas
-            );
+                    command.Parameters.AddWithValue(
+                        "@Coordenadas",
+                        inmueble.Coordenadas
+                    );
 
-            command.Parameters.AddWithValue(
-                "@PrecioPorDia",
-                inmueble.PrecioPorDia
-            );
+                    command.Parameters.AddWithValue(
+                        "@PrecioPorDia",
+                        inmueble.PrecioPorDia
+                    );
 
-            command.Parameters.AddWithValue(
-                "@PorcentajeReserva",
-                inmueble.PorcentajeReserva
-            );
+                    command.Parameters.AddWithValue(
+                        "@PorcentajeReserva",
+                        inmueble.PorcentajeReserva
+                    );
 
-            command.Parameters.AddWithValue(
-                "@Estado",
-                inmueble.Estado
-            );
+                    command.Parameters.AddWithValue(
+                        "@Estado",
+                        inmueble.Estado
+                    );
 
-            inmueble.ID_inmueble =
-                Convert.ToInt32(command.ExecuteScalar());
+                    inmueble.ID_inmueble =
+                        Convert.ToInt32(command.ExecuteScalar());
 
-            return inmueble.ID_inmueble;
+                    return inmueble.ID_inmueble;
+                }
+            }
         }
-    }
-}
 
         public int Baja(int id)
         {
@@ -303,6 +303,185 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             }
 
             return cantidad;
+        }
+        public int ObtenerCantidad(string? buscar)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT COUNT(*)
+                FROM Inmueble i
+                INNER JOIN Propietario p 
+                    ON i.ID_propietario = p.ID_propietario
+                INNER JOIN TipoInmueble t 
+                    ON i.ID_tipo = t.ID_tipo
+                WHERE
+                    @Buscar = ''
+                    OR i.Direccion LIKE @BuscarLike
+                    OR p.Nombre LIKE @BuscarLike
+                    OR p.Apellido LIKE @BuscarLike
+                    OR t.Nombre LIKE @BuscarLike";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            var textoBuscar = buscar?.Trim() ?? "";
+
+            comando.Parameters.AddWithValue("@Buscar", textoBuscar);
+            comando.Parameters.AddWithValue("@BuscarLike", "%" + textoBuscar + "%");
+
+            conexion.Open();
+
+            return Convert.ToInt32(comando.ExecuteScalar());
+        }
+
+        public IList<Inmueble> ObtenerListaPaginada(
+    string? buscar,
+    int pagina,
+    int cantidadPorPagina)
+        {
+            var lista = new List<Inmueble>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = @"SELECT
+                           i.ID_inmueble,
+                           i.Direccion,
+                           i.Cupo,
+                           i.Coordenadas,
+                           i.PrecioPorDia,
+                           i.PorcentajeReserva,
+                           i.Estado,
+
+                           p.ID_propietario,
+                           p.Nombre AS NombrePropietario,
+                           p.Apellido AS ApellidoPropietario,
+                           p.DNI AS DNIPropietario,
+                           p.Telefono AS TelefonoPropietario,
+                           p.Mail AS MailPropietario,
+                           p.Estado AS EstadoPropietario,
+
+                           t.ID_tipo,
+                           t.Nombre AS NombreTipo,
+                           t.Estado AS EstadoTipo
+
+                       FROM Inmueble i
+
+                       INNER JOIN Propietario p
+                           ON i.ID_propietario = p.ID_propietario
+
+                       INNER JOIN TipoInmueble t
+                           ON i.ID_tipo = t.ID_tipo
+
+                       WHERE
+                           @Buscar = ''
+                           OR i.Direccion LIKE @BuscarLike
+                           OR p.Nombre LIKE @BuscarLike
+                           OR p.Apellido LIKE @BuscarLike
+                           OR t.Nombre LIKE @BuscarLike
+
+                       ORDER BY i.ID_inmueble
+
+                       LIMIT @CantidadPorPagina
+                       OFFSET @Offset";
+
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    string textoBuscar = buscar?.Trim() ?? "";
+
+                    int offset = (pagina - 1) * cantidadPorPagina;
+
+                    command.Parameters.AddWithValue(
+                        "@Buscar",
+                        textoBuscar
+                    );
+
+                    command.Parameters.AddWithValue(
+                        "@BuscarLike",
+                        "%" + textoBuscar + "%"
+                    );
+
+                    command.Parameters.AddWithValue(
+                        "@CantidadPorPagina",
+                        cantidadPorPagina
+                    );
+
+                    command.Parameters.AddWithValue(
+                        "@Offset",
+                        offset
+                    );
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var inmueble = new Inmueble
+                            {
+                                ID_inmueble =
+                                    reader.GetInt32("ID_inmueble"),
+
+                                Direccion =
+                                    reader.GetString("Direccion"),
+
+                                Cupo =
+                                    reader.GetInt32("Cupo"),
+
+                                Coordenadas =
+                                    reader.GetDecimal("Coordenadas"),
+
+                                PrecioPorDia =
+                                    reader.GetDecimal("PrecioPorDia"),
+
+                                PorcentajeReserva =
+                                    reader.GetDecimal("PorcentajeReserva"),
+
+                                Estado =
+                                    reader.GetBoolean("Estado"),
+
+                                Duenio = new Propietario
+                                {
+                                    ID_propietario =
+                                        reader.GetInt32("ID_propietario"),
+
+                                    Nombre =
+                                        reader.GetString("NombrePropietario"),
+
+                                    Apellido =
+                                        reader.GetString("ApellidoPropietario"),
+
+                                    DNI =
+                                        reader.GetString("DNIPropietario"),
+
+                                    Telefono =
+                                        reader.GetString("TelefonoPropietario"),
+
+                                    Mail =
+                                        reader.GetString("MailPropietario"),
+
+                                    Estado =
+                                        reader.GetBoolean("EstadoPropietario")
+                                },
+
+                                Tipo = new TipoInmueble
+                                {
+                                    ID_tipo =
+                                        reader.GetInt32("ID_tipo"),
+
+                                    Nombre =
+                                        reader.GetString("NombreTipo"),
+
+                                    Estado =
+                                        reader.GetBoolean("EstadoTipo")
+                                }
+                            };
+
+                            lista.Add(inmueble);
+                        }
+                    }
+                }
+            }
+
+            return lista;
         }
 
         public Inmueble ObtenerPorId(int id)
