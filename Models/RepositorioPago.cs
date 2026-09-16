@@ -159,5 +159,86 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return comando.ExecuteNonQuery();
         }
+
+        public int ObtenerCantidad(string? buscar)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT COUNT(*)
+                FROM Pago p
+                WHERE
+                    @Buscar = ''
+                    OR CAST(p.ID_pago AS CHAR) LIKE @Texto
+                    OR CAST(p.ID_reserva AS CHAR) LIKE @Texto
+                    OR p.Concepto LIKE @Texto";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            buscar ??= "";
+
+            comando.Parameters.AddWithValue("@Buscar", buscar);
+            comando.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+
+            conexion.Open();
+
+            return Convert.ToInt32(comando.ExecuteScalar());
+        }
+
+        public IList<Pago> ObtenerListaPaginada(
+            string? buscar,
+            int pagina,
+            int cantidadPorPagina)
+        {
+            var lista = new List<Pago>();
+
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT
+                    p.ID_pago,
+                    p.ID_reserva,
+                    p.Concepto,
+                    p.FechaPago,
+                    p.Monto,
+                    p.Estado
+                FROM Pago p
+                WHERE
+                    @Buscar = ''
+                    OR CAST(p.ID_pago AS CHAR) LIKE @Texto
+                    OR CAST(p.ID_reserva AS CHAR) LIKE @Texto
+                    OR p.Concepto LIKE @Texto
+                ORDER BY p.ID_pago
+                LIMIT @CantidadPorPagina
+                OFFSET @Offset";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            buscar ??= "";
+
+            int offset = (pagina - 1) * cantidadPorPagina;
+
+            comando.Parameters.AddWithValue("@Buscar", buscar);
+            comando.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+            comando.Parameters.AddWithValue("@CantidadPorPagina", cantidadPorPagina);
+            comando.Parameters.AddWithValue("@Offset", offset);
+
+            conexion.Open();
+
+            using var reader = comando.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new Pago
+                {
+                    ID_pago = Convert.ToInt32(reader["ID_pago"]),
+                    ID_reserva = Convert.ToInt32(reader["ID_reserva"]),
+                    Concepto = Convert.ToString(reader["Concepto"]) ?? "",
+                    FechaPago = Convert.ToDateTime(reader["FechaPago"]),
+                    Monto = Convert.ToDecimal(reader["Monto"]),
+                    Estado = Convert.ToBoolean(reader["Estado"])
+                });
+            }
+
+            return lista;
+        }
     }
 }

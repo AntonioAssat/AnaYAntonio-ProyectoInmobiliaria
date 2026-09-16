@@ -15,5 +15,13 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         Pago? ObtenerPorId(int id);
 
         int AltaEstado(int id);
+
+        IList<Pago> ObtenerListaPaginada(
+            string? buscar,
+            int pagina,
+            int cantidadPorPagina
+        );
+
+        int ObtenerCantidad(string? buscar);
     }
 }

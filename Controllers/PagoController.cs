@@ -23,11 +23,34 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         // LISTADO DE PAGOS
-        public IActionResult Index()
+        public IActionResult Index(string? buscar, int pagina = 1)
         {
-            var lista = repositorioPago.ObtenerLista();
+            int cantidadPorPagina = 10;
+
+            if (pagina < 1)
+                pagina = 1;
+
+            int cantidadTotal = repositorioPago.ObtenerCantidad(buscar);
+
+            int cantidadPaginas = (int)Math.Ceiling(
+                cantidadTotal / (double)cantidadPorPagina
+            );
+
+            if (cantidadPaginas > 0 && pagina > cantidadPaginas)
+                pagina = cantidadPaginas;
+
+            var lista = repositorioPago.ObtenerListaPaginada(
+                buscar,
+                pagina,
+                cantidadPorPagina
+            );
 
             ViewBag.Reservas = repositorioReserva.ObtenerLista();
+
+            ViewBag.Buscar = buscar;
+            ViewBag.PaginaActual = pagina;
+            ViewBag.CantidadPaginas = cantidadPaginas;
+            ViewBag.CantidadTotal = cantidadTotal;
 
             return View(lista);
         }

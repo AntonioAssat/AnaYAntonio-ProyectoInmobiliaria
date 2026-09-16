@@ -79,10 +79,50 @@
                 </h5>
 
                 <span class="text-muted small">
-                    @Model.Count() pago(s)
+                    @ViewBag.CantidadTotal pago(s)
                 </span>
 
             </div>
+
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="card-body bg-white border-bottom">
+
+            <form method="get" asp-action="Index">
+
+                <div class="row g-2">
+
+                    <div class="col-md-10">
+
+                        <input type="text"
+                               name="buscar"
+                               value="@ViewBag.Buscar"
+                               class="form-control"
+                               placeholder="Buscar por código de pago, código de reserva o concepto..." />
+
+                    </div>
+
+                    <div class="col-md-2 d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary flex-grow-1">
+                            Buscar
+                        </button>
+
+                        @if (!string.IsNullOrWhiteSpace(ViewBag.Buscar))
+                        {
+                            <a asp-action="Index"
+                               class="btn btn-secondary">
+                                Limpiar
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
 
@@ -92,108 +132,170 @@
 
                 <thead>
                     <tr>
-                        <th class="ps-4">Código</th>
-                        <th>Reserva</th>
-                        <th>Concepto</th>
-                        <th>Fecha de pago</th>
-                        <th>Monto</th>
-                        <th>Estado</th>
-                        <th class="text-end pe-4">Acciones</th>
+
+                        <th class="ps-4">
+                            Código
+                        </th>
+
+                        <th>
+                            Reserva
+                        </th>
+
+                        <th>
+                            Concepto
+                        </th>
+
+                        <th>
+                            Fecha de pago
+                        </th>
+
+                        <th>
+                            Monto
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acciones
+                        </th>
+
                     </tr>
                 </thead>
 
                 <tbody>
 
-                    @foreach (var pago in Model)
+                    @if (!Model.Any())
                     {
                         <tr>
 
-                            <td class="ps-4">
-                                <span class="text-muted">
-                                    #@pago.ID_pago
-                                </span>
-                            </td>
+                            <td colspan="7" class="text-center py-5">
 
-                            <td>
-                                Reserva #@pago.ID_reserva
-                            </td>
+                                <div class="text-muted">
 
-                            <td>
-                                @pago.Concepto
-                            </td>
-                            
-                            <td>
-                                @pago.FechaPago.ToString("dd/MM/yyyy")
-                            </td>
+                                    @if (!string.IsNullOrWhiteSpace(ViewBag.Buscar))
+                                    {
+                                        <h6 class="mb-2">
+                                            No se encontraron pagos.
+                                        </h6>
 
-                            <td>
-                                <strong>
-                                    $@pago.Monto.ToString("N2")
-                                </strong>
-                            </td>
+                                        <p class="mb-0">
+                                            No hay pagos que coincidan con
+                                            "<strong>@ViewBag.Buscar</strong>".
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <h6 class="mb-2">
+                                            No hay pagos registrados.
+                                        </h6>
+                                    }
 
-                            <td>
-
-                                @if (pago.Estado)
-                                {
-                                    <span class="badge rounded-pill bg-success">
-                                        Activo
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge rounded-pill bg-secondary">
-                                        Inactivo
-                                    </span>
-                                }
-
-                            </td>
-
-                            <td class="text-end pe-4">
-
-                                <a asp-action="Details"
-                                asp-route-id="@pago.ID_pago"
-                                class="btn btn-info btn-sm">
-                                    Detalle
-                                </a>
-                                <a asp-action="Edit"
-                                   asp-route-id="@pago.ID_pago"
-                                   class="btn btn-outline-primary btn-sm">
-                                    Modificar
-                                </a>
-
-                                @if (pago.Estado)
-                                {
-                                    <form asp-action="Delete"
-                                          asp-route-id="@pago.ID_pago"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-danger btn-sm ms-1">
-                                            Dar de baja
-                                        </button>
-
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="Activate"
-                                          asp-route-id="@pago.ID_pago"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-success btn-sm ms-1">
-                                            Dar de alta
-                                        </button>
-
-                                    </form>
-                                }
+                                </div>
 
                             </td>
 
                         </tr>
+                    }
+                    else
+                    {
+                        @foreach (var pago in Model)
+                        {
+                            <tr>
+
+                                <td class="ps-4">
+
+                                    <span class="text-muted">
+                                        #@pago.ID_pago
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    Reserva #@pago.ID_reserva
+                                </td>
+
+                                <td>
+                                    @pago.Concepto
+                                </td>
+
+                                <td>
+                                    @pago.FechaPago.ToString("dd/MM/yyyy")
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        $@pago.Monto.ToString("N2")
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    @if (pago.Estado)
+                                    {
+                                        <span class="badge rounded-pill bg-success">
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-secondary">
+                                            Inactivo
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td class="text-end pe-4">
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@pago.ID_pago"
+                                       class="btn btn-info btn-sm">
+                                        Detalle
+                                    </a>
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@pago.ID_pago"
+                                       class="btn btn-outline-primary btn-sm ms-1">
+                                        Modificar
+                                    </a>
+
+                                    @if (pago.Estado)
+                                    {
+                                        <form asp-action="Delete"
+                                              asp-route-id="@pago.ID_pago"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm ms-1">
+                                                Dar de baja
+                                            </button>
+
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Activate"
+                                              asp-route-id="@pago.ID_pago"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-success btn-sm ms-1">
+                                                Dar de alta
+                                            </button>
+
+                                        </form>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
                     }
 
                 </tbody>
@@ -201,6 +303,67 @@
             </table>
 
         </div>
+
+        <!-- PAGINACIÓN -->
+        @if (ViewBag.CantidadPaginas > 1)
+        {
+            <div class="card-footer bg-white">
+
+                <nav aria-label="Paginación de pagos">
+
+                    <ul class="pagination justify-content-center mb-0">
+
+                        <!-- ANTERIOR -->
+                        <li class="page-item @(ViewBag.PaginaActual == 1 ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pagina="@(ViewBag.PaginaActual - 1)"
+                               asp-route-buscar="@ViewBag.Buscar">
+
+                                Anterior
+
+                            </a>
+
+                        </li>
+
+                        <!-- NÚMEROS DE PÁGINA -->
+                        @for (int i = 1; i <= ViewBag.CantidadPaginas; i++)
+                        {
+                            <li class="page-item @(ViewBag.PaginaActual == i ? "active" : "")">
+
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pagina="@i"
+                                   asp-route-buscar="@ViewBag.Buscar">
+
+                                    @i
+
+                                </a>
+
+                            </li>
+                        }
+
+                        <!-- SIGUIENTE -->
+                        <li class="page-item @(ViewBag.PaginaActual == ViewBag.CantidadPaginas ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pagina="@(ViewBag.PaginaActual + 1)"
+                               asp-route-buscar="@ViewBag.Buscar">
+
+                                Siguiente
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+            </div>
+        }
 
     </div>
 
