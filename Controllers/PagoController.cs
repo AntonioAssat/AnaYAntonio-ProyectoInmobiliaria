@@ -172,6 +172,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         // DAR DE BAJA
+        [Authorize(Policy = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
