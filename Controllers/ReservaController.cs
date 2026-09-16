@@ -97,11 +97,58 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
 
                 return View(reserva);
+            }       
+            // OBTENER EL INMUEBLE Y SU PORCENTAJE DE RESERVA
+
+            var inmueble = repositorioInmueble.ObtenerPorId(reserva.ID_inmueble);
+
+            if (inmueble == null)
+            {
+                ModelState.AddModelError(
+                    "ID_inmueble",
+                    "El inmueble seleccionado no existe."
+                );
+
+                ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+                ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
+                return View(reserva);
             }
 
+            // Usamos el precio real del inmueble
+            reserva.MontoPorDia = inmueble.PrecioPorDia;
+            // CALCULAR EL IMPORTE TOTAL DE LA RESERVA
+
+            var cantidadDias =
+                (reserva.FechaFin - reserva.FechaInicio).Days;
+
+            var importeTotal =
+                cantidadDias * reserva.MontoPorDia;
+
+            // CALCULAR EL PAGO INICIAL SEGÚN EL PORCENTAJE
+  
+            var importeReserva =
+                importeTotal * inmueble.PorcentajeReserva / 100m;
+            // GUARDAR LA RESERVA
             reserva.Estado = true;
 
             var idReserva = repositorio.Alta(reserva);
+
+            // REGISTRAR EL PAGO INICIAL
+
+            var pago = new Pago
+            {
+                ID_reserva = idReserva,
+                FechaPago = DateTime.Today,
+                Monto = importeReserva,
+                Concepto =
+                    $"Pago inicial de reserva ({inmueble.PorcentajeReserva}%)",
+                Estado = true
+            };
+
+            repositorioPago.Alta(pago);
+
+            // REGISTRAR AUDITORÍA DE LA RESERVA
 
             var idUsuario = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
@@ -116,7 +163,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 Fecha = DateTime.Now
             });
 
-            TempData["Mensaje"] = "Reserva registrada correctamente.";
+            TempData["Mensaje"] =
+                $"Reserva registrada correctamente. " +
+                $"Pago inicial: ${importeReserva:N2}.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -367,7 +416,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult FinalizarAnticipadamente(
             int id,
-            DateTime fechaFinEfectiva)
+            DateTime fechaFinEfectiva,
+            bool multaPagada)
         {
             var reserva = repositorio.ObtenerPorId(id);
 
@@ -384,8 +434,22 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Validar que la fecha efectiva esté dentro
-            // del período original de la reserva.
+            // ========================================================
+            // VALIDAR QUE LA MULTA HAYA SIDO PAGADA
+            // ========================================================
+
+            if (!multaPagada)
+            {
+                TempData["Mensaje"] =
+                    "No se puede finalizar la reserva porque la multa no fue pagada.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // ========================================================
+            // VALIDAR FECHA EFECTIVA
+            // ========================================================
+
             if (fechaFinEfectiva < reserva.FechaInicio ||
                 fechaFinEfectiva > reserva.FechaFin)
             {
@@ -397,19 +461,31 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return View(reserva);
             }
 
-            // Duración total de la reserva
+            // ========================================================
+            // CALCULAR DURACIÓN ORIGINAL
+            // ========================================================
+
             var totalDias =
                 (reserva.FechaFin - reserva.FechaInicio).Days;
 
-            // Días que realmente se utilizaron
+            // ========================================================
+            // CALCULAR DÍAS CUMPLIDOS
+            // ========================================================
+
             var diasCumplidos =
                 (fechaFinEfectiva - reserva.FechaInicio).Days;
 
-            // Días que quedaron pendientes
+            // ========================================================
+            // CALCULAR DÍAS RESTANTES
+            // ========================================================
+
             var diasRestantes =
                 (reserva.FechaFin - fechaFinEfectiva).Days;
 
-            // Determinar porcentaje de multa
+            // ========================================================
+            // DETERMINAR PORCENTAJE DE MULTA
+            // ========================================================
+
             decimal porcentajeMulta;
 
             if (diasCumplidos < totalDias / 2.0)
@@ -421,15 +497,24 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 porcentajeMulta = 0.25m;
             }
 
-            // Importe correspondiente a los días restantes
+            // ========================================================
+            // CALCULAR IMPORTE RESTANTE
+            // ========================================================
+
             var importeRestante =
                 diasRestantes * reserva.MontoPorDia;
 
-            // Calcular multa
+            // ========================================================
+            // CALCULAR MULTA
+            // ========================================================
+
             var multa =
                 importeRestante * porcentajeMulta;
 
-            // Crear el pago correspondiente a la multa
+            // ========================================================
+            // REGISTRAR PAGO DE LA MULTA
+            // ========================================================
+
             var pago = new Pago
             {
                 ID_reserva = reserva.ID_reserva,
@@ -442,31 +527,44 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             repositorioPago.Alta(pago);
 
-            // Registrar la fecha real de finalización
+            // ========================================================
+            // REGISTRAR FECHA REAL DE FINALIZACIÓN
+            // ========================================================
+
             repositorio.FinalizarAnticipadamente(
                 reserva.ID_reserva,
                 fechaFinEfectiva
             );
 
-            // Finalizar la reserva
+            // ========================================================
+            // FINALIZAR RESERVA
+            // ========================================================
+
             repositorio.Baja(reserva.ID_reserva);
 
-            var idUsuario = int.Parse(
-                User.FindFirstValue(ClaimTypes.NameIdentifier)!
-            );
+            // ========================================================
+            // REGISTRAR USUARIO QUE FINALIZÓ
+            // ========================================================
 
-            repositorioAuditoria.Alta(new Auditoria
+            var claimId = User.FindFirst(
+                ClaimTypes.NameIdentifier
+            )?.Value;
+
+            if (int.TryParse(claimId, out int idUsuario))
             {
-                ID_usuario = idUsuario,
-                Entidad = "Reserva",
-                ID_entidad = reserva.ID_reserva,
-                Accion = "FINALIZACION",
-                Fecha = DateTime.Now
-            });
+                repositorioAuditoria.Alta(new Auditoria
+                {
+                    ID_usuario = idUsuario,
+                    Entidad = "Reserva",
+                    ID_entidad = reserva.ID_reserva,
+                    Accion = "FINALIZACION",
+                    Fecha = DateTime.Now
+                });
+            }
 
             TempData["Mensaje"] =
                 $"Reserva finalizada anticipadamente. " +
-                $"Multa generada: ${multa:N2}.";
+                $"Multa pagada: ${multa:N2}.";
 
             return RedirectToAction(nameof(Index));
         }
