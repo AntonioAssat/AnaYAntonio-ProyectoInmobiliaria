@@ -2,14 +2,21 @@
 
 @{
     ViewData["Title"] = "Gestión de Inquilinos";
+
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int cantidadPaginas = ViewBag.CantidadPaginas ?? 0;
+    int cantidadTotal = ViewBag.CantidadTotal ?? 0;
+    string buscar = ViewBag.Buscar ?? "";
 }
 
 <div class="container-fluid py-4">
 
     <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
             <h2 class="fw-bold mb-1">Gestión de Inquilinos</h2>
+
             <p class="text-muted mb-0">
                 Administre la información y el estado de los inquilinos registrados.
             </p>
@@ -18,8 +25,10 @@
         <a asp-action="Create" class="btn btn-primary px-4 py-2">
             <span class="me-1">+</span> Nuevo Inquilino
         </a>
+
     </div>
 
+    <!-- Mensaje -->
     @if (ViewBag.Mensaje != null)
     {
         <div class="alert alert-success alert-dismissible fade show mb-4"
@@ -33,13 +42,51 @@
                     data-bs-dismiss="alert"
                     aria-label="Cerrar">
             </button>
+
         </div>
     }
+
+    <!-- Buscador -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form asp-action="Index" method="get">
+
+                <div class="row g-2">
+
+                    <div class="col-md-10">
+
+                        <input type="text"
+                               name="buscar"
+                               value="@buscar"
+                               class="form-control"
+                               placeholder="Buscar por nombre, apellido, DNI, teléfono o mail..." />
+
+                    </div>
+
+                    <div class="col-md-2 d-grid">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Buscar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
     <!-- Tabla -->
     <div class="card shadow-sm">
 
         <div class="card-header bg-white py-3">
+
             <div class="d-flex justify-content-between align-items-center">
 
                 <h5 class="mb-0 fw-semibold">
@@ -47,10 +94,11 @@
                 </h5>
 
                 <span class="text-muted small">
-                    @Model.Count() registro(s)
+                    @cantidadTotal registro(s)
                 </span>
 
             </div>
+
         </div>
 
         <div class="table-responsive">
@@ -58,6 +106,7 @@
             <table class="table table-hover align-middle mb-0">
 
                 <thead class="table-light">
+
                     <tr>
                         <th class="ps-4">Código</th>
                         <th>Nombre completo</th>
@@ -66,98 +115,126 @@
                         <th>Estado</th>
                         <th class="text-end pe-4">Acciones</th>
                     </tr>
+
                 </thead>
 
                 <tbody>
 
-                    @foreach (var inquilino in Model)
+                    @if (!Model.Any())
                     {
                         <tr>
 
-                            <!-- Código -->
-                            <td class="ps-4">
-                                <span class="text-muted">
-                                    #@inquilino.ID_inquilino
-                                </span>
-                            </td>
+                            <td colspan="6"
+                                class="text-center text-muted py-4">
 
-                            <!-- Nombre -->
-                            <td>
-                                <div class="fw-semibold">
-                                    @inquilino.Nombre @inquilino.Apellido
-                                </div>
-                            </td>
-
-                            <!-- DNI -->
-                            <td>
-                                @inquilino.DNI
-                            </td>
-
-                            <!-- Contacto -->
-                            <td>
-                                <div>@inquilino.Telefono</div>
-                                <small class="text-muted">
-                                    @inquilino.Mail
-                                </small>
-                            </td>
-
-                            <!-- Estado -->
-                            <td>
-                                @if (inquilino.Estado)
-                                {
-                                    <span class="badge rounded-pill bg-success">
-                                        Activo
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge rounded-pill bg-secondary">
-                                        Inactivo
-                                    </span>
-                                }
-                            </td>
-
-                            <!-- Acciones -->
-                            <td class="text-end pe-4">
-
-                                <a asp-action="Edit"
-                                   asp-route-id="@inquilino.ID_inquilino"
-                                   class="btn btn-outline-primary btn-sm">
-                                    Modificar
-                                </a>
-
-                                @if (inquilino.Estado)
-                                {
-                                    <form asp-action="Baja"
-                                          asp-route-id="@inquilino.ID_inquilino"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-danger btn-sm ms-1">
-                                            Dar de baja
-                                        </button>
-
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="AltaEstado"
-                                          asp-route-id="@inquilino.ID_inquilino"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-success btn-sm ms-1">
-                                            Dar de alta
-                                        </button>
-
-                                    </form>
-                                }
+                                No se encontraron inquilinos.
 
                             </td>
 
                         </tr>
+                    }
+                    else
+                    {
+                        @foreach (var inquilino in Model)
+                        {
+                            <tr>
+
+                                <!-- Código -->
+                                <td class="ps-4">
+
+                                    <span class="text-muted">
+                                        #@inquilino.ID_inquilino
+                                    </span>
+
+                                </td>
+
+                                <!-- Nombre -->
+                                <td>
+
+                                    <div class="fw-semibold">
+                                        @inquilino.Nombre @inquilino.Apellido
+                                    </div>
+
+                                </td>
+
+                                <!-- DNI -->
+                                <td>
+                                    @inquilino.DNI
+                                </td>
+
+                                <!-- Contacto -->
+                                <td>
+
+                                    <div>
+                                        @inquilino.Telefono
+                                    </div>
+
+                                    <small class="text-muted">
+                                        @inquilino.Mail
+                                    </small>
+
+                                </td>
+
+                                <!-- Estado -->
+                                <td>
+
+                                    @if (inquilino.Estado)
+                                    {
+                                        <span class="badge rounded-pill bg-success">
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-secondary">
+                                            Inactivo
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <!-- Acciones -->
+                                <td class="text-end pe-4">
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@inquilino.ID_inquilino"
+                                       class="btn btn-outline-primary btn-sm">
+                                        Modificar
+                                    </a>
+
+                                    @if (inquilino.Estado)
+                                    {
+                                        <form asp-action="Baja"
+                                              asp-route-id="@inquilino.ID_inquilino"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm ms-1">
+                                                Dar de baja
+                                            </button>
+
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="AltaEstado"
+                                              asp-route-id="@inquilino.ID_inquilino"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-success btn-sm ms-1">
+                                                Dar de alta
+                                            </button>
+
+                                        </form>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
                     }
 
                 </tbody>
@@ -165,6 +242,62 @@
             </table>
 
         </div>
+
+        <!-- Paginación -->
+        @if (cantidadPaginas > 1)
+        {
+            <div class="card-footer bg-white">
+
+                <nav aria-label="Paginación">
+
+                    <ul class="pagination justify-content-center mb-0">
+
+                        <!-- Anterior -->
+                        <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-buscar="@buscar"
+                               asp-route-pagina="@(paginaActual - 1)">
+                                Anterior
+                            </a>
+
+                        </li>
+
+                        <!-- Números -->
+                        @for (int i = 1; i <= cantidadPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-buscar="@buscar"
+                                   asp-route-pagina="@i">
+                                    @i
+                                </a>
+
+                            </li>
+                        }
+
+                        <!-- Siguiente -->
+                        <li class="page-item @(paginaActual == cantidadPaginas ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-buscar="@buscar"
+                               asp-route-pagina="@(paginaActual + 1)">
+                                Siguiente
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+            </div>
+        }
+
     </div>
 
 </div>

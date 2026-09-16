@@ -18,10 +18,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             using var conexion = ObtenerConexion();
 
             var sql = @"INSERT INTO Inquilino
-                    (Nombre, Apellido, DNI, Telefono, Mail, Estado)
-                    VALUES
-                    (@Nombre, @Apellido, @DNI, @Telefono, @Mail, @Estado);
-                    SELECT LAST_INSERT_ID();";
+                        (Nombre, Apellido, DNI, Telefono, Mail, Estado)
+                        VALUES
+                        (@Nombre, @Apellido, @DNI, @Telefono, @Mail, @Estado);
+                        SELECT LAST_INSERT_ID();";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -43,8 +43,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             using var conexion = ObtenerConexion();
 
             var sql = @"UPDATE Inquilino
-                SET Estado = false
-                WHERE ID_inquilino = @Id";
+                        SET Estado = false
+                        WHERE ID_inquilino = @Id";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -67,8 +67,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                             Telefono = @Telefono,
                             Mail = @Mail,
                             Estado = @Estado
-                            WHERE ID_inquilino = @Id";
-
+                        WHERE ID_inquilino = @Id";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -77,6 +76,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             comando.Parameters.AddWithValue("@DNI", p.DNI);
             comando.Parameters.AddWithValue("@Telefono", p.Telefono);
             comando.Parameters.AddWithValue("@Mail", p.Mail);
+            comando.Parameters.AddWithValue("@Estado", p.Estado);
             comando.Parameters.AddWithValue("@Id", p.ID_inquilino);
 
             conexion.Open();
@@ -118,15 +118,98 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             return lista;
         }
 
+        // OBTENER CANTIDAD PARA PAGINACIÓN
+        public int ObtenerCantidad(string? buscar)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT COUNT(*)
+                        FROM Inquilino
+                        WHERE
+                            @Buscar = ''
+                            OR Nombre LIKE @Texto
+                            OR Apellido LIKE @Texto
+                            OR DNI LIKE @Texto
+                            OR Telefono LIKE @Texto
+                            OR Mail LIKE @Texto";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            buscar ??= "";
+
+            comando.Parameters.AddWithValue("@Buscar", buscar);
+            comando.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+
+            conexion.Open();
+
+            return Convert.ToInt32(comando.ExecuteScalar());
+        }
+
+        // OBTENER LISTA PAGINADA
+        public IList<Inquilino> ObtenerListaPaginada(
+            string? buscar,
+            int pagina,
+            int cantidadPorPagina)
+        {
+            var lista = new List<Inquilino>();
+
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT ID_inquilino, Nombre, Apellido, DNI,
+                               Telefono, Mail, Estado
+                        FROM Inquilino
+                        WHERE
+                            @Buscar = ''
+                            OR Nombre LIKE @Texto
+                            OR Apellido LIKE @Texto
+                            OR DNI LIKE @Texto
+                            OR Telefono LIKE @Texto
+                            OR Mail LIKE @Texto
+                        ORDER BY ID_inquilino
+                        LIMIT @CantidadPorPagina
+                        OFFSET @Offset";
+
+            using var comando = new MySqlCommand(sql, conexion);
+
+            buscar ??= "";
+
+            int offset = (pagina - 1) * cantidadPorPagina;
+
+            comando.Parameters.AddWithValue("@Buscar", buscar);
+            comando.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+            comando.Parameters.AddWithValue("@CantidadPorPagina", cantidadPorPagina);
+            comando.Parameters.AddWithValue("@Offset", offset);
+
+            conexion.Open();
+
+            using var reader = comando.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new Inquilino
+                {
+                    ID_inquilino = Convert.ToInt32(reader["ID_inquilino"]),
+                    Nombre = reader["Nombre"].ToString()!,
+                    Apellido = reader["Apellido"].ToString()!,
+                    DNI = reader["DNI"].ToString()!,
+                    Telefono = reader["Telefono"].ToString()!,
+                    Mail = reader["Mail"].ToString()!,
+                    Estado = Convert.ToBoolean(reader["Estado"])
+                });
+            }
+
+            return lista;
+        }
+
         // OBTENER POR ID
         public Inquilino? ObtenerPorId(int id)
         {
             using var conexion = ObtenerConexion();
 
-            var sql = @"SELECT Id_inquilino, Nombre, Apellido, DNI,
+            var sql = @"SELECT ID_inquilino, Nombre, Apellido, DNI,
                                Telefono, Mail, Estado
                         FROM Inquilino
-                        WHERE Id_inquilino = @Id";
+                        WHERE ID_inquilino = @Id";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -140,7 +223,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             {
                 return new Inquilino
                 {
-                    ID_inquilino = Convert.ToInt32(reader["Id_inquilino"]),
+                    ID_inquilino = Convert.ToInt32(reader["ID_inquilino"]),
                     Nombre = reader["Nombre"].ToString()!,
                     Apellido = reader["Apellido"].ToString()!,
                     DNI = reader["DNI"].ToString()!,
@@ -152,14 +235,15 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return null;
         }
+
         // DAR DE ALTA NUEVAMENTE
         public int AltaEstado(int id)
         {
             using var conexion = ObtenerConexion();
 
             var sql = @"UPDATE Inquilino
-                SET Estado = true
-                WHERE ID_inquilino = @Id";
+                        SET Estado = true
+                        WHERE ID_inquilino = @Id";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -169,7 +253,5 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return comando.ExecuteNonQuery();
         }
-
-
     }
 }

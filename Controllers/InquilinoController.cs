@@ -20,12 +20,35 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         // LISTADO
-
-        public ActionResult Index()
+        public ActionResult Index(string? buscar, int pagina = 1)
         {
             try
             {
-                var lista = repositorio.ObtenerLista();
+                int cantidadPorPagina = 10;
+
+                if (pagina < 1)
+                    pagina = 1;
+
+                int cantidadTotal = repositorio.ObtenerCantidad(buscar);
+
+                int cantidadPaginas = (int)Math.Ceiling(
+                    cantidadTotal / (double)cantidadPorPagina
+                );
+
+                if (cantidadPaginas > 0 && pagina > cantidadPaginas)
+                    pagina = cantidadPaginas;
+
+                var lista = repositorio.ObtenerListaPaginada(
+                    buscar,
+                    pagina,
+                    cantidadPorPagina
+                );
+
+                ViewBag.Buscar = buscar;
+                ViewBag.PaginaActual = pagina;
+                ViewBag.CantidadPaginas = cantidadPaginas;
+                ViewBag.CantidadTotal = cantidadTotal;
+
                 ViewBag.Mensaje = TempData["Mensaje"];
 
                 return View(lista);
@@ -64,7 +87,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 {
                     repositorio.Alta(inquilino);
 
-                    TempData["Mensaje"] = "Inquilino registrado correctamente";
+                    TempData["Mensaje"] =
+                        "Inquilino registrado correctamente";
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -79,7 +103,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         // MODIFICACIÓN
-
 
         // GET: Inquilinos/Edit/5
         public ActionResult Edit(int id)
@@ -118,10 +141,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 inquilino.Telefono = entidad.Telefono;
                 inquilino.Mail = entidad.Mail;
 
-
                 repositorio.Modificacion(inquilino);
 
-                TempData["Mensaje"] = "Datos guardados correctamente";
+                TempData["Mensaje"] =
+                    "Datos guardados correctamente";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -141,7 +164,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             {
                 repositorio.Baja(id);
 
-                TempData["Mensaje"] = "Inquilino dado de baja correctamente";
+                TempData["Mensaje"] =
+                    "Inquilino dado de baja correctamente";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -153,6 +177,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         }
 
         // DAR DE ALTA NUEVAMENTE
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AltaEstado(int id)
@@ -161,7 +186,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             {
                 repositorio.AltaEstado(id);
 
-                TempData["Mensaje"] = "Inquilino dado de alta correctamente";
+                TempData["Mensaje"] =
+                    "Inquilino dado de alta correctamente";
 
                 return RedirectToAction(nameof(Index));
             }
