@@ -263,5 +263,122 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return comando.ExecuteNonQuery();
         }
+
+        public int ObtenerCantidad(string? buscar)
+{
+    using var conexion = ObtenerConexion();
+
+    var sql = @"SELECT COUNT(*)
+                FROM Reserva r
+                INNER JOIN Inquilino i
+                    ON r.ID_inquilino = i.ID_inquilino
+                INNER JOIN Inmueble m
+                    ON r.ID_inmueble = m.ID_inmueble
+                WHERE
+                    @Buscar = ''
+                    OR CAST(r.ID_reserva AS CHAR) LIKE @Texto
+                    OR i.Nombre LIKE @Texto
+                    OR i.Apellido LIKE @Texto
+                    OR i.DNI LIKE @Texto
+                    OR m.Direccion LIKE @Texto";
+
+    using var comando = new MySqlCommand(sql, conexion);
+
+    buscar ??= "";
+
+    comando.Parameters.AddWithValue("@Buscar", buscar);
+    comando.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+
+    conexion.Open();
+
+    return Convert.ToInt32(comando.ExecuteScalar());
+}
+
+public IList<Reserva> ObtenerListaPaginada(
+    string? buscar,
+    int pagina,
+    int cantidadPorPagina)
+{
+    var lista = new List<Reserva>();
+
+    using var conexion = ObtenerConexion();
+
+    var sql = @"SELECT
+                    r.ID_reserva,
+                    r.ID_inquilino,
+                    r.ID_inmueble,
+                    r.FechaInicio,
+                    r.FechaFin,
+                    r.FechaFinEfectiva,
+                    r.MontoPorDia,
+                    r.Estado
+                FROM Reserva r
+                INNER JOIN Inquilino i
+                    ON r.ID_inquilino = i.ID_inquilino
+                INNER JOIN Inmueble m
+                    ON r.ID_inmueble = m.ID_inmueble
+                WHERE
+                    @Buscar = ''
+                    OR CAST(r.ID_reserva AS CHAR) LIKE @Texto
+                    OR i.Nombre LIKE @Texto
+                    OR i.Apellido LIKE @Texto
+                    OR i.DNI LIKE @Texto
+                    OR m.Direccion LIKE @Texto
+                ORDER BY r.ID_reserva
+                LIMIT @CantidadPorPagina
+                OFFSET @Offset";
+
+    using var comando = new MySqlCommand(sql, conexion);
+
+    buscar ??= "";
+
+    int offset = (pagina - 1) * cantidadPorPagina;
+
+    comando.Parameters.AddWithValue("@Buscar", buscar);
+    comando.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+    comando.Parameters.AddWithValue(
+        "@CantidadPorPagina",
+        cantidadPorPagina);
+    comando.Parameters.AddWithValue("@Offset", offset);
+
+    conexion.Open();
+
+    using var reader = comando.ExecuteReader();
+
+    while (reader.Read())
+    {
+        lista.Add(new Reserva
+        {
+            ID_reserva =
+                Convert.ToInt32(reader["ID_reserva"]),
+
+            ID_inquilino =
+                Convert.ToInt32(reader["ID_inquilino"]),
+
+            ID_inmueble =
+                Convert.ToInt32(reader["ID_inmueble"]),
+
+            FechaInicio =
+                Convert.ToDateTime(reader["FechaInicio"]),
+
+            FechaFin =
+                Convert.ToDateTime(reader["FechaFin"]),
+
+            FechaFinEfectiva =
+                reader["FechaFinEfectiva"] == DBNull.Value
+                    ? null
+                    : Convert.ToDateTime(
+                        reader["FechaFinEfectiva"]),
+
+            MontoPorDia =
+                Convert.ToDecimal(reader["MontoPorDia"]),
+
+            Estado =
+                Convert.ToBoolean(reader["Estado"])
+        });
+    }
+
+    return lista;
+}
     }
 }

@@ -49,6 +49,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1">Gestión de Reservas</h2>
+
             <p class="text-muted mb-0">
                 Administre las reservas de inmuebles.
             </p>
@@ -76,6 +77,7 @@
     <div class="card shadow-sm">
 
         <div class="card-header bg-white py-3">
+
             <div class="d-flex justify-content-between align-items-center">
 
                 <h5 class="mb-0 fw-semibold">
@@ -83,10 +85,51 @@
                 </h5>
 
                 <span class="text-muted small">
-                    @Model.Count() reserva(s)
+                    @ViewBag.CantidadTotal reserva(s)
                 </span>
 
             </div>
+
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="card-body bg-white border-bottom">
+
+            <form method="get" asp-action="Index">
+
+                <div class="row g-2">
+
+                    <div class="col-md-10">
+
+                        <input type="text"
+                               name="buscar"
+                               value="@ViewBag.Buscar"
+                               class="form-control"
+                               placeholder="Buscar por código, inquilino, DNI o dirección..." />
+
+                    </div>
+
+                    <div class="col-md-2 d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary flex-grow-1">
+                            Buscar
+                        </button>
+
+                        @if (!string.IsNullOrWhiteSpace(ViewBag.Buscar))
+                        {
+                            <a asp-action="Index"
+                               class="btn btn-secondary">
+                                Limpiar
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+
+            </form>
+
         </div>
 
         <div class="table-responsive">
@@ -94,238 +137,306 @@
             <table class="table table-hover align-middle mb-0">
 
                 <thead>
+
                     <tr>
+
                         <th class="ps-4">Código</th>
+
                         <th>Inquilino</th>
+
                         <th>Inmueble</th>
+
                         <th>Fecha inicio</th>
+
                         <th>Fecha fin</th>
+
                         <th>Monto por día</th>
+
                         <th>Estado</th>
+
                         <th class="text-end pe-4">Acciones</th>
+
                     </tr>
+
                 </thead>
 
                 <tbody>
 
-                    @foreach (var reserva in Model)
+                    @if (!Model.Any())
                     {
                         <tr>
 
-                            <td class="ps-4">
-                                <span class="text-muted">
-                                    #@reserva.ID_reserva
-                                </span>
-                            </td>
+                            <td colspan="8" class="text-center py-5">
 
-                            <td>
-                                @{
-                                    var inquilino = ((IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inquilino>)ViewBag.Inquilinos)
-                                        .FirstOrDefault(i => i.ID_inquilino == reserva.ID_inquilino);
-                                }
+                                <div class="text-muted">
 
-                                @if (inquilino != null)
-                                {
-                                    @($"{inquilino.Nombre} {inquilino.Apellido}")
-                                }
-                            </td>
+                                    @if (!string.IsNullOrWhiteSpace(ViewBag.Buscar))
+                                    {
+                                        <h6 class="mb-2">
+                                            No se encontraron reservas.
+                                        </h6>
 
-                            <td>
-                                @{
-                                    var inmueble = ((IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inmueble>)ViewBag.Inmuebles)
-                                        .FirstOrDefault(i => i.ID_inmueble == reserva.ID_inmueble);
-                                }
+                                        <p class="mb-0">
+                                            No hay reservas que coincidan con
+                                            "<strong>@ViewBag.Buscar</strong>".
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <h6 class="mb-2">
+                                            No hay reservas registradas.
+                                        </h6>
+                                    }
 
-                                @if (inmueble != null)
-                                {
-                                    @inmueble.Direccion
-                                }
-                            </td>
-
-                            <td>
-                                @reserva.FechaInicio.ToString("dd/MM/yyyy")
-                            </td>
-
-                            <td>
-                                @reserva.FechaFin.ToString("dd/MM/yyyy")
-                            </td>
-
-                            <td>
-                                <strong>
-                                    $@reserva.MontoPorDia.ToString("N2")
-                                </strong>
-                            </td>
-
-                            <td>
-                                @if (reserva.Estado)
-                                {
-                                    <span class="badge rounded-pill bg-success">
-                                        Activa
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge rounded-pill bg-secondary">
-                                        Inactiva
-                                    </span>
-                                }
-                            </td>
-
-                            <td class="text-end pe-4">
-
-                                @if (User.IsInRole("Administrador"))
-                                {
-                                    <button type="button"
-                                            class="btn btn-outline-secondary btn-sm"
-                                            v-on:click="alternarAuditoria(@reserva.ID_reserva)">
-
-                                        {{ reservaAbierta === @reserva.ID_reserva
-                                            ? 'Ocultar auditoría'
-                                            : 'Auditoría' }}
-
-                                    </button>
-                                }
-
-                                <a asp-action="Edit"
-                                   asp-route-id="@reserva.ID_reserva"
-                                   class="btn btn-outline-primary btn-sm ms-1">
-                                    Modificar
-                                </a>
-
-                                @if (reserva.Estado)
-                                {
-                                    <a asp-action="Renovar"
-                                       asp-route-id="@reserva.ID_reserva"
-                                       class="btn btn-outline-info btn-sm ms-1">
-                                        Renovar
-                                    </a>
-
-                                    <a asp-action="FinalizarAnticipadamente"
-                                       asp-route-id="@reserva.ID_reserva"
-                                       class="btn btn-outline-warning btn-sm ms-1">
-                                        Finalizar anticipadamente
-                                    </a>
-
-                                    <form asp-action="Delete"
-                                          asp-route-id="@reserva.ID_reserva"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-danger btn-sm ms-1">
-                                            Dar de baja
-                                        </button>
-
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="Activate"
-                                          asp-route-id="@reserva.ID_reserva"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-success btn-sm ms-1">
-                                            Dar de alta
-                                        </button>
-
-                                    </form>
-                                }
+                                </div>
 
                             </td>
 
                         </tr>
-
-                        @if (User.IsInRole("Administrador") &&
-                            auditorias != null &&
-                            auditorias.ContainsKey(reserva.ID_reserva))
+                    }
+                    else
+                    {
+                        @foreach (var reserva in Model)
                         {
-                            <tr v-if="reservaAbierta === @reserva.ID_reserva"
-                                class="auditoria-row">
+                            <tr>
 
-                                <td colspan="8">
+                                <td class="ps-4">
 
-                                    <div class="auditoria-container">
+                                    <span class="text-muted">
+                                        #@reserva.ID_reserva
+                                    </span>
 
-                                        <h6 class="fw-bold mb-3">
-                                            Auditoría de la reserva #@reserva.ID_reserva
-                                        </h6>
+                                </td>
 
-                                        @{
-                                            var registros = auditorias[reserva.ID_reserva];
-                                        }
+                                <td>
 
-                                        @if (registros.Any())
-                                        {
-                                            <div class="table-responsive">
+                                    @{
+                                        var inquilino =
+                                            ((IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inquilino>)ViewBag.Inquilinos)
+                                            .FirstOrDefault(i =>
+                                                i.ID_inquilino == reserva.ID_inquilino);
+                                    }
 
-                                                <table class="table table-sm table-bordered mb-0">
+                                    @if (inquilino != null)
+                                    {
+                                        @($"{inquilino.Nombre} {inquilino.Apellido}")
+                                    }
 
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Usuario</th>
-                                                            <th>Acción</th>
-                                                            <th>Fecha</th>
-                                                        </tr>
-                                                    </thead>
+                                </td>
 
-                                                    <tbody>
+                                <td>
 
-                                                        @foreach (var registro in registros)
-                                                        {
-                                                            <tr>
+                                    @{
+                                        var inmueble =
+                                            ((IEnumerable<AnaYAntonio_ProyectoInmobiliaria.Models.Inmueble>)ViewBag.Inmuebles)
+                                            .FirstOrDefault(i =>
+                                                i.ID_inmueble == reserva.ID_inmueble);
+                                    }
 
-                                                                <td>
-                                                                    Usuario #@registro.NombreUsuario
-                                                                </td>
+                                    @if (inmueble != null)
+                                    {
+                                        @inmueble.Direccion
+                                    }
 
-                                                                <td>
-                                                                    @if (registro.Accion == "CREACION")
-                                                                    {
-                                                                        <span class="badge bg-success">
-                                                                            Creación
-                                                                        </span>
-                                                                    }
-                                                                    else if (registro.Accion == "FINALIZACION")
-                                                                    {
-                                                                        <span class="badge bg-warning text-dark">
-                                                                            Finalización
-                                                                        </span>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @registro.Accion
-                                                                    }
-                                                                </td>
+                                </td>
 
-                                                                <td>
-                                                                    @registro.Fecha.ToString("dd/MM/yyyy HH:mm:ss")
-                                                                </td>
+                                <td>
+                                    @reserva.FechaInicio.ToString("dd/MM/yyyy")
+                                </td>
 
-                                                            </tr>
-                                                        }
+                                <td>
+                                    @reserva.FechaFin.ToString("dd/MM/yyyy")
+                                </td>
 
-                                                    </tbody>
+                                <td>
 
-                                                </table>
+                                    <strong>
+                                        $@reserva.MontoPorDia.ToString("N2")
+                                    </strong>
 
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <p class="text-muted mb-0">
-                                                No hay registros de auditoría para esta reserva.
-                                            </p>
-                                        }
+                                </td>
 
-                                    </div>
+                                <td>
+
+                                    @if (reserva.Estado)
+                                    {
+                                        <span class="badge rounded-pill bg-success">
+                                            Activa
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-secondary">
+                                            Inactiva
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td class="text-end pe-4">
+
+                                    @if (User.IsInRole("Administrador"))
+                                    {
+                                        <button type="button"
+                                                class="btn btn-outline-secondary btn-sm"
+                                                v-on:click="alternarAuditoria(@reserva.ID_reserva)">
+
+                                            {{ reservaAbierta === @reserva.ID_reserva
+                                                ? 'Ocultar auditoría'
+                                                : 'Auditoría' }}
+
+                                        </button>
+                                    }
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@reserva.ID_reserva"
+                                       class="btn btn-outline-primary btn-sm ms-1">
+                                        Modificar
+                                    </a>
+
+                                    @if (reserva.Estado)
+                                    {
+                                        <a asp-action="Renovar"
+                                           asp-route-id="@reserva.ID_reserva"
+                                           class="btn btn-outline-info btn-sm ms-1">
+                                            Renovar
+                                        </a>
+
+                                        <a asp-action="FinalizarAnticipadamente"
+                                           asp-route-id="@reserva.ID_reserva"
+                                           class="btn btn-outline-warning btn-sm ms-1">
+                                            Finalizar anticipadamente
+                                        </a>
+
+                                        <form asp-action="Delete"
+                                              asp-route-id="@reserva.ID_reserva"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm ms-1">
+                                                Dar de baja
+                                            </button>
+
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Activate"
+                                              asp-route-id="@reserva.ID_reserva"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-success btn-sm ms-1">
+                                                Dar de alta
+                                            </button>
+
+                                        </form>
+                                    }
 
                                 </td>
 
                             </tr>
-                        }
 
+                            @if (User.IsInRole("Administrador") &&
+                                 auditorias != null &&
+                                 auditorias.ContainsKey(reserva.ID_reserva))
+                            {
+                                <tr v-if="reservaAbierta === @reserva.ID_reserva"
+                                    class="auditoria-row">
+
+                                    <td colspan="8">
+
+                                        <div class="auditoria-container">
+
+                                            <h6 class="fw-bold mb-3">
+                                                Auditoría de la reserva #@reserva.ID_reserva
+                                            </h6>
+
+                                            @{
+                                                var registros =
+                                                    auditorias[reserva.ID_reserva];
+                                            }
+
+                                            @if (registros.Any())
+                                            {
+                                                <div class="table-responsive">
+
+                                                    <table class="table table-sm table-bordered mb-0">
+
+                                                        <thead>
+
+                                                            <tr>
+
+                                                                <th>Usuario</th>
+
+                                                                <th>Acción</th>
+
+                                                                <th>Fecha</th>
+
+                                                            </tr>
+
+                                                        </thead>
+
+                                                        <tbody>
+
+                                                            @foreach (var registro in registros)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        Usuario #@registro.NombreUsuario
+                                                                    </td>
+
+                                                                    <td>
+
+                                                                        @if (registro.Accion == "CREACION")
+                                                                        {
+                                                                            <span class="badge bg-success">
+                                                                                Creación
+                                                                            </span>
+                                                                        }
+                                                                        else if (registro.Accion == "FINALIZACION")
+                                                                        {
+                                                                            <span class="badge bg-warning text-dark">
+                                                                                Finalización
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @registro.Accion
+                                                                        }
+
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @registro.Fecha.ToString("dd/MM/yyyy HH:mm:ss")
+                                                                    </td>
+
+                                                                </tr>
+                                                            }
+
+                                                        </tbody>
+
+                                                    </table>
+
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-muted mb-0">
+                                                    No hay registros de auditoría para esta reserva.
+                                                </p>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
                     }
 
                 </tbody>
@@ -333,6 +444,68 @@
             </table>
 
         </div>
+
+        <!-- PAGINACIÓN -->
+        @if (ViewBag.CantidadPaginas > 1)
+        {
+            <div class="card-footer bg-white">
+
+                <nav aria-label="Paginación de reservas">
+
+                    <ul class="pagination justify-content-center mb-0">
+
+                        <!-- ANTERIOR -->
+                        <li class="page-item @(ViewBag.PaginaActual == 1 ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pagina="@(ViewBag.PaginaActual - 1)"
+                               asp-route-buscar="@ViewBag.Buscar">
+
+                                Anterior
+
+                            </a>
+
+                        </li>
+
+                        <!-- NÚMEROS -->
+                        @for (int i = 1; i <= ViewBag.CantidadPaginas; i++)
+                        {
+                            <li class="page-item @(ViewBag.PaginaActual == i ? "active" : "")">
+
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pagina="@i"
+                                   asp-route-buscar="@ViewBag.Buscar">
+
+                                    @i
+
+                                </a>
+
+                            </li>
+                        }
+
+                        <!-- SIGUIENTE -->
+                        <li class="page-item @(ViewBag.PaginaActual == ViewBag.CantidadPaginas ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pagina="@(ViewBag.PaginaActual + 1)"
+                               asp-route-buscar="@ViewBag.Buscar">
+
+                                Siguiente
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+            </div>
+        }
+
     </div>
 
 </div>
@@ -340,21 +513,35 @@
 <script src="https://unpkg.com/vue@3"></script>
 
 <script>
+
     Vue.createApp({
+
         data() {
+
             return {
                 reservaAbierta: null
             };
+
         },
 
         methods: {
+
             alternarAuditoria(id) {
+
                 if (this.reservaAbierta === id) {
+
                     this.reservaAbierta = null;
+
                 } else {
+
                     this.reservaAbierta = id;
+
                 }
+
             }
+
         }
+
     }).mount('#app');
+
 </script>

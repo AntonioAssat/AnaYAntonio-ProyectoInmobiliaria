@@ -29,31 +29,58 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             this.repositorioAuditoria = repositorioAuditoria;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? buscar, int pagina = 1)
+{
+    int cantidadPorPagina = 10;
+
+    if (pagina < 1)
+        pagina = 1;
+
+    int cantidadTotal = repositorio.ObtenerCantidad(buscar);
+
+    int cantidadPaginas = (int)Math.Ceiling(
+        cantidadTotal / (double)cantidadPorPagina
+    );
+
+    if (cantidadPaginas > 0 && pagina > cantidadPaginas)
+        pagina = cantidadPaginas;
+
+    var lista = repositorio.ObtenerListaPaginada(
+        buscar,
+        pagina,
+        cantidadPorPagina
+    );
+
+    // Se mantienen para mostrar los datos de inquilinos e inmuebles
+    // en la vista.
+    ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
+    ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
+
+    // Auditoría solamente para administradores
+    if (User.IsInRole("Administrador"))
+    {
+        var auditorias = new Dictionary<int, IList<Auditoria>>();
+
+        foreach (var reserva in lista)
         {
-            var lista = repositorio.ObtenerLista();
-
-            ViewBag.Inquilinos = repositorioInquilino.ObtenerLista();
-            ViewBag.Inmuebles = repositorioInmueble.ObtenerLista();
-
-            if (User.IsInRole("Administrador"))
-            {
-                var auditorias = new Dictionary<int, IList<Auditoria>>();
-
-                foreach (var reserva in lista)
-                {
-                    auditorias[reserva.ID_reserva] =
-                        repositorioAuditoria.ObtenerPorEntidad(
-                            "Reserva",
-                            reserva.ID_reserva
-                        );
-                }
-
-                ViewBag.Auditorias = auditorias;
-            }
-
-            return View(lista);
+            auditorias[reserva.ID_reserva] =
+                repositorioAuditoria.ObtenerPorEntidad(
+                    "Reserva",
+                    reserva.ID_reserva
+                );
         }
+
+        ViewBag.Auditorias = auditorias;
+    }
+
+    ViewBag.Buscar = buscar;
+    ViewBag.PaginaActual = pagina;
+    ViewBag.CantidadPaginas = cantidadPaginas;
+    ViewBag.CantidadTotal = cantidadTotal;
+
+    return View(lista);
+}
+
         [HttpGet]
         public IActionResult Create()
         {
