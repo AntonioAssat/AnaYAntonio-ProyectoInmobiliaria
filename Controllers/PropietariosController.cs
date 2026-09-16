@@ -14,9 +14,33 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             this.repositorio = repositorio;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? buscar, int pagina = 1)
         {
-            var lista = repositorio.ObtenerLista();
+            int cantidadPorPagina = 10;
+
+            if (pagina < 1)
+                pagina = 1;
+
+            int cantidadTotal = repositorio.ObtenerCantidad(buscar);
+
+            int cantidadPaginas = (int)Math.Ceiling(
+                cantidadTotal / (double)cantidadPorPagina
+            );
+
+            if (cantidadPaginas > 0 && pagina > cantidadPaginas)
+                pagina = cantidadPaginas;
+
+            var lista = repositorio.ObtenerListaPaginada(
+                buscar,
+                pagina,
+                cantidadPorPagina
+            );
+
+            ViewBag.Buscar = buscar;
+            ViewBag.PaginaActual = pagina;
+            ViewBag.CantidadPaginas = cantidadPaginas;
+            ViewBag.CantidadTotal = cantidadTotal;
+
             return View(lista);
         }
 
@@ -37,7 +61,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             }
 
             propietario.Estado = true;
-
             repositorio.Alta(propietario);
 
             TempData["Mensaje"] = "Propietario registrado correctamente.";

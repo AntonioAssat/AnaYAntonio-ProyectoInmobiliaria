@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = "Gestión de Propietarios";
+
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int cantidadPaginas = ViewBag.CantidadPaginas ?? 0;
+    int cantidadTotal = ViewBag.CantidadTotal ?? 0;
+    string buscar = ViewBag.Buscar ?? "";
 }
 
 <div class="container-fluid py-4">
@@ -23,8 +28,11 @@
     <!-- Mensaje de operación realizada -->
     @if (TempData["Mensaje"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
-            <strong>¡Operación realizada correctamente!</strong> @TempData["Mensaje"]
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4"
+             role="alert">
+
+            <strong>¡Operación realizada correctamente!</strong>
+            @TempData["Mensaje"]
 
             <button type="button"
                     class="btn-close"
@@ -34,10 +42,41 @@
         </div>
     }
 
+    <!-- Buscador -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form asp-action="Index" method="get">
+
+                <div class="row g-2">
+
+                    <div class="col-md-10">
+                        <input type="text"
+                               name="buscar"
+                               value="@buscar"
+                               class="form-control"
+                               placeholder="Buscar por nombre, apellido, DNI, teléfono o mail..." />
+                    </div>
+
+                    <div class="col-md-2 d-grid">
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Buscar
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
     <!-- Contenedor de la tabla -->
     <div class="card shadow-sm">
 
         <div class="card-header bg-white py-3">
+
             <div class="d-flex justify-content-between align-items-center">
 
                 <h5 class="mb-0 fw-semibold">
@@ -45,10 +84,11 @@
                 </h5>
 
                 <span class="text-muted small">
-                    @Model.Count() registro(s)
+                    @cantidadTotal registro(s)
                 </span>
 
             </div>
+
         </div>
 
         <div class="table-responsive">
@@ -56,6 +96,7 @@
             <table class="table table-hover align-middle mb-0">
 
                 <thead class="table-light">
+
                     <tr>
                         <th class="ps-4">Código</th>
                         <th>Nombre completo</th>
@@ -64,98 +105,118 @@
                         <th>Estado</th>
                         <th class="text-end pe-4">Acciones</th>
                     </tr>
+
                 </thead>
 
                 <tbody>
 
-                    @foreach (var propietario in Model)
+                    @if (!Model.Any())
                     {
                         <tr>
+                            <td colspan="6"
+                                class="text-center text-muted py-4">
 
-                            <!-- Código -->
-                            <td class="ps-4">
-                                <span class="text-muted">
-                                    #@propietario.ID_propietario
-                                </span>
-                            </td>
-
-                            <!-- Nombre -->
-                            <td>
-                                <div class="fw-semibold">
-                                    @propietario.Nombre @propietario.Apellido
-                                </div>
-                            </td>
-
-                            <!-- DNI -->
-                            <td>
-                                @propietario.DNI
-                            </td>
-
-                            <!-- Contacto -->
-                            <td>
-                                <div>@propietario.Telefono</div>
-                                <small class="text-muted">
-                                    @propietario.Mail
-                                </small>
-                            </td>
-
-                            <!-- Estado -->
-                            <td>
-                                @if (propietario.Estado)
-                                {
-                                    <span class="badge rounded-pill bg-success">
-                                        Activo
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge rounded-pill bg-secondary">
-                                        Inactivo
-                                    </span>
-                                }
-                            </td>
-
-                            <!-- Acciones -->
-                            <td class="text-end pe-4">
-
-                                <a asp-action="Edit"
-                                   asp-route-id="@propietario.ID_propietario"
-                                   class="btn btn-outline-primary btn-sm">
-                                    Modificar
-                                </a>
-
-                                @if (propietario.Estado)
-                                {
-                                    <form asp-action="Delete"
-                                          asp-route-id="@propietario.ID_propietario"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-danger btn-sm ms-1">
-                                            Dar de baja
-                                        </button>
-
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="Activate"
-                                          asp-route-id="@propietario.ID_propietario"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <button type="submit"
-                                                class="btn btn-outline-success btn-sm ms-1">
-                                            Dar de alta
-                                        </button>
-
-                                    </form>
-                                }
+                                No se encontraron propietarios.
 
                             </td>
-
                         </tr>
+                    }
+                    else
+                    {
+                        @foreach (var propietario in Model)
+                        {
+                            <tr>
+
+                                <!-- Código -->
+                                <td class="ps-4">
+                                    <span class="text-muted">
+                                        #@propietario.ID_propietario
+                                    </span>
+                                </td>
+
+                                <!-- Nombre -->
+                                <td>
+                                    <div class="fw-semibold">
+                                        @propietario.Nombre @propietario.Apellido
+                                    </div>
+                                </td>
+
+                                <!-- DNI -->
+                                <td>
+                                    @propietario.DNI
+                                </td>
+
+                                <!-- Contacto -->
+                                <td>
+                                    <div>
+                                        @propietario.Telefono
+                                    </div>
+
+                                    <small class="text-muted">
+                                        @propietario.Mail
+                                    </small>
+                                </td>
+
+                                <!-- Estado -->
+                                <td>
+
+                                    @if (propietario.Estado)
+                                    {
+                                        <span class="badge rounded-pill bg-success">
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-secondary">
+                                            Inactivo
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <!-- Acciones -->
+                                <td class="text-end pe-4">
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@propietario.ID_propietario"
+                                       class="btn btn-outline-primary btn-sm">
+                                        Modificar
+                                    </a>
+
+                                    @if (propietario.Estado)
+                                    {
+                                        <form asp-action="Delete"
+                                              asp-route-id="@propietario.ID_propietario"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm ms-1">
+                                                Dar de baja
+                                            </button>
+
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Activate"
+                                              asp-route-id="@propietario.ID_propietario"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-success btn-sm ms-1">
+                                                Dar de alta
+                                            </button>
+
+                                        </form>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
                     }
 
                 </tbody>
@@ -163,6 +224,62 @@
             </table>
 
         </div>
+
+        <!-- Paginación -->
+        @if (cantidadPaginas > 1)
+        {
+            <div class="card-footer bg-white">
+
+                <nav aria-label="Paginación">
+
+                    <ul class="pagination justify-content-center mb-0">
+
+                        <!-- Anterior -->
+                        <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-buscar="@buscar"
+                               asp-route-pagina="@(paginaActual - 1)">
+                                Anterior
+                            </a>
+
+                        </li>
+
+                        <!-- Números de página -->
+                        @for (int i = 1; i <= cantidadPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-buscar="@buscar"
+                                   asp-route-pagina="@i">
+                                    @i
+                                </a>
+
+                            </li>
+                        }
+
+                        <!-- Siguiente -->
+                        <li class="page-item @(paginaActual == cantidadPaginas ? "disabled" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-buscar="@buscar"
+                               asp-route-pagina="@(paginaActual + 1)">
+                                Siguiente
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+            </div>
+        }
+
     </div>
 
 </div>

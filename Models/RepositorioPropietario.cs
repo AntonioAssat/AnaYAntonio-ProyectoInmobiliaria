@@ -12,7 +12,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         {
         }
 
-
         public int Alta(Propietario p)
         {
             using var conexion = ObtenerConexion();
@@ -21,6 +20,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                         (Nombre, Apellido, DNI, Telefono, Mail, Estado)
                         VALUES
                         (@Nombre, @Apellido, @DNI, @Telefono, @Mail, @Estado);
+
                         SELECT LAST_INSERT_ID();";
 
             using var comando = new MySqlCommand(sql, conexion);
@@ -34,9 +34,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             conexion.Open();
 
-            return Convert.ToInt32(comando.ExecuteScalar());
+            return Convert.ToInt32(
+                comando.ExecuteScalar()
+            );
         }
-
 
         public int Baja(int id)
         {
@@ -54,7 +55,6 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             return comando.ExecuteNonQuery();
         }
-
 
         public int Modificacion(Propietario p)
         {
@@ -88,9 +88,16 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
 
             using var conexion = ObtenerConexion();
 
-            var sql = @"SELECT ID_propietario, Nombre, Apellido, DNI,
-                               Telefono, Mail, Estado
-                        FROM Propietario";
+            var sql = @"SELECT
+                            ID_propietario,
+                            Nombre,
+                            Apellido,
+                            DNI,
+                            Telefono,
+                            Mail,
+                            Estado
+                        FROM Propietario
+                        ORDER BY ID_propietario";
 
             using var comando = new MySqlCommand(sql, conexion);
 
@@ -102,13 +109,190 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             {
                 lista.Add(new Propietario
                 {
-                    ID_propietario = Convert.ToInt32(reader["ID_propietario"]),
-                    Nombre = reader["Nombre"].ToString()!,
-                    Apellido = reader["Apellido"].ToString()!,
-                    DNI = reader["DNI"].ToString()!,
-                    Telefono = reader["Telefono"].ToString()!,
-                    Mail = reader["Mail"].ToString()!,
-                    Estado = Convert.ToBoolean(reader["Estado"])
+                    ID_propietario =
+                        Convert.ToInt32(
+                            reader["ID_propietario"]
+                        ),
+
+                    Nombre =
+                        reader["Nombre"].ToString()!,
+
+                    Apellido =
+                        reader["Apellido"].ToString()!,
+
+                    DNI =
+                        reader["DNI"].ToString()!,
+
+                    Telefono =
+                        reader["Telefono"].ToString()!,
+
+                    Mail =
+                        reader["Mail"].ToString()!,
+
+                    Estado =
+                        Convert.ToBoolean(
+                            reader["Estado"]
+                        )
+                });
+            }
+
+            return lista;
+        }
+
+        public int ObtenerCantidad()
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT COUNT(*)
+                        FROM Propietario";
+
+            using var comando = new MySqlCommand(
+                sql,
+                conexion
+            );
+
+            conexion.Open();
+
+            return Convert.ToInt32(
+                comando.ExecuteScalar()
+            );
+        }
+
+        public int ObtenerCantidad(string? buscar)
+        {
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT COUNT(*)
+                        FROM Propietario
+                        WHERE
+                            @Buscar = ''
+                            OR Nombre LIKE @BuscarLike
+                            OR Apellido LIKE @BuscarLike
+                            OR DNI LIKE @BuscarLike
+                            OR Telefono LIKE @BuscarLike
+                            OR Mail LIKE @BuscarLike";
+
+            using var comando = new MySqlCommand(
+                sql,
+                conexion
+            );
+
+            string textoBuscar =
+                buscar?.Trim() ?? "";
+
+            comando.Parameters.AddWithValue(
+                "@Buscar",
+                textoBuscar
+            );
+
+            comando.Parameters.AddWithValue(
+                "@BuscarLike",
+                "%" + textoBuscar + "%"
+            );
+
+            conexion.Open();
+
+            return Convert.ToInt32(
+                comando.ExecuteScalar()
+            );
+        }
+
+        public IList<Propietario> ObtenerListaPaginada(
+            string? buscar,
+            int pagina,
+            int cantidadPorPagina)
+        {
+            var lista = new List<Propietario>();
+
+            using var conexion = ObtenerConexion();
+
+            var sql = @"SELECT
+                            ID_propietario,
+                            Nombre,
+                            Apellido,
+                            DNI,
+                            Telefono,
+                            Mail,
+                            Estado
+
+                        FROM Propietario
+
+                        WHERE
+                            @Buscar = ''
+                            OR Nombre LIKE @BuscarLike
+                            OR Apellido LIKE @BuscarLike
+                            OR DNI LIKE @BuscarLike
+                            OR Telefono LIKE @BuscarLike
+                            OR Mail LIKE @BuscarLike
+
+                        ORDER BY ID_propietario
+
+                        LIMIT @CantidadPorPagina
+                        OFFSET @Offset";
+
+            using var comando = new MySqlCommand(
+                sql,
+                conexion
+            );
+
+            string textoBuscar =
+                buscar?.Trim() ?? "";
+
+            int offset =
+                (pagina - 1) * cantidadPorPagina;
+
+            comando.Parameters.AddWithValue(
+                "@Buscar",
+                textoBuscar
+            );
+
+            comando.Parameters.AddWithValue(
+                "@BuscarLike",
+                "%" + textoBuscar + "%"
+            );
+
+            comando.Parameters.AddWithValue(
+                "@CantidadPorPagina",
+                cantidadPorPagina
+            );
+
+            comando.Parameters.AddWithValue(
+                "@Offset",
+                offset
+            );
+
+            conexion.Open();
+
+            using var reader = comando.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new Propietario
+                {
+                    ID_propietario =
+                        Convert.ToInt32(
+                            reader["ID_propietario"]
+                        ),
+
+                    Nombre =
+                        reader["Nombre"].ToString()!,
+
+                    Apellido =
+                        reader["Apellido"].ToString()!,
+
+                    DNI =
+                        reader["DNI"].ToString()!,
+
+                    Telefono =
+                        reader["Telefono"].ToString()!,
+
+                    Mail =
+                        reader["Mail"].ToString()!,
+
+                    Estado =
+                        Convert.ToBoolean(
+                            reader["Estado"]
+                        )
                 });
             }
 
@@ -119,14 +303,28 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         {
             using var conexion = ObtenerConexion();
 
-            var sql = @"SELECT ID_propietario, Nombre, Apellido, DNI,
-                               Telefono, Mail, Estado
+            var sql = @"SELECT
+                            ID_propietario,
+                            Nombre,
+                            Apellido,
+                            DNI,
+                            Telefono,
+                            Mail,
+                            Estado
+
                         FROM Propietario
+
                         WHERE ID_propietario = @Id";
 
-            using var comando = new MySqlCommand(sql, conexion);
+            using var comando = new MySqlCommand(
+                sql,
+                conexion
+            );
 
-            comando.Parameters.AddWithValue("@Id", id);
+            comando.Parameters.AddWithValue(
+                "@Id",
+                id
+            );
 
             conexion.Open();
 
@@ -136,13 +334,30 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             {
                 return new Propietario
                 {
-                    ID_propietario = Convert.ToInt32(reader["ID_propietario"]),
-                    Nombre = reader["Nombre"].ToString()!,
-                    Apellido = reader["Apellido"].ToString()!,
-                    DNI = reader["DNI"].ToString()!,
-                    Telefono = reader["Telefono"].ToString()!,
-                    Mail = reader["Mail"].ToString()!,
-                    Estado = Convert.ToBoolean(reader["Estado"])
+                    ID_propietario =
+                        Convert.ToInt32(
+                            reader["ID_propietario"]
+                        ),
+
+                    Nombre =
+                        reader["Nombre"].ToString()!,
+
+                    Apellido =
+                        reader["Apellido"].ToString()!,
+
+                    DNI =
+                        reader["DNI"].ToString()!,
+
+                    Telefono =
+                        reader["Telefono"].ToString()!,
+
+                    Mail =
+                        reader["Mail"].ToString()!,
+
+                    Estado =
+                        Convert.ToBoolean(
+                            reader["Estado"]
+                        )
                 };
             }
 
@@ -157,9 +372,15 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
                         SET Estado = true
                         WHERE ID_propietario = @Id";
 
-            using var comando = new MySqlCommand(sql, conexion);
+            using var comando = new MySqlCommand(
+                sql,
+                conexion
+            );
 
-            comando.Parameters.AddWithValue("@Id", id);
+            comando.Parameters.AddWithValue(
+                "@Id",
+                id
+            );
 
             conexion.Open();
 
