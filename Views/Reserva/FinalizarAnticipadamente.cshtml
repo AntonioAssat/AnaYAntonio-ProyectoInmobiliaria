@@ -107,6 +107,8 @@
 
                 <hr class="my-4" />
 
+                <!-- RESULTADO DE LA MULTA -->
+
                 <div id="resultadoMulta"
                      class="alert alert-warning"
                      style="display: none;">
@@ -125,10 +127,28 @@
                         <span id="porcentajeMulta"></span>
                     </p>
 
-                    <p class="mb-0">
+                    <p class="mb-3">
                         <strong>Multa a pagar:</strong>
                         $<span id="montoMulta"></span>
                     </p>
+
+                    <div class="form-check">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="multaPagada"
+                               name="multaPagada"
+                               value="true" />
+
+                        <label class="form-check-label fw-semibold"
+                               for="multaPagada">
+
+                            Confirmo que el inquilino pagó la multa
+                            en este momento.
+
+                        </label>
+
+                    </div>
 
                 </div>
 
@@ -140,7 +160,9 @@
                     </a>
 
                     <button type="submit"
-                            class="btn btn-danger px-4">
+                            class="btn btn-danger px-4"
+                            id="btnFinalizar"
+                            disabled>
                         Finalizar Reserva
                     </button>
 
@@ -165,7 +187,9 @@
             new Date("@Model.FechaFin.ToString("yyyy-MM-dd")");
 
         const montoPorDia =
-            parseFloat("@Model.MontoPorDia.ToString(System.Globalization.CultureInfo.InvariantCulture)");
+            parseFloat(
+                "@Model.MontoPorDia.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+            );
 
         const fechaFinInput =
             document.getElementById("fechaFinEfectiva");
@@ -173,53 +197,103 @@
         const resultadoMulta =
             document.getElementById("resultadoMulta");
 
+        const multaPagada =
+            document.getElementById("multaPagada");
+
+        const btnFinalizar =
+            document.getElementById("btnFinalizar");
+
+
         fechaFinInput.addEventListener("change", function () {
 
             const fechaEfectiva =
                 new Date(this.value);
 
             if (!this.value) {
+
                 resultadoMulta.style.display = "none";
+
+                multaPagada.checked = false;
+
+                btnFinalizar.disabled = true;
+
                 return;
             }
+
 
             const totalDias =
                 (fechaFin - fechaInicio) /
                 (1000 * 60 * 60 * 24);
 
+
             const diasCumplidos =
                 (fechaEfectiva - fechaInicio) /
                 (1000 * 60 * 60 * 24);
+
 
             const diasRestantes =
                 (fechaFin - fechaEfectiva) /
                 (1000 * 60 * 60 * 24);
 
+
             let porcentaje;
 
+
             if (diasCumplidos < totalDias / 2) {
+
                 porcentaje = 50;
+
             }
             else {
+
                 porcentaje = 25;
+
             }
+
 
             const importeRestante =
                 diasRestantes * montoPorDia;
 
+
             const multa =
                 importeRestante * porcentaje / 100;
 
-            document.getElementById("diasRestantes").textContent =
-                diasRestantes;
 
-            document.getElementById("porcentajeMulta").textContent =
-                porcentaje + "%";
+            document.getElementById("diasRestantes")
+                .textContent = diasRestantes;
 
-            document.getElementById("montoMulta").textContent =
-                multa.toFixed(2);
+
+            document.getElementById("porcentajeMulta")
+                .textContent = porcentaje + "%";
+
+
+            document.getElementById("montoMulta")
+                .textContent =
+                    multa.toLocaleString(
+                        "es-AR",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    );
+
 
             resultadoMulta.style.display = "block";
+
+
+            // Cada vez que cambia la fecha,
+            // obligamos a confirmar nuevamente el pago.
+
+            multaPagada.checked = false;
+
+            btnFinalizar.disabled = true;
+
+        });
+
+
+        multaPagada.addEventListener("change", function () {
+
+            btnFinalizar.disabled = !this.checked;
 
         });
 
