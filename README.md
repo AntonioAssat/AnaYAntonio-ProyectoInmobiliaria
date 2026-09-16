@@ -10,147 +10,207 @@
 - **Antonio Tomas Assat** - GitHub: [AntonioAssat](https://github.com/AntonioAssat)
 - **Ana Paula Quevedo** - GitHub: [Quevedoana](https://github.com/quevedoana)
 
----
-
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Tecnologías utilizadas
 
 - **C#**
 - **ASP.NET Core MVC**
 - **.NET 10**
 - **MySQL**
+- **MySql.Data**
+- **HTML5 / CSS3**
+- **Bootstrap**
+- **Vue.js**
 - **DBeaver**
-- **HTML / CSS**
-- **Git**
-- **GitHub**
 - **Visual Studio Code**
 
----
+## 📊 Diagrama Entidad-Relación
 
-## 📋 Primera Entrega
+![Diagrama Entidad-Relación](Diagrama_ER_Inmobiliaria.png)
 
-Para la primera entrega se desarrolló el **ABM de Propietarios e Inquilinos**, utilizando el patrón arquitectónico **MVC (Model-View-Controller)**.
+El sistema está compuesto principalmente por las entidades:
 
-### Propietarios
+- Usuario
+- Auditoría
+- Propietario
+- Inmueble
+- Tipo de Inmueble
+- Imagen
+- Inquilino
+- Reserva
+- Pago
 
-- Listado.
-- Alta.
-- Modificación.
-- Baja.
-
-### Inquilinos
-
-- Listado.
-- Alta.
-- Modificación.
-- Baja.
-
----
-
-## 📋 Segunda Entrega
-
-Para la segunda entrega se incorporó el **ABM de Inmuebles, Tipos de Inmueble y Reservas**.
-
-### 🏠 Inmuebles
-
-- Listado.
-- Alta.
-- Modificación.
-- Baja y reactivación.
-- Asociación con propietarios.
-- Asociación con tipos de inmueble.
-
-### 🏢 Tipos de Inmueble
-
-- Listado.
-- Alta.
-- Modificación.
-- Baja y reactivación.
-
-### 📅 Reservas
-
-- Listado.
-- Alta.
-- Modificación.
-- Baja.
-- Asociación entre inmueble e inquilino.
-
----
-
-## 🏗️ Arquitectura
-
-El proyecto utiliza el patrón **MVC (Model-View-Controller)**.
-
-### Model
-
-- `Propietario`
-- `Inquilino`
-- `Inmueble`
-- `TipoInmueble`
-- `Reserva`
-- Repositorios correspondientes.
-
-### Controller
-
-- `HomeController`
-- `PropietariosController`
-- `InquilinosController`
-- `InmueblesController`
-- `TipoInmueblesController`
-- `ReservasController`
-
-### View
-
-Vistas para:
-
-- Listados.
-- Altas.
-- Modificaciones.
-- Bajas.
-
----
-
-## 🗄️ Base de Datos
-
-El proyecto utiliza **MySQL** como sistema gestor de base de datos.
-
-La aplicación utiliza repositorios para realizar las operaciones de acceso y modificación de los datos.
-
----
-
-## 🖼️ Diagrama Entidad-Relación
-
-![DER](ER_INMOBILIARIA.drawio.png)
-
----
-
-## 🚀 Instalación y ejecución
+## 🗄️ Configuración de la base de datos
 
 ### Requisitos
 
+Para ejecutar el proyecto es necesario tener instalado:
+
+- MySQL
 - .NET 10 SDK
-- MySQL Server
-- DBeaver
-- Git
 
-### Clonar el repositorio
+### Crear la base de datos
 
-```bash
+1. Abrir **DBeaver**, **MySQL Workbench** o una herramienta similar.
+2. Conectarse al servidor MySQL.
+3. Abrir el archivo `Inmobiliaria.sql`, incluido en el proyecto.
+4. Ejecutar el script completo.
+5. Verificar que la base de datos y sus tablas se hayan creado correctamente.
+
+El archivo SQL contiene la estructura necesaria para ejecutar el sistema y los datos iniciales.
+
+### Configurar la conexión
+
+Verificar la configuración de conexión a MySQL utilizada por el proyecto.
+
+Los datos necesarios son:
+
+- Servidor
+- Puerto
+- Usuario
+- Contraseña
+- Base de datos
+
+Ejemplo:
+
+~~~text
+Servidor: localhost
+Puerto: 3306
+Usuario: root
+Contraseña: tu_contraseña
+Base de datos: inmobiliaria
+~~~
+
+Si los datos de conexión son diferentes, deben modificarse según la configuración local de MySQL.
+
+---
+
+## 📥 Clonar el proyecto
+
+Desde una terminal ejecutar:
+
+~~~bash
 git clone https://github.com/AntonioAssat/AnaYAntonio-ProyectoInmobiliaria.git
-```
+~~~
 
-### Levantar la base de datos
+Ingresar a la carpeta:
 
-1. Abrir **DBeaver** y conectarse al servidor **MySQL**.
-2. Abrir el archivo `Inmobiliaria.sql`, ubicado en la raíz del proyecto.
-3. Ejecutar el script completo.
-4. Verificar que se haya creado correctamente la base de datos `Inmobiliaria` y sus tablas.
+~~~bash
+cd AnaYAntonio-ProyectoInmobiliaria
+~~~
 
-### Ejecutar el proyecto
+---
 
-Desde la carpeta del proyecto, ejecutar:
+## 📦 Restaurar dependencias
 
-```bash
+Ejecutar:
+
+~~~bash
+dotnet restore
+~~~
+
+---
+
+## 🔨 Compilar el proyecto
+
+Ejecutar:
+
+~~~bash
+dotnet build
+~~~
+
+Si la compilación finaliza correctamente, el proyecto está listo para ejecutarse.
+
+---
+
+## ▶️ Ejecutar el proyecto
+
+Ejecutar:
+
+~~~bash
+dotnet run
+~~~
+
+La terminal mostrará la dirección local donde se encuentra disponible la aplicación, por ejemplo:
+
+~~~text
+https://localhost:xxxx
+~~~
+
+Abrir esa dirección en un navegador.
+
+---
+
+## 🔐 Usuarios de prueba
+
+### Administrador
+
+~~~text
+Usuario: admin@inmobiliaria.com
+Contraseña: 1234
+Rol: Administrador
+~~~
+
+### Empleado
+
+~~~text
+Usuario: empleado@inmobiliaria.com
+Contraseña: 123456
+Rol: Empleado
+~~~
+
+---
+
+## 👤 Roles
+
+### Administrador
+
+El administrador cuenta con acceso a las funciones administrativas del sistema, incluyendo la gestión de usuarios y las operaciones que requieren permisos de administrador.
+
+También puede consultar la información de auditoría.
+
+### Empleado
+
+El empleado puede utilizar las funcionalidades correspondientes a su rol y modificar sus propios datos de perfil, contraseña y avatar.
+
+---
+
+## 📌 Funcionalidades principales
+
+- Gestión de propietarios.
+- Gestión de inquilinos.
+- Gestión de inmuebles.
+- Gestión de tipos de inmueble.
+- Gestión de imágenes de inmuebles.
+- Gestión de reservas.
+- Control de superposición de reservas.
+- Renovación de reservas.
+- Finalización anticipada de reservas.
+- Cálculo de multas por finalización anticipada.
+- Gestión de pagos.
+- Anulación de pagos.
+- Reactivación de registros.
+- Gestión de usuarios y roles.
+- Auditoría de operaciones.
+- Búsqueda server-side.
+- Paginación server-side.
+- Informes del sistema.
+
+---
+
+## 🚀 Resumen rápido
+
+~~~bash
+git clone https://github.com/AntonioAssat/AnaYAntonio-ProyectoInmobiliaria.git
+cd AnaYAntonio-ProyectoInmobiliaria
 dotnet restore
 dotnet build
 dotnet run
-```
+~~~
+
+Antes de ejecutar la aplicación:
+
+1. Ejecutar `Inmobiliaria.sql` en MySQL.
+2. Configurar la conexión a la base de datos.
+3. Ejecutar `dotnet run`.
+4. Abrir en el navegador la dirección indicada por ASP.NET Core.
+5. Ingresar con uno de los usuarios de prueba.
