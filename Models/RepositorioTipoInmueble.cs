@@ -135,6 +135,78 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
             return lista;
         }
 
+        // OBTENER CANTIDAD PARA PAGINACIÓN
+        public int ObtenerCantidad(string? buscar)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = @"SELECT COUNT(*)
+                               FROM TipoInmueble
+                               WHERE @Buscar = ''
+                                  OR Nombre LIKE @Texto";
+
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    buscar ??= "";
+
+                    command.Parameters.AddWithValue("@Buscar", buscar);
+                    command.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+
+                    return Convert.ToInt32(command.ExecuteScalar());
+                }
+            }
+        }
+
+        // OBTENER LISTA PAGINADA
+        public IList<TipoInmueble> ObtenerListaPaginada(
+            string? buscar,
+            int pagina,
+            int cantidadPorPagina)
+        {
+            var lista = new List<TipoInmueble>();
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = @"SELECT ID_tipo, Nombre, Estado
+                               FROM TipoInmueble
+                               WHERE @Buscar = ''
+                                  OR Nombre LIKE @Texto
+                               ORDER BY Nombre
+                               LIMIT @CantidadPorPagina
+                               OFFSET @Offset";
+
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    buscar ??= "";
+
+                    int offset = (pagina - 1) * cantidadPorPagina;
+
+                    command.Parameters.AddWithValue("@Buscar", buscar);
+                    command.Parameters.AddWithValue("@Texto", "%" + buscar + "%");
+                    command.Parameters.AddWithValue("@CantidadPorPagina", cantidadPorPagina);
+                    command.Parameters.AddWithValue("@Offset", offset);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            lista.Add(new TipoInmueble
+                            {
+                                ID_tipo = reader.GetInt32("ID_tipo"),
+                                Nombre = reader.GetString("Nombre"),
+                                Estado = reader.GetBoolean("Estado")
+                            });
+                        }
+                    }
+                }
+            }
+
+            return lista;
+        }
 
         public TipoInmueble? ObtenerPorId(int id)
         {

@@ -14,9 +14,33 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             this.repositorio = repositorio;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? buscar, int pagina = 1)
         {
-            var lista = repositorio.ObtenerLista();
+            int cantidadPorPagina = 10;
+
+            if (pagina < 1)
+                pagina = 1;
+
+            int cantidadTotal = repositorio.ObtenerCantidad(buscar);
+
+            int cantidadPaginas = (int)Math.Ceiling(
+                cantidadTotal / (double)cantidadPorPagina
+            );
+
+            if (cantidadPaginas > 0 && pagina > cantidadPaginas)
+                pagina = cantidadPaginas;
+
+            var lista = repositorio.ObtenerListaPaginada(
+                buscar,
+                pagina,
+                cantidadPorPagina
+            );
+
+            ViewBag.Buscar = buscar;
+            ViewBag.PaginaActual = pagina;
+            ViewBag.CantidadPaginas = cantidadPaginas;
+            ViewBag.CantidadTotal = cantidadTotal;
+
             return View(lista);
         }
 
@@ -41,9 +65,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             repositorio.Alta(tipo);
 
-            TempData["Mensaje"] = "Tipo de inmueble creado correctamente.";
+            TempData["Mensaje"] =
+                "Tipo de inmueble creado correctamente.";
 
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            if (!string.IsNullOrEmpty(returnUrl) &&
+                Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
@@ -73,7 +99,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return View(tipo);
             }
 
-            var tipoExistente = repositorio.ObtenerPorId(tipo.ID_tipo);
+            var tipoExistente =
+                repositorio.ObtenerPorId(tipo.ID_tipo);
 
             if (tipoExistente == null)
             {
@@ -84,7 +111,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 
             repositorio.Modificacion(tipoExistente);
 
-            TempData["Mensaje"] = "Tipo de inmueble modificado correctamente.";
+            TempData["Mensaje"] =
+                "Tipo de inmueble modificado correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -96,7 +124,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             repositorio.Baja(id);
 
-            TempData["Mensaje"] = "Tipo de inmueble dado de baja correctamente.";
+            TempData["Mensaje"] =
+                "Tipo de inmueble dado de baja correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -107,7 +136,8 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             repositorio.AltaEstado(id);
 
-            TempData["Mensaje"] = "Tipo de inmueble dado de alta correctamente.";
+            TempData["Mensaje"] =
+                "Tipo de inmueble dado de alta correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
