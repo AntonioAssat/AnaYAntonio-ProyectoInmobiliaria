@@ -4,24 +4,23 @@
     ViewData["Title"] = "Modificar Reserva";
 }
 
-<div class="container py-4">
+<div class="py-4">
 
+    <!-- ENCABEZADO -->
     <div class="mb-4">
-        <h2 class="fw-bold mb-1">Modificar Reserva</h2>
+        <h2 class="fw-bold mb-1">Gestión inmobiliaria</h2>
         <p class="text-muted mb-0">
-            Modifique los datos de la reserva seleccionada.
+            Modificar reserva
         </p>
     </div>
 
-    <div class="card shadow-sm">
+    <!-- FORMULARIO -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4 p-md-5">
 
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-semibold">
-                Datos de la Reserva
+            <h5 class="fw-semibold mb-4">
+                Datos de la reserva
             </h5>
-        </div>
-
-        <div class="card-body p-4">
 
             <form asp-action="Edit" method="post">
 
@@ -31,7 +30,7 @@
                      class="text-danger mb-3">
                 </div>
 
-                <div class="row g-3">
+                <div class="row g-4">
 
                     <!-- INQUILINO -->
                     <div class="col-md-6">
@@ -44,7 +43,9 @@
                         <select asp-for="ID_inquilino"
                                 class="form-select">
 
-                            <option value="">Seleccione un inquilino</option>
+                            <option value="">
+                                Seleccione un inquilino
+                            </option>
 
                             @foreach (var inquilino in ViewBag.Inquilinos)
                             {
@@ -76,7 +77,9 @@
                                 class="form-select"
                                 id="inmuebleSelect">
 
-                            <option value="">Seleccione un inmueble</option>
+                            <option value="">
+                                Seleccione un inmueble
+                            </option>
 
                             @foreach (var inmueble in ViewBag.Inmuebles)
                             {
@@ -84,7 +87,9 @@
                                 {
                                     <option value="@inmueble.ID_inmueble"
                                             data-precio="@inmueble.PrecioPorDia">
+
                                         @inmueble.Direccion
+
                                     </option>
                                 }
                             }
@@ -133,7 +138,7 @@
 
                     </div>
 
-                    <!-- MONTO -->
+                    <!-- MONTO POR DÍA -->
                     <div class="col-md-6">
 
                         <label asp-for="MontoPorDia"
@@ -169,6 +174,7 @@
 
                 <hr class="my-4" />
 
+                <!-- BOTONES -->
                 <div class="d-flex justify-content-end gap-2">
 
                     <a asp-action="Index"
@@ -177,7 +183,7 @@
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary px-4">
+                            class="btn btn-dark px-4">
                         Guardar cambios
                     </button>
 
@@ -197,26 +203,40 @@
     }
 
     <script>
-        const inmuebleSelect = document.getElementById("inmuebleSelect");
-        const montoPorDia = document.getElementById("montoPorDia");
+
+        const inmuebleSelect =
+            document.getElementById("inmuebleSelect");
+
+        const montoPorDia =
+            document.getElementById("montoPorDia");
 
         function actualizarMonto() {
 
             const opcionSeleccionada =
                 inmuebleSelect.options[inmuebleSelect.selectedIndex];
 
-            let precio = opcionSeleccionada.getAttribute("data-precio");
+            let precio =
+                opcionSeleccionada.getAttribute("data-precio");
 
             if (precio) {
+
                 precio = precio.replace(",", ".");
+
                 montoPorDia.value = precio;
+
             } else {
+
                 montoPorDia.value = "";
+
             }
         }
 
-        inmuebleSelect.addEventListener("change", actualizarMonto);
+        inmuebleSelect.addEventListener(
+            "change",
+            actualizarMonto
+        );
 
         actualizarMonto();
+
     </script>
 }

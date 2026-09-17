@@ -4,150 +4,186 @@
     ViewData["Title"] = "Nuevo Pago";
 }
 
-<div class="container py-4">
+<div class="py-4">
 
+    <!-- ENCABEZADO -->
     <div class="mb-4">
-        <h2 class="fw-bold mb-1">Nuevo Pago</h2>
 
-        <p class="text-muted mb-0">
-            Registre un pago correspondiente a una reserva.
+        <p class="text-uppercase text-secondary fw-semibold mb-2"
+           style="letter-spacing: 1.5px;">
+            Gestión inmobiliaria
         </p>
+
+        <h1 class="fw-semibold mb-2">
+            Nuevo pago
+        </h1>
+
+        <p class="text-secondary mb-0">
+            Registrá un pago correspondiente a una reserva.
+        </p>
+
     </div>
 
-    <div class="card shadow-sm">
 
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-semibold">
-                Datos del Pago
-            </h5>
-        </div>
+    <!-- FORMULARIO -->
+    <div class="card border-0 shadow-sm rounded-4">
 
-        <div class="card-body p-4">
+        <div class="card-body p-4 p-lg-5">
 
-            <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-4">
+            </div>
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
-                </div>
 
-                <div class="row g-3">
+            <form asp-action="Create"
+                  method="post"
+                  class="row g-4">
 
-                    <!-- RESERVA -->
-                    <div class="col-md-6">
+                <!-- RESERVA -->
+                <div class="col-md-6">
 
-                        <label asp-for="ID_reserva"
-                               class="form-label fw-semibold">
-                            Reserva
-                        </label>
+                    <label asp-for="ID_reserva"
+                           class="form-label fw-semibold">
 
-                        <select asp-for="ID_reserva"
-                                class="form-select">
+                        Reserva
 
-                            <option value="">
-                                Seleccione una reserva
-                            </option>
+                    </label>
 
-                            @foreach (var reserva in ViewBag.Reservas)
+                    <select asp-for="ID_reserva"
+                            class="form-select">
+
+                        <option value="">
+                            Seleccioná una reserva
+                        </option>
+
+                        @foreach (var reserva in ViewBag.Reservas)
+                        {
+                            if (reserva.Estado)
                             {
-                                if (reserva.Estado)
-                                {
-                                    <option value="@reserva.ID_reserva"
-                                            data-inicio="@reserva.FechaInicio.ToString("yyyy-MM-dd")"
-                                            data-fin="@reserva.FechaFin.ToString("yyyy-MM-dd")"
-                                            data-precio="@reserva.MontoPorDia">
-                                        Reserva #@reserva.ID_reserva -
-                                        @reserva.FechaInicio.ToString("dd/MM/yyyy")
-                                        al
-                                        @reserva.FechaFin.ToString("dd/MM/yyyy")
-                                    </option>
-                                }
+                                <option value="@reserva.ID_reserva"
+                                        data-inicio="@reserva.FechaInicio.ToString("yyyy-MM-dd")"
+                                        data-fin="@reserva.FechaFin.ToString("yyyy-MM-dd")"
+                                        data-precio="@reserva.MontoPorDia">
+
+                                    Reserva #@reserva.ID_reserva -
+                                    @reserva.FechaInicio.ToString("dd/MM/yyyy")
+                                    al
+                                    @reserva.FechaFin.ToString("dd/MM/yyyy")
+
+                                </option>
                             }
+                        }
 
-                        </select>
+                    </select>
 
-                        <span asp-validation-for="ID_reserva"
-                              class="text-danger">
-                        </span>
-
-                    </div>
-                    <!-- CONCEPTO -->
-                    <div class="col-md-6">
-
-                        <label asp-for="Concepto"
-                               class="form-label fw-semibold">
-                            Concepto
-                        </label>
-
-                        <input asp-for="Concepto"
-                               class="form-control"
-                               placeholder="Ingrese el concepto del pago" />
-
-                        <span asp-validation-for="Concepto"
-                              class="text-danger">
-                        </span>
-
-                    </div>
-                    <!-- FECHA DE PAGO -->
-                    <div class="col-md-6">
-
-                        <label asp-for="FechaPago"
-                               class="form-label fw-semibold">
-                            Fecha de pago
-                        </label>
-
-                        <input asp-for="FechaPago"
-                               type="date"
-                               class="form-control" />
-
-                        <span asp-validation-for="FechaPago"
-                              class="text-danger">
-                        </span>
-
-                    </div>
-
-                    <!-- MONTO -->
-                    <div class="col-md-6">
-
-                        <label asp-for="Monto"
-                               class="form-label fw-semibold">
-                            Monto
-                        </label>
-
-                        <div class="input-group">
-
-                            <span class="input-group-text">$</span>
-
-                            <input asp-for="Monto"
-                                    type="number"
-                                    min="0.01"
-                                    step="0.01"
-                                    class="form-control"
-                                    id="monto"
-                                    readonly />
-
-                        </div>
-
-                        <span asp-validation-for="Monto"
-                              class="text-danger">
-                        </span>
-
-                    </div>
+                    <span asp-validation-for="ID_reserva"
+                          class="text-danger small d-block mt-1">
+                    </span>
 
                 </div>
 
-                <hr class="my-4" />
 
-                <div class="d-flex justify-content-end gap-2">
+                <!-- CONCEPTO -->
+                <div class="col-md-6">
 
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary px-4">
-                        Cancelar
-                    </a>
+                    <label asp-for="Concepto"
+                           class="form-label fw-semibold">
 
-                    <button type="submit"
-                            class="btn btn-primary px-4">
-                        Guardar Pago
-                    </button>
+                        Concepto
+
+                    </label>
+
+                    <input asp-for="Concepto"
+                           class="form-control"
+                           placeholder="Ingresá el concepto del pago" />
+
+                    <span asp-validation-for="Concepto"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- FECHA DE PAGO -->
+                <div class="col-md-6">
+
+                    <label asp-for="FechaPago"
+                           class="form-label fw-semibold">
+
+                        Fecha de pago
+
+                    </label>
+
+                    <input asp-for="FechaPago"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="FechaPago"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- MONTO -->
+                <div class="col-md-6">
+
+                    <label asp-for="Monto"
+                           class="form-label fw-semibold">
+
+                        Monto
+
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            $
+                        </span>
+
+                        <input asp-for="Monto"
+                               type="number"
+                               min="0.01"
+                               step="0.01"
+                               class="form-control"
+                               id="monto"
+                               readonly />
+
+                    </div>
+
+                    <span asp-validation-for="Monto"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- BOTONES -->
+                <div class="col-12">
+
+                    <hr class="my-2">
+
+                    <div class="d-flex flex-column flex-sm-row
+                                justify-content-between
+                                gap-2
+                                align-items-sm-center
+                                pt-3">
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            ← Volver
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-dark px-4">
+
+                            Guardar pago
+
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -159,6 +195,7 @@
 
 </div>
 
+
 @section Scripts {
 
     @{
@@ -167,13 +204,20 @@
 
     <script>
 
-        const reservaSelect = document.getElementById("ID_reserva");
-        const montoInput = document.getElementById("monto");
+        const reservaSelect =
+            document.getElementById("ID_reserva");
+
+        const montoInput =
+            document.getElementById("monto");
+
 
         function calcularMonto() {
 
             const opcion =
-                reservaSelect.options[reservaSelect.selectedIndex];
+                reservaSelect.options[
+                    reservaSelect.selectedIndex
+                ];
+
 
             const fechaInicio =
                 opcion.getAttribute("data-inicio");
@@ -184,28 +228,43 @@
             const precioPorDia =
                 opcion.getAttribute("data-precio");
 
-            if (!fechaInicio || !fechaFin || !precioPorDia) {
+
+            if (!fechaInicio ||
+                !fechaFin ||
+                !precioPorDia) {
+
                 montoInput.value = "";
+
                 return;
             }
 
-            const inicio = new Date(fechaInicio);
-            const fin = new Date(fechaFin);
+
+            const inicio =
+                new Date(fechaInicio);
+
+            const fin =
+                new Date(fechaFin);
+
 
             const diferenciaMilisegundos =
                 fin - inicio;
+
 
             const cantidadDias =
                 diferenciaMilisegundos /
                 (1000 * 60 * 60 * 24);
 
+
             const total =
                 cantidadDias *
                 parseFloat(precioPorDia);
 
+
             montoInput.value =
                 total.toFixed(2);
+
         }
+
 
         reservaSelect.addEventListener(
             "change",

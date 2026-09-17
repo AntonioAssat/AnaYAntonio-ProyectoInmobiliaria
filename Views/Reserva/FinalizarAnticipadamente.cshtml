@@ -4,29 +4,26 @@
     ViewData["Title"] = "Finalizar Reserva Anticipadamente";
 }
 
-<div class="container py-4">
+<div class="py-4">
 
+    <!-- ENCABEZADO -->
     <div class="mb-4">
-        <h2 class="fw-bold mb-1">
-            Finalizar Reserva Anticipadamente
-        </h2>
-
+        <h2 class="fw-bold mb-1">Gestión inmobiliaria</h2>
         <p class="text-muted mb-0">
-            Seleccione la fecha en la que finaliza efectivamente la reserva.
+            Finalizar reserva anticipadamente
         </p>
     </div>
 
-    <div class="card shadow-sm">
+    <!-- CONTENIDO -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4 p-md-5">
 
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-semibold">
-                Datos de la Reserva
+            <h5 class="fw-semibold mb-4">
+                Datos de la reserva
             </h5>
-        </div>
 
-        <div class="card-body p-4">
-
-            <div class="row g-3">
+            <!-- DATOS ORIGINALES -->
+            <div class="row g-4">
 
                 <div class="col-md-4">
 
@@ -85,7 +82,8 @@
                        name="id"
                        value="@Model.ID_reserva" />
 
-                <div class="row g-3">
+                <!-- FECHA EFECTIVA -->
+                <div class="row g-4">
 
                     <div class="col-md-6">
 
@@ -101,6 +99,10 @@
                                max="@Model.FechaFin.ToString("yyyy-MM-dd")"
                                required />
 
+                        <div class="form-text">
+                            Seleccione la fecha en la que finaliza efectivamente la reserva.
+                        </div>
+
                     </div>
 
                 </div>
@@ -108,12 +110,11 @@
                 <hr class="my-4" />
 
                 <!-- RESULTADO DE LA MULTA -->
-
                 <div id="resultadoMulta"
-                     class="alert alert-warning"
+                     class="alert alert-warning rounded-3"
                      style="display: none;">
 
-                    <h5 class="mb-3">
+                    <h5 class="fw-semibold mb-3">
                         Cálculo de la multa
                     </h5>
 
@@ -152,7 +153,8 @@
 
                 </div>
 
-                <div class="d-flex justify-content-end gap-2">
+                <!-- BOTONES -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
 
                     <a asp-action="Index"
                        class="btn btn-outline-secondary px-4">
@@ -163,7 +165,7 @@
                             class="btn btn-danger px-4"
                             id="btnFinalizar"
                             disabled>
-                        Finalizar Reserva
+                        Finalizar reserva
                     </button>
 
                 </div>
@@ -171,7 +173,6 @@
             </form>
 
         </div>
-
     </div>
 
 </div>
@@ -225,11 +226,9 @@
                 (fechaFin - fechaInicio) /
                 (1000 * 60 * 60 * 24);
 
-
             const diasCumplidos =
                 (fechaEfectiva - fechaInicio) /
                 (1000 * 60 * 60 * 24);
-
 
             const diasRestantes =
                 (fechaFin - fechaEfectiva) /
@@ -238,22 +237,16 @@
 
             let porcentaje;
 
-
             if (diasCumplidos < totalDias / 2) {
-
                 porcentaje = 50;
-
             }
             else {
-
                 porcentaje = 25;
-
             }
 
 
             const importeRestante =
                 diasRestantes * montoPorDia;
-
 
             const multa =
                 importeRestante * porcentaje / 100;
@@ -262,10 +255,8 @@
             document.getElementById("diasRestantes")
                 .textContent = diasRestantes;
 
-
             document.getElementById("porcentajeMulta")
                 .textContent = porcentaje + "%";
-
 
             document.getElementById("montoMulta")
                 .textContent =

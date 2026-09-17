@@ -4,115 +4,156 @@
     ViewData["Title"] = "Modificar Pago";
 }
 
-<div class="container py-4">
+<div class="py-4">
 
+    <!-- ENCABEZADO -->
     <div class="mb-4">
-        <h2 class="fw-bold mb-1">Modificar Pago</h2>
-        <p class="text-muted mb-0">
-            Modifique el concepto del pago seleccionado.
+
+        <p class="text-uppercase text-secondary fw-semibold mb-2"
+           style="letter-spacing: 1.5px;">
+            Gestión inmobiliaria
         </p>
+
+        <h1 class="fw-semibold mb-2">
+            Modificar pago
+        </h1>
+
+        <p class="text-secondary mb-0">
+            Modificá el concepto del pago seleccionado.
+        </p>
+
     </div>
 
-    <div class="card shadow-sm">
 
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-semibold">
-                Datos del Pago
-            </h5>
-        </div>
+    <!-- FORMULARIO -->
+    <div class="card border-0 shadow-sm rounded-4">
 
-        <div class="card-body p-4">
+        <div class="card-body p-4 p-lg-5">
 
-            <form asp-action="Edit" method="post">
+            <form asp-action="Edit"
+                  method="post"
+                  class="row g-4">
 
-                <input type="hidden" asp-for="ID_pago" />
+                <input type="hidden"
+                       asp-for="ID_pago" />
+
 
                 <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+                     class="text-danger mb-2">
                 </div>
 
-                <div class="row g-3">
 
-                    <!-- RESERVA -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">
-                            Reserva
-                        </label>
+                <!-- RESERVA -->
+                <div class="col-md-6">
 
-                        <input type="text"
-                               class="form-control"
-                               value="Reserva #@Model.ID_reserva"
-                               readonly />
-                    </div>
+                    <label class="form-label fw-semibold">
+                        Reserva
+                    </label>
 
-                    <!-- FECHA DE PAGO -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">
-                            Fecha de pago
-                        </label>
+                    <input type="text"
+                           class="form-control"
+                           value="Reserva #@Model.ID_reserva"
+                           readonly />
 
-                        <input type="text"
-                               class="form-control"
-                               value="@Model.FechaPago.ToString("dd/MM/yyyy")"
-                               readonly />
-                    </div>
+                </div>
 
-                    <!-- MONTO -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">
-                            Monto total
-                        </label>
 
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
+                <!-- FECHA DE PAGO -->
+                <div class="col-md-6">
 
-                            <input type="text"
-                                   class="form-control"
-                                   value="@Model.Monto.ToString("N2")"
-                                   readonly />
-                        </div>
-                    </div>
+                    <label class="form-label fw-semibold">
+                        Fecha de pago
+                    </label>
 
-                    <!-- CONCEPTO -->
-                    <div class="col-md-6">
-                        <label asp-for="Concepto"
-                               class="form-label fw-semibold">
-                            Concepto
-                        </label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.FechaPago.ToString("dd/MM/yyyy")"
+                           readonly />
 
-                        <input asp-for="Concepto"
-                               class="form-control"
-                               placeholder="Ingrese el concepto del pago" />
+                </div>
 
-                        <span asp-validation-for="Concepto"
-                              class="text-danger">
+
+                <!-- MONTO -->
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Monto total
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            $
                         </span>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Model.Monto.ToString("N2")"
+                               readonly />
+
                     </div>
 
                 </div>
 
-                <hr class="my-4" />
 
-                <div class="d-flex justify-content-end gap-2">
+                <!-- CONCEPTO -->
+                <div class="col-md-6">
 
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary px-4">
-                        Cancelar
-                    </a>
+                    <label asp-for="Concepto"
+                           class="form-label fw-semibold">
 
-                    <button type="submit"
-                            class="btn btn-primary px-4">
-                        Guardar Cambios
-                    </button>
+                        Concepto
+
+                    </label>
+
+                    <input asp-for="Concepto"
+                           class="form-control"
+                           placeholder="Ingresá el concepto del pago" />
+
+                    <span asp-validation-for="Concepto"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- BOTONES -->
+                <div class="col-12">
+
+                    <hr class="my-2">
+
+                    <div class="d-flex flex-column flex-sm-row
+                                justify-content-between
+                                gap-2
+                                align-items-sm-center
+                                pt-3">
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            ← Volver
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-dark px-4">
+
+                            Guardar cambios
+
+                        </button>
+
+                    </div>
 
                 </div>
 
             </form>
 
         </div>
+
     </div>
 
 </div>
+
 
 @section Scripts {
 

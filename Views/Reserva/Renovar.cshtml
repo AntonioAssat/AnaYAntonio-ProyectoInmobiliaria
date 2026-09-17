@@ -4,129 +4,142 @@
     ViewData["Title"] = "Renovar Reserva";
 }
 
-<div class="container mt-4">
+<div class="py-4">
 
-    <div class="row justify-content-center">
+    <!-- ENCABEZADO -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Gestión inmobiliaria</h2>
+        <p class="text-muted mb-0">
+            Renovar reserva
+        </p>
+    </div>
 
-        <div class="col-md-7">
+    <!-- FORMULARIO -->
+    <div class="card border-0 shadow-sm rounded-4">
 
-            <div class="card shadow-sm">
+        <div class="card-body p-4 p-md-5">
 
-                <div class="card-header bg-white">
-                    <h3 class="mb-0">
-                        Renovar Reserva
-                    </h3>
+            <h5 class="fw-semibold mb-4">
+                Datos de la renovación
+            </h5>
+
+            <!-- AVISO -->
+            <div class="alert alert-info rounded-3 mb-4">
+
+                <strong>Reserva original:</strong>
+                #@Model.ID_reserva
+
+                <br />
+
+                La reserva original no será modificada.
+                Se creará una nueva reserva.
+
+            </div>
+
+            <form asp-action="Renovar" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       asp-for="ID_reserva" />
+
+                <input type="hidden"
+                       asp-for="ID_inquilino" />
+
+                <input type="hidden"
+                       asp-for="ID_inmueble" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
                 </div>
 
-                <div class="card-body">
+                <div class="row g-4">
 
-                    <div class="alert alert-info">
-                        <strong>Reserva original:</strong>
-                        #@Model.ID_reserva
-                        <br />
-                        La reserva original no será modificada.
-                        Se creará una nueva reserva.
+                    <!-- INQUILINO -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Inquilino
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@ViewBag.InquilinoNombre"
+                               readonly />
+
                     </div>
 
-                    <form asp-action="Renovar" method="post">
+                    <!-- INMUEBLE -->
+                    <div class="col-md-6">
 
-                        @Html.AntiForgeryToken()
+                        <label class="form-label fw-semibold">
+                            Inmueble
+                        </label>
 
-                        <input type="hidden"
-                               asp-for="ID_reserva" />
+                        <input type="text"
+                               class="form-control"
+                               value="@ViewBag.InmuebleDireccion"
+                               readonly />
 
-                        <input type="hidden"
-                               asp-for="ID_inquilino" />
+                    </div>
 
-                        <input type="hidden"
-                               asp-for="ID_inmueble" />
+                </div>
 
-                        <div asp-validation-summary="ModelOnly"
-                             class="text-danger mb-3">
-                        </div>
+                <hr class="my-4" />
 
-                        <!-- INQUILINO -->
+                <h5 class="fw-semibold mb-4">
+                    Nuevas fechas y monto
+                </h5>
 
-                        <div class="mb-3">
+                <div class="row g-4">
 
-                            <label class="form-label">
-                                Inquilino
-                            </label>
+                    <!-- FECHA INICIO -->
+                    <div class="col-md-6">
 
-                            <input type="text"
-                                   class="form-control"
-                                   value="@ViewBag.InquilinoNombre"
-                                   readonly />
+                        <label asp-for="FechaInicio"
+                               class="form-label fw-semibold">
+                            Nueva fecha de inicio
+                        </label>
 
-                        </div>
+                        <input asp-for="FechaInicio"
+                               type="datetime-local"
+                               class="form-control" />
 
-                        <!-- INMUEBLE -->
+                        <span asp-validation-for="FechaInicio"
+                              class="text-danger">
+                        </span>
 
-                        <div class="mb-3">
+                    </div>
 
-                            <label class="form-label">
-                                Inmueble
-                            </label>
+                    <!-- FECHA FIN -->
+                    <div class="col-md-6">
 
-                            <input type="text"
-                                   class="form-control"
-                                   value="@ViewBag.InmuebleDireccion"
-                                   readonly />
+                        <label asp-for="FechaFin"
+                               class="form-label fw-semibold">
+                            Nueva fecha de finalización
+                        </label>
 
-                        </div>
+                        <input asp-for="FechaFin"
+                               type="datetime-local"
+                               class="form-control" />
 
-                        <hr />
+                        <span asp-validation-for="FechaFin"
+                              class="text-danger">
+                        </span>
 
-                        <h5 class="mb-3">
-                            Nuevas fechas y monto
-                        </h5>
+                    </div>
 
-                        <!-- FECHA INICIO -->
+                    <!-- MONTO -->
+                    <div class="col-md-6">
 
-                        <div class="mb-3">
+                        <label asp-for="MontoPorDia"
+                               class="form-label fw-semibold">
+                            Nuevo monto por día
+                        </label>
 
-                            <label asp-for="FechaInicio"
-                                   class="form-label">
-                                Nueva fecha de inicio
-                            </label>
+                        <div class="input-group">
 
-                            <input asp-for="FechaInicio"
-                                   type="datetime-local"
-                                   class="form-control" />
-
-                            <span asp-validation-for="FechaInicio"
-                                  class="text-danger">
-                            </span>
-
-                        </div>
-
-                        <!-- FECHA FIN -->
-
-                        <div class="mb-3">
-
-                            <label asp-for="FechaFin"
-                                   class="form-label">
-                                Nueva fecha de finalización
-                            </label>
-
-                            <input asp-for="FechaFin"
-                                   type="datetime-local"
-                                   class="form-control" />
-
-                            <span asp-validation-for="FechaFin"
-                                  class="text-danger">
-                            </span>
-
-                        </div>
-
-                        <!-- MONTO -->
-
-                        <div class="mb-3">
-
-                            <label asp-for="MontoPorDia"
-                                   class="form-label">
-                                Nuevo monto por día
-                            </label>
+                            <span class="input-group-text">$</span>
 
                             <input asp-for="MontoPorDia"
                                    type="number"
@@ -134,31 +147,34 @@
                                    min="0.01"
                                    class="form-control" />
 
-                            <span asp-validation-for="MontoPorDia"
-                                  class="text-danger">
-                            </span>
-
                         </div>
 
-                        <div class="d-flex justify-content-between mt-4">
+                        <span asp-validation-for="MontoPorDia"
+                              class="text-danger">
+                        </span>
 
-                            <a asp-action="Index"
-                               class="btn btn-secondary">
-                                Volver
-                            </a>
-
-                            <button type="submit"
-                                    class="btn btn-primary">
-                                Renovar reserva
-                            </button>
-
-                        </div>
-
-                    </form>
+                    </div>
 
                 </div>
 
-            </div>
+                <hr class="my-4" />
+
+                <!-- BOTONES -->
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary px-4">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-dark px-4">
+                        Renovar reserva
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
@@ -167,7 +183,9 @@
 </div>
 
 @section Scripts {
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
 }

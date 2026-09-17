@@ -4,28 +4,42 @@
     ViewData["Title"] = "Detalle del Inmueble";
 }
 
-<div id="app" class="container py-5">
+<div id="app" class="py-4">
 
     <!-- ENCABEZADO -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3
+                mb-4">
 
         <div>
-            <h1 class="h2 mb-1">
+
+            <p class="text-uppercase text-secondary fw-semibold mb-2"
+               style="letter-spacing: 1.5px;">
+                Gestión inmobiliaria
+            </p>
+
+            <h1 class="fw-semibold mb-2">
                 Detalle del inmueble
             </h1>
 
-            <p class="text-muted mb-0">
+            <p class="text-secondary mb-0">
                 Información completa del inmueble.
             </p>
+
         </div>
 
         <div class="d-flex gap-2">
 
-            <a asp-action="Index" class="btn btn-outline-secondary">
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
                 ← Volver
             </a>
 
-            <a asp-action="Edit" asp-route-id="@Model.ID_inmueble" class="btn btn-primary">
+            <a asp-action="Edit"
+               asp-route-id="@Model.ID_inmueble"
+               class="btn btn-dark">
                 Editar
             </a>
 
@@ -35,37 +49,54 @@
 
 
     <!-- IMÁGENES -->
-    <div class="card border-0 shadow rounded-4 overflow-hidden mb-4">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
 
         @if (Model.Imagenes != null && Model.Imagenes.Count > 0)
         {
             <!-- IMAGEN PRINCIPAL -->
             <div class="bg-light">
-                <img :src="imagenSeleccionada" alt="Imagen de @Model.Direccion" class="w-100"
+
+                <img :src="imagenSeleccionada"
+                     alt="Imagen de @Model.Direccion"
+                     class="w-100"
                      style="height: 450px; object-fit: contain;" />
+
             </div>
+
 
             <!-- MINIATURAS -->
             <div class="p-3">
+
                 <div class="row g-3">
 
                     @foreach (var imagen in Model.Imagenes)
                     {
                         <div class="col-6 col-md-3">
-                            <img src="@imagen.Url" alt="Imagen de @Model.Direccion" class="img-fluid rounded-3 w-100"
-                                 style="height: 150px; object-fit: cover; cursor: pointer;"
-                            @@click="seleccionarImagen('@imagen.Url')" />
+
+                            <img src="@imagen.Url"
+                                 alt="Imagen de @Model.Direccion"
+                                 class="img-fluid rounded-3 w-100"
+                                 style="height: 150px;
+                                        object-fit: cover;
+                                        cursor: pointer;"
+                                 @@click="seleccionarImagen('@imagen.Url')" />
+
                         </div>
                     }
 
                 </div>
+
             </div>
         }
         else
         {
-            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 350px;">
+            <!-- SIN IMÁGENES -->
+            <div class="bg-light d-flex
+                        align-items-center
+                        justify-content-center"
+                 style="height: 350px;">
 
-                <div class="text-center text-muted">
+                <div class="text-center text-secondary">
 
                     <div class="fs-1 mb-3">
                         🏠
@@ -83,16 +114,24 @@
     </div>
 
 
+    <!-- INFORMACIÓN -->
     <div class="row g-4">
+
 
         <!-- INFORMACIÓN PRINCIPAL -->
         <div class="col-12 col-lg-8">
 
-            <div class="card border-0 shadow rounded-4 h-100">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
 
-                <div class="card-body p-4 p-md-5">
+                <div class="card-body p-4 p-lg-5">
 
-                    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+
+                    <!-- TÍTULO Y ESTADO -->
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-start
+                                gap-3
+                                mb-4">
 
                         <div>
 
@@ -100,11 +139,12 @@
                                 @Model.Direccion
                             </h2>
 
-                            <span class="badge text-bg-primary">
+                            <span class="badge text-bg-light border">
                                 @Model.Tipo.Nombre
                             </span>
 
                         </div>
+
 
                         @if (Model.Estado)
                         {
@@ -125,7 +165,7 @@
                     <!-- PROPIETARIO -->
                     <div class="border-top pt-4 mb-4">
 
-                        <div class="small text-muted mb-1">
+                        <div class="small text-secondary mb-1">
                             Propietario
                         </div>
 
@@ -139,9 +179,11 @@
                     <!-- DATOS -->
                     <div class="row g-4">
 
+
+                        <!-- CAPACIDAD -->
                         <div class="col-md-6">
 
-                            <div class="small text-muted mb-1">
+                            <div class="small text-secondary mb-1">
                                 Capacidad
                             </div>
 
@@ -152,9 +194,10 @@
                         </div>
 
 
+                        <!-- PRECIO -->
                         <div class="col-md-6">
 
-                            <div class="small text-muted mb-1">
+                            <div class="small text-secondary mb-1">
                                 Precio por día
                             </div>
 
@@ -165,9 +208,10 @@
                         </div>
 
 
+                        <!-- PORCENTAJE -->
                         <div class="col-md-6">
 
-                            <div class="small text-muted mb-1">
+                            <div class="small text-secondary mb-1">
                                 Porcentaje de reserva
                             </div>
 
@@ -178,9 +222,10 @@
                         </div>
 
 
+                        <!-- COORDENADAS -->
                         <div class="col-md-6">
 
-                            <div class="small text-muted mb-1">
+                            <div class="small text-secondary mb-1">
                                 Coordenadas
                             </div>
 
@@ -202,18 +247,19 @@
         <!-- RESUMEN -->
         <div class="col-12 col-lg-4">
 
-            <div class="card border-0 shadow rounded-4 h-100">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
 
                 <div class="card-body p-4">
 
-                    <h3 class="h5 mb-4">
+                    <h3 class="h5 fw-semibold mb-4">
                         Resumen
                     </h3>
 
 
+                    <!-- TIPO -->
                     <div class="mb-4">
 
-                        <div class="small text-muted">
+                        <div class="small text-secondary">
                             Tipo de inmueble
                         </div>
 
@@ -224,9 +270,10 @@
                     </div>
 
 
+                    <!-- CAPACIDAD -->
                     <div class="mb-4">
 
-                        <div class="small text-muted">
+                        <div class="small text-secondary">
                             Capacidad
                         </div>
 
@@ -237,12 +284,10 @@
                     </div>
 
 
-                   
-
-
+                    <!-- PRECIO -->
                     <div class="border-top pt-4">
 
-                        <div class="small text-muted mb-1">
+                        <div class="small text-secondary mb-1">
                             Precio por día
                         </div>
 
@@ -261,22 +306,37 @@
     </div>
 
 </div>
+
+
 <script src="https://unpkg.com/vue@3"></script>
 
 <script>
-    Vue.createApp({
-    data() {
-    return {
-    imagenSeleccionada: '@(Model.Imagenes != null && Model.Imagenes.Count > 0
-                        ? Model.Imagenes[0].Url
-                    : "")'
-    };
-    },
 
-    methods: {
-    seleccionarImagen(url) {
-    this.imagenSeleccionada = url;
-    }
-    }
+    Vue.createApp({
+
+        data() {
+
+            return {
+
+                imagenSeleccionada:
+                    '@(Model.Imagenes != null && Model.Imagenes.Count > 0
+                        ? Model.Imagenes[0].Url
+                        : "")'
+
+            };
+
+        },
+
+        methods: {
+
+            seleccionarImagen(url) {
+
+                this.imagenSeleccionada = url;
+
+            }
+
+        }
+
     }).mount('#app');
+
 </script>

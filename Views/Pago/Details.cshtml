@@ -2,110 +2,328 @@
 
 @{
     ViewData["Title"] = "Detalle del Pago";
-    var auditoria = ViewBag.Auditoria as IList<AnaYAntonio_ProyectoInmobiliaria.Models.Auditoria>;
+
+    var auditoria =
+        ViewBag.Auditoria as IList<AnaYAntonio_ProyectoInmobiliaria.Models.Auditoria>;
 }
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+<div class="py-4">
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h3 class="mb-0">Detalle del Pago</h3>
-                </div>
+    <!-- ENCABEZADO -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3
+                mb-4">
 
-                <div class="card-body">
+        <div>
 
-                    <dl class="row">
-                        <dt class="col-sm-4">Código del pago</dt>
-                        <dd class="col-sm-8">@Model.ID_pago</dd>
+            <p class="text-uppercase text-secondary fw-semibold mb-2"
+               style="letter-spacing: 1.5px;">
+                Gestión inmobiliaria
+            </p>
 
-                        <dt class="col-sm-4">Reserva</dt>
-                        <dd class="col-sm-8">@Model.ID_reserva</dd>
+            <h1 class="fw-semibold mb-2">
+                Detalle del pago
+            </h1>
 
-                        <dt class="col-sm-4">Concepto</dt>
-                        <dd class="col-sm-8">@Model.Concepto</dd>
+            <p class="text-secondary mb-0">
+                Información completa del pago registrado.
+            </p>
 
-                        <dt class="col-sm-4">Fecha de pago</dt>
-                        <dd class="col-sm-8">
-                            @Model.FechaPago.ToString("dd/MM/yyyy")
-                        </dd>
+        </div>
 
-                        <dt class="col-sm-4">Monto</dt>
-                        <dd class="col-sm-8">
-                            $ @Model.Monto.ToString("N2")
-                        </dd>
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
 
-                        <dt class="col-sm-4">Estado</dt>
-                        <dd class="col-sm-8">
-                            @if (Model.Estado)
-                            {
-                                <span class="badge bg-success">Activo</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Anulado</span>
-                            }
-                        </dd>
-                    </dl>
+            ← Volver
 
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <hr />
+        </a>
 
-                        <h4 class="mb-3">Auditoría</h4>
+    </div>
 
-                        @if (auditoria != null && auditoria.Count > 0)
-                        {
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Usuario</th>
-                                            <th>Acción</th>
-                                            <th>Fecha</th>
-                                        </tr>
-                                    </thead>
 
-                                    <tbody>
-                                        @foreach (var registro in auditoria)
-                                        {
-                                            <tr>
-                                                <td>
-                                                     @registro.NombreUsuario
-                                                </td>
+    <div class="row g-4">
 
-                                                <td>
-                                                    @registro.Accion
-                                                </td>
+        <!-- INFORMACIÓN DEL PAGO -->
+        <div class="col-12 col-lg-8">
 
-                                                <td>
-                                                    @registro.Fecha.ToString("dd/MM/yyyy HH:mm")
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body p-4 p-lg-5">
+
+                    <div class="d-flex
+                                justify-content-between
+                                align-items-start
+                                gap-3
+                                mb-4">
+
+                        <div>
+
+                            <div class="small text-secondary mb-1">
+                                Código del pago
                             </div>
+
+                            <h2 class="h3 fw-semibold mb-0">
+                                #@Model.ID_pago
+                            </h2>
+
+                        </div>
+
+
+                        @if (Model.Estado)
+                        {
+                            <span class="badge text-bg-success">
+                                Activo
+                            </span>
                         }
                         else
                         {
-                            <div class="alert alert-info">
-                                No hay registros de auditoría para este pago.
-                            </div>
+                            <span class="badge text-bg-danger">
+                                Anulado
+                            </span>
                         }
-                    }
 
-                    <div class="mt-4">
-                        <a asp-action="Index"
-                           class="btn btn-secondary">
-                            Volver
-                        </a>
+                    </div>
+
+
+                    <div class="border-top pt-4">
+
+                        <div class="row g-4">
+
+                            <!-- RESERVA -->
+                            <div class="col-md-6">
+
+                                <div class="small text-secondary mb-1">
+                                    Reserva
+                                </div>
+
+                                <div class="fw-semibold">
+                                    #@Model.ID_reserva
+                                </div>
+
+                            </div>
+
+
+                            <!-- FECHA -->
+                            <div class="col-md-6">
+
+                                <div class="small text-secondary mb-1">
+                                    Fecha de pago
+                                </div>
+
+                                <div class="fw-semibold">
+                                    @Model.FechaPago.ToString("dd/MM/yyyy")
+                                </div>
+
+                            </div>
+
+
+                            <!-- CONCEPTO -->
+                            <div class="col-12">
+
+                                <div class="small text-secondary mb-1">
+                                    Concepto
+                                </div>
+
+                                <div class="fs-5 fw-semibold">
+                                    @Model.Concepto
+                                </div>
+
+                            </div>
+
+
+                            <!-- MONTO -->
+                            <div class="col-12">
+
+                                <div class="border-top pt-4">
+
+                                    <div class="small text-secondary mb-1">
+                                        Monto
+                                    </div>
+
+                                    <div class="fs-2 fw-bold">
+                                        $ @Model.Monto.ToString("N2")
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                 </div>
+
             </div>
 
         </div>
+
+
+        <!-- RESUMEN -->
+        <div class="col-12 col-lg-4">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body p-4">
+
+                    <h3 class="h5 fw-semibold mb-4">
+                        Resumen
+                    </h3>
+
+
+                    <div class="mb-4">
+
+                        <div class="small text-secondary">
+                            Código del pago
+                        </div>
+
+                        <div class="fw-semibold">
+                            #@Model.ID_pago
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <div class="small text-secondary">
+                            Reserva asociada
+                        </div>
+
+                        <div class="fw-semibold">
+                            #@Model.ID_reserva
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <div class="small text-secondary">
+                            Fecha
+                        </div>
+
+                        <div class="fw-semibold">
+                            @Model.FechaPago.ToString("dd/MM/yyyy")
+                        </div>
+
+                    </div>
+
+
+                    <div class="border-top pt-4">
+
+                        <div class="small text-secondary mb-1">
+                            Total
+                        </div>
+
+                        <div class="fs-3 fw-bold">
+                            $ @Model.Monto.ToString("N2")
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
+
+    <!-- AUDITORÍA -->
+    @if (User.IsInRole("Administrador"))
+    {
+        <div class="card border-0 shadow-sm rounded-4 mt-4">
+
+            <div class="card-body p-4 p-lg-5">
+
+                <div class="mb-4">
+
+                    <p class="text-uppercase text-secondary fw-semibold mb-2"
+                       style="letter-spacing: 1.5px;">
+                        Registro del sistema
+                    </p>
+
+                    <h2 class="h4 fw-semibold mb-1">
+                        Auditoría
+                    </h2>
+
+                    <p class="text-secondary mb-0">
+                        Historial de acciones realizadas sobre este pago.
+                    </p>
+
+                </div>
+
+
+                @if (auditoria != null &&
+                     auditoria.Count > 0)
+                {
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle mb-0">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>
+                                        Usuario
+                                    </th>
+
+                                    <th>
+                                        Acción
+                                    </th>
+
+                                    <th>
+                                        Fecha
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var registro in auditoria)
+                                {
+                                    <tr>
+
+                                        <td class="fw-semibold">
+                                            @registro.NombreUsuario
+                                        </td>
+
+                                        <td>
+                                            @registro.Accion
+                                        </td>
+
+                                        <td class="text-secondary">
+                                            @registro.Fecha.ToString("dd/MM/yyyy HH:mm")
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-light border mb-0">
+
+                        No hay registros de auditoría para este pago.
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
 </div>

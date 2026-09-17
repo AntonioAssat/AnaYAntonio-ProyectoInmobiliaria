@@ -9,29 +9,47 @@
     string buscar = ViewBag.Buscar ?? "";
 }
 
-<div class="container-fluid py-4">
+<div class="py-4">
 
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- ENCABEZADO -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between
+                align-items-md-center
+                gap-3
+                mb-4">
 
         <div>
-            <h2 class="fw-bold mb-1">Gestión de Inquilinos</h2>
 
-            <p class="text-muted mb-0">
-                Administre la información y el estado de los inquilinos registrados.
+            <p class="text-uppercase text-secondary fw-semibold mb-2"
+               style="letter-spacing: 1.5px;">
+                Gestión inmobiliaria
             </p>
+
+            <h1 class="fw-semibold mb-2">
+                Inquilinos
+            </h1>
+
+            <p class="text-secondary mb-0">
+                Administración de los inquilinos registrados.
+            </p>
+
         </div>
 
-        <a asp-action="Create" class="btn btn-primary px-4 py-2">
-            <span class="me-1">+</span> Nuevo Inquilino
+        <a asp-action="Create"
+           class="btn btn-dark">
+
+            + Nuevo inquilino
+
         </a>
 
     </div>
 
-    <!-- Mensaje -->
+
+    <!-- MENSAJE -->
     @if (ViewBag.Mensaje != null)
     {
-        <div class="alert alert-success alert-dismissible fade show mb-4"
+        <div class="alert alert-success alert-dismissible fade show
+                    border-0 shadow-sm rounded-3 mb-4"
              role="alert">
 
             <strong>¡Operación realizada correctamente!</strong>
@@ -46,33 +64,49 @@
         </div>
     }
 
-    <!-- Buscador -->
-    <div class="card shadow-sm mb-4">
 
-        <div class="card-body">
+    <!-- BUSCADOR -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-            <form asp-action="Index" method="get">
+        <div class="card-body p-4">
 
-                <div class="row g-2">
+            <form asp-action="Index"
+                  method="get"
+                  class="row g-3 align-items-end">
 
-                    <div class="col-md-10">
+                <div class="col-12 col-md-9">
 
-                        <input type="text"
-                               name="buscar"
-                               value="@buscar"
-                               class="form-control"
-                               placeholder="Buscar por nombre, apellido, DNI, teléfono o mail..." />
+                    <label for="buscar"
+                           class="form-label fw-semibold">
 
-                    </div>
+                        Buscar inquilino
 
-                    <div class="col-md-2 d-grid">
+                    </label>
 
-                        <button type="submit"
-                                class="btn btn-primary">
-                            Buscar
-                        </button>
+                    <input type="text"
+                           id="buscar"
+                           name="buscar"
+                           value="@buscar"
+                           class="form-control"
+                           placeholder="Nombre, apellido, DNI, teléfono o mail..." />
 
-                    </div>
+                </div>
+
+                <div class="col-12 col-md-3 d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-dark flex-grow-1">
+
+                        Buscar
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        Limpiar
+
+                    </a>
 
                 </div>
 
@@ -82,24 +116,41 @@
 
     </div>
 
-    <!-- Tabla -->
-    <div class="card shadow-sm">
 
-        <div class="card-header bg-white py-3">
+    <!-- CANTIDAD DE RESULTADOS -->
+    @if (cantidadTotal > 0)
+    {
+        <div class="text-secondary mb-3">
 
-            <div class="d-flex justify-content-between align-items-center">
+            Se encontraron
+            <strong>@cantidadTotal</strong>
+            inquilino(s).
 
-                <h5 class="mb-0 fw-semibold">
-                    Listado de Inquilinos
-                </h5>
+        </div>
+    }
 
-                <span class="text-muted small">
+
+    <!-- TABLA -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <div class="card-header bg-white border-0 p-4">
+
+            <div class="d-flex
+                        justify-content-between
+                        align-items-center">
+
+                <h2 class="h5 fw-semibold mb-0">
+                    Listado de inquilinos
+                </h2>
+
+                <span class="text-secondary small">
                     @cantidadTotal registro(s)
                 </span>
 
             </div>
 
         </div>
+
 
         <div class="table-responsive">
 
@@ -108,15 +159,35 @@
                 <thead class="table-light">
 
                     <tr>
-                        <th class="ps-4">Código</th>
-                        <th>Nombre completo</th>
-                        <th>DNI</th>
-                        <th>Contacto</th>
-                        <th>Estado</th>
-                        <th class="text-end pe-4">Acciones</th>
+
+                        <th class="ps-4">
+                            Código
+                        </th>
+
+                        <th>
+                            Nombre completo
+                        </th>
+
+                        <th>
+                            DNI
+                        </th>
+
+                        <th>
+                            Contacto
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acciones
+                        </th>
+
                     </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -125,9 +196,48 @@
                         <tr>
 
                             <td colspan="6"
-                                class="text-center text-muted py-4">
+                                class="text-center text-secondary py-5">
 
-                                No se encontraron inquilinos.
+                                <div class="fs-1 mb-3">
+                                    👤
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(buscar))
+                                {
+                                    <h3 class="h5">
+                                        No se encontraron inquilinos
+                                    </h3>
+
+                                    <p class="mb-3">
+                                        No hay inquilinos que coincidan con
+                                        "<strong>@buscar</strong>".
+                                    </p>
+
+                                    <a asp-action="Index"
+                                       class="btn btn-outline-secondary">
+
+                                        Limpiar búsqueda
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    <h3 class="h5">
+                                        No hay inquilinos registrados
+                                    </h3>
+
+                                    <p class="mb-3">
+                                        Todavía no se registraron inquilinos
+                                        en el sistema.
+                                    </p>
+
+                                    <a asp-action="Create"
+                                       class="btn btn-dark">
+
+                                        + Nuevo inquilino
+
+                                    </a>
+                                }
 
                             </td>
 
@@ -139,16 +249,17 @@
                         {
                             <tr>
 
-                                <!-- Código -->
+                                <!-- CÓDIGO -->
                                 <td class="ps-4">
 
-                                    <span class="text-muted">
+                                    <span class="text-secondary">
                                         #@inquilino.ID_inquilino
                                     </span>
 
                                 </td>
 
-                                <!-- Nombre -->
+
+                                <!-- NOMBRE -->
                                 <td>
 
                                     <div class="fw-semibold">
@@ -157,79 +268,96 @@
 
                                 </td>
 
+
                                 <!-- DNI -->
                                 <td>
                                     @inquilino.DNI
                                 </td>
 
-                                <!-- Contacto -->
+
+                                <!-- CONTACTO -->
                                 <td>
 
                                     <div>
                                         @inquilino.Telefono
                                     </div>
 
-                                    <small class="text-muted">
+                                    <small class="text-secondary">
                                         @inquilino.Mail
                                     </small>
 
                                 </td>
 
-                                <!-- Estado -->
+
+                                <!-- ESTADO -->
                                 <td>
 
                                     @if (inquilino.Estado)
                                     {
-                                        <span class="badge rounded-pill bg-success">
+                                        <span class="badge text-bg-success">
                                             Activo
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="badge rounded-pill bg-secondary">
+                                        <span class="badge text-bg-secondary">
                                             Inactivo
                                         </span>
                                     }
 
                                 </td>
 
-                                <!-- Acciones -->
+
+                                <!-- ACCIONES -->
                                 <td class="text-end pe-4">
 
-                                    <a asp-action="Edit"
-                                       asp-route-id="@inquilino.ID_inquilino"
-                                       class="btn btn-outline-primary btn-sm">
-                                        Modificar
-                                    </a>
+                                    <div class="d-flex
+                                                justify-content-end
+                                                gap-2">
 
-                                    @if (inquilino.Estado)
-                                    {
-                                        <form asp-action="Baja"
-                                              asp-route-id="@inquilino.ID_inquilino"
-                                              method="post"
-                                              class="d-inline">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@inquilino.ID_inquilino"
+                                           class="btn btn-outline-secondary btn-sm">
 
-                                            <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm ms-1">
-                                                Dar de baja
-                                            </button>
+                                            Modificar
 
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <form asp-action="AltaEstado"
-                                              asp-route-id="@inquilino.ID_inquilino"
-                                              method="post"
-                                              class="d-inline">
+                                        </a>
 
-                                            <button type="submit"
-                                                    class="btn btn-outline-success btn-sm ms-1">
-                                                Dar de alta
-                                            </button>
 
-                                        </form>
-                                    }
+                                        @if (inquilino.Estado)
+                                        {
+                                            <form asp-action="Baja"
+                                                  asp-route-id="@inquilino.ID_inquilino"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm">
+
+                                                    Dar de baja
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="AltaEstado"
+                                                  asp-route-id="@inquilino.ID_inquilino"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-success btn-sm">
+
+                                                    Dar de alta
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+                                    </div>
 
                                 </td>
 
@@ -243,51 +371,81 @@
 
         </div>
 
-        <!-- Paginación -->
+
+        <!-- PAGINACIÓN -->
         @if (cantidadPaginas > 1)
         {
-            <div class="card-footer bg-white">
+            <div class="card-footer bg-white border-0 py-4">
 
-                <nav aria-label="Paginación">
+                <nav aria-label="Paginación de inquilinos">
 
                     <ul class="pagination justify-content-center mb-0">
 
-                        <!-- Anterior -->
-                        <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+                        <!-- ANTERIOR -->
+                        <li class="page-item
+                                   @(paginaActual <= 1 ? "disabled" : "")">
 
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-buscar="@buscar"
-                               asp-route-pagina="@(paginaActual - 1)">
-                                Anterior
-                            </a>
+                            @if (paginaActual > 1)
+                            {
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-buscar="@buscar"
+                                   asp-route-pagina="@(paginaActual - 1)">
+
+                                    ← Anterior
+
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="page-link">
+                                    ← Anterior
+                                </span>
+                            }
 
                         </li>
 
-                        <!-- Números -->
+
+                        <!-- NÚMEROS -->
                         @for (int i = 1; i <= cantidadPaginas; i++)
                         {
-                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                            <li class="page-item
+                                       @(i == paginaActual ? "active" : "")">
 
                                 <a class="page-link"
                                    asp-action="Index"
                                    asp-route-buscar="@buscar"
                                    asp-route-pagina="@i">
+
                                     @i
+
                                 </a>
 
                             </li>
                         }
 
-                        <!-- Siguiente -->
-                        <li class="page-item @(paginaActual == cantidadPaginas ? "disabled" : "")">
 
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-buscar="@buscar"
-                               asp-route-pagina="@(paginaActual + 1)">
-                                Siguiente
-                            </a>
+                        <!-- SIGUIENTE -->
+                        <li class="page-item
+                                   @(paginaActual >= cantidadPaginas ? "disabled" : "")">
+
+                            @if (paginaActual < cantidadPaginas)
+                            {
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-buscar="@buscar"
+                                   asp-route-pagina="@(paginaActual + 1)">
+
+                                    Siguiente →
+
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="page-link">
+                                    Siguiente →
+                                </span>
+                            }
 
                         </li>
 

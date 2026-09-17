@@ -4,294 +4,404 @@
     ViewData["Title"] = "Editar Inmueble";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8 col-xl-7">
+<div class="py-4">
 
-            <div class="card border-0 shadow rounded-4 overflow-hidden">
+    <!-- ENCABEZADO -->
+    <div class="mb-4">
 
-                <div class="card-header bg-primary text-white border-0 p-4">
-                    <div>
-                        <h1 class="h3 mb-1">Editar inmueble</h1>
-                        <p class="mb-0 text-white-50">
-                            Modificá los datos del inmueble.
-                        </p>
-                    </div>
-                </div>
+        <p class="text-uppercase text-secondary fw-semibold mb-2"
+           style="letter-spacing: 1.5px;">
+            Gestión inmobiliaria
+        </p>
 
-                <div class="card-body p-4 p-md-5">
+        <h1 class="fw-semibold mb-2">
+            Editar inmueble
+        </h1>
 
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3">
-                    </div>
+        <p class="text-secondary mb-0">
+            Modificá los datos del inmueble.
+        </p>
 
-                    <form asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
-
-                        <input type="hidden" asp-for="ID_inmueble" />
-
-                        <!-- PROPIETARIO -->
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">
-                                Propietario
-                            </label>
-
-                            <div class="input-group">
-
-                                <select name="DuenioId" class="form-select">
-
-                                    <option value="">
-                                        Seleccioná un propietario
-                                    </option>
-
-                                    @foreach (var propietario in ViewBag.Propietarios)
-                                    {
-                                        if (Model.Duenio != null &&
-                                            propietario.ID_propietario == Model.Duenio.ID_propietario)
-                                        {
-                                            <option value="@propietario.ID_propietario" selected>
-                                                @propietario.Nombre @propietario.Apellido
-                                            </option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@propietario.ID_propietario">
-                                                @propietario.Nombre @propietario.Apellido
-                                            </option>
-                                        }
-                                    }
-
-                                </select>
-
-                                <a asp-controller="Propietarios" asp-action="Create"
-                                   asp-route-returnUrl="/Inmuebles/Edit/@Model.ID_inmueble"
-                                   class="btn btn-outline-primary">
-                                    + Nuevo propietario
-                                </a>
-
-                            </div>
-                        </div>
+    </div>
 
 
-                        <!-- TIPO DE INMUEBLE -->
-                        <div class="col-12">
+    <!-- FORMULARIO -->
+    <div class="card border-0 shadow-sm rounded-4">
 
-                            <label class="form-label fw-semibold">
-                                Tipo de inmueble
-                            </label>
+        <div class="card-body p-4 p-lg-5">
 
-                            <div class="input-group">
-
-                                <select name="TipoId" class="form-select">
-
-                                    <option value="">
-                                        Seleccioná un tipo
-                                    </option>
-
-                                    @foreach (var tipo in ViewBag.Tipos)
-                                    {
-                                        if (Model.Tipo != null &&
-                                            tipo.ID_tipo == Model.Tipo.ID_tipo)
-                                        {
-                                            <option value="@tipo.ID_tipo" selected>
-                                                @tipo.Nombre
-                                            </option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@tipo.ID_tipo">
-                                                @tipo.Nombre
-                                            </option>
-                                        }
-                                    }
-
-                                </select>
-
-                                <a asp-controller="TipoInmuebles" asp-action="Create"
-                                   asp-route-returnUrl="/Inmuebles/Edit/@Model.ID_inmueble"
-                                   class="btn btn-outline-primary">
-                                    + Nuevo tipo
-                                </a>
-
-                            </div>
-
-                        </div>
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-4">
+            </div>
 
 
-                        <!-- DIRECCIÓN -->
-                        <div class="col-12">
+            <form asp-action="Edit"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="row g-4">
 
-                            <label asp-for="Direccion" class="form-label fw-semibold">
-                            </label>
-
-                            <input asp-for="Direccion" class="form-control" />
-
-                            <span asp-validation-for="Direccion" class="text-danger small d-block mt-1">
-                            </span>
-
-                        </div>
+                <input type="hidden" asp-for="ID_inmueble" />
 
 
-                        <!-- CUPO -->
-                        <div class="col-md-6">
+                <!-- PROPIETARIO -->
+                <div class="col-12">
 
-                            <label asp-for="Cupo" class="form-label fw-semibold">
-                            </label>
+                    <label class="form-label fw-semibold">
+                        Propietario
+                    </label>
 
-                            <input asp-for="Cupo" type="number" min="1" class="form-control" />
+                    <div class="input-group">
 
-                            <span asp-validation-for="Cupo" class="text-danger small d-block mt-1">
-                            </span>
+                        <select name="DuenioId"
+                                class="form-select">
 
-                        </div>
+                            <option value="">
+                                Seleccioná un propietario
+                            </option>
 
-
-                        <!-- COORDENADAS -->
-                        <div class="col-md-6">
-
-                            <label asp-for="Coordenadas" class="form-label fw-semibold">
-                            </label>
-
-                            <input asp-for="Coordenadas" type="number" step="any" class="form-control" />
-
-                            <span asp-validation-for="Coordenadas" class="text-danger small d-block mt-1">
-                            </span>
-
-                        </div>
-
-
-                        <!-- PRECIO POR DÍA -->
-                        <div class="col-md-6">
-
-                            <label asp-for="PrecioPorDia" class="form-label fw-semibold">
-                                Precio por día
-                            </label>
-
-                            <input asp-for="PrecioPorDia" type="number" step="0.01" min="0" class="form-control" />
-
-                            <span asp-validation-for="PrecioPorDia" class="text-danger small d-block mt-1">
-                            </span>
-
-                        </div>
-
-
-                        <!-- PORCENTAJE DE RESERVA -->
-                        <div class="col-md-6">
-
-                            <label asp-for="PorcentajeReserva" class="form-label fw-semibold">
-                                Porcentaje de reserva
-                            </label>
-
-                            <div class="input-group">
-
-                                <input asp-for="PorcentajeReserva" type="number" step="0.01" min="0" max="100"
-                                       class="form-control" />
-
-                                <span class="input-group-text">
-                                    %
-                                </span>
-
-                            </div>
-
-                            <span asp-validation-for="PorcentajeReserva" class="text-danger small d-block mt-1">
-                            </span>
-
-                        </div>
-
-
-                        <!-- IMÁGENES DEL INMUEBLE -->
-                        <div class="col-12">
-
-                            <div class="border-top pt-4 mt-2">
-
-                                <h5 class="mb-3">
-                                    Imágenes del inmueble
-                                </h5>
-
-                                @if (Model.Imagenes != null && Model.Imagenes.Count > 0)
+                            @foreach (var propietario in ViewBag.Propietarios)
+                            {
+                                if (Model.Duenio != null &&
+                                    propietario.ID_propietario == Model.Duenio.ID_propietario)
                                 {
-                                    <div class="row g-3 mb-4">
-
-                                        @foreach (var imagen in Model.Imagenes)
-                                        {
-                                            <div class="col-12 col-sm-6 col-md-4">
-
-                                                <div class="card border-0 shadow-sm overflow-hidden">
-
-                                                    <img src="@imagen.Url" alt="Imagen del inmueble"
-                                                         style="height: 180px; width: 100%; object-fit: cover;" />
-
-                                                    <div class="card-body p-2">
-                                                        <button type="submit"
-                                                                class="btn btn-outline-danger btn-sm w-100"
-                                                                form="delete-image-form-@imagen.Id"
-                                                                onclick="return confirm('¿Querés eliminar esta imagen?');">
-                                                            Eliminar imagen
-                                                        </button>
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-                                        }
-                                    </div>
+                                    <option value="@propietario.ID_propietario"
+                                            selected>
+                                        @propietario.Nombre @propietario.Apellido
+                                    </option>
                                 }
                                 else
                                 {
-                                    <div class="alert alert-light border mb-4">
-                                        Este inmueble no tiene imágenes cargadas.
-                                    </div>
+                                    <option value="@propietario.ID_propietario">
+                                        @propietario.Nombre @propietario.Apellido
+                                    </option>
                                 }
+                            }
 
-                                <label class="form-label fw-semibold">
-                                    Agregar nuevas imágenes
-                                </label>
+                        </select>
 
-                                <input type="file" name="imagenes" class="form-control" multiple accept="image/*" />
+                        <a asp-controller="Propietarios"
+                           asp-action="Create"
+                           asp-route-returnUrl="/Inmuebles/Edit/@Model.ID_inmueble"
+                           class="btn btn-outline-secondary">
 
-                                <div class="form-text">
-                                    Podés seleccionar varias imágenes.
-                                </div>
+                            + Nuevo propietario
 
-                            </div>
+                        </a>
 
-                        </div>
-
-
-                        <!-- BOTONES -->
-                        <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2 align-items-sm-center mt-4 pt-3 border-top">
-
-                            <a asp-action="Index" class="btn btn-outline-secondary">
-                                ← Volver
-                            </a>
-
-                            <button type="submit" class="btn btn-primary px-4">
-                                Guardar cambios
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                    @if (Model.Imagenes != null && Model.Imagenes.Count > 0)
-                    {
-                        foreach (var imagen in Model.Imagenes)
-                        {
-                            <form asp-action="EliminarImagen" method="post" id="delete-image-form-@imagen.Id" style="display: none;"
-                                  onsubmit="return confirm('¿Querés eliminar esta imagen?');">
-                                <input type="hidden" name="id" value="@imagen.Id" />
-                            </form>
-                        }
-                    }
+                    </div>
 
                 </div>
 
-            </div>
+
+                <!-- TIPO DE INMUEBLE -->
+                <div class="col-12">
+
+                    <label class="form-label fw-semibold">
+                        Tipo de inmueble
+                    </label>
+
+                    <div class="input-group">
+
+                        <select name="TipoId"
+                                class="form-select">
+
+                            <option value="">
+                                Seleccioná un tipo
+                            </option>
+
+                            @foreach (var tipo in ViewBag.Tipos)
+                            {
+                                if (Model.Tipo != null &&
+                                    tipo.ID_tipo == Model.Tipo.ID_tipo)
+                                {
+                                    <option value="@tipo.ID_tipo"
+                                            selected>
+                                        @tipo.Nombre
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@tipo.ID_tipo">
+                                        @tipo.Nombre
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <a asp-controller="TipoInmuebles"
+                           asp-action="Create"
+                           asp-route-returnUrl="/Inmuebles/Edit/@Model.ID_inmueble"
+                           class="btn btn-outline-secondary">
+
+                            + Nuevo tipo
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DIRECCIÓN -->
+                <div class="col-12">
+
+                    <label asp-for="Direccion"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <input asp-for="Direccion"
+                           class="form-control" />
+
+                    <span asp-validation-for="Direccion"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- CUPO -->
+                <div class="col-md-6">
+
+                    <label asp-for="Cupo"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <input asp-for="Cupo"
+                           type="number"
+                           min="1"
+                           class="form-control" />
+
+                    <span asp-validation-for="Cupo"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- COORDENADAS -->
+                <div class="col-md-6">
+
+                    <label asp-for="Coordenadas"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <input asp-for="Coordenadas"
+                           type="number"
+                           step="any"
+                           class="form-control" />
+
+                    <span asp-validation-for="Coordenadas"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- PRECIO POR DÍA -->
+                <div class="col-md-6">
+
+                    <label asp-for="PrecioPorDia"
+                           class="form-label fw-semibold">
+
+                        Precio por día
+
+                    </label>
+
+                    <input asp-for="PrecioPorDia"
+                           type="number"
+                           step="0.01"
+                           min="0"
+                           class="form-control" />
+
+                    <span asp-validation-for="PrecioPorDia"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- PORCENTAJE DE RESERVA -->
+                <div class="col-md-6">
+
+                    <label asp-for="PorcentajeReserva"
+                           class="form-label fw-semibold">
+
+                        Porcentaje de reserva
+
+                    </label>
+
+                    <div class="input-group">
+
+                        <input asp-for="PorcentajeReserva"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               max="100"
+                               class="form-control" />
+
+                        <span class="input-group-text">
+                            %
+                        </span>
+
+                    </div>
+
+                    <span asp-validation-for="PorcentajeReserva"
+                          class="text-danger small d-block mt-1">
+                    </span>
+
+                </div>
+
+
+                <!-- IMÁGENES DEL INMUEBLE -->
+                <div class="col-12">
+
+                    <div class="border-top pt-4 mt-2">
+
+                        <h5 class="fw-semibold mb-3">
+                            Imágenes del inmueble
+                        </h5>
+
+
+                        @if (Model.Imagenes != null &&
+                             Model.Imagenes.Count > 0)
+                        {
+
+                            <!-- IMÁGENES EXISTENTES -->
+                            <div class="row g-3 mb-4">
+
+                                @foreach (var imagen in Model.Imagenes)
+                                {
+                                    <div class="col-12 col-sm-6 col-md-4">
+
+                                        <div class="card border-0 shadow-sm overflow-hidden">
+
+                                            <img src="@imagen.Url"
+                                                 alt="Imagen del inmueble"
+                                                 style="height: 180px;
+                                                        width: 100%;
+                                                        object-fit: cover;" />
+
+                                            <div class="card-body p-2">
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm w-100"
+                                                        form="delete-image-form-@imagen.Id"
+                                                        onclick="return confirm('¿Querés eliminar esta imagen?');">
+
+                                                    Eliminar imagen
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        }
+                        else
+                        {
+
+                            <div class="alert alert-light border mb-4">
+
+                                Este inmueble no tiene imágenes cargadas.
+
+                            </div>
+
+                        }
+
+
+                        <!-- AGREGAR NUEVAS -->
+                        <label class="form-label fw-semibold">
+
+                            Agregar nuevas imágenes
+
+                        </label>
+
+                        <input type="file"
+                               name="imagenes"
+                               class="form-control"
+                               multiple
+                               accept="image/*" />
+
+                        <div class="form-text">
+
+                            Podés seleccionar varias imágenes.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOTONES -->
+                <div class="col-12">
+
+                    <hr class="my-2">
+
+                    <div class="d-flex flex-column flex-sm-row
+                                justify-content-between
+                                gap-2
+                                align-items-sm-center
+                                pt-3">
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            ← Volver
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-dark px-4">
+
+                            Guardar cambios
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <!-- FORMULARIOS OCULTOS PARA ELIMINAR IMÁGENES -->
+            @if (Model.Imagenes != null &&
+                 Model.Imagenes.Count > 0)
+            {
+                foreach (var imagen in Model.Imagenes)
+                {
+                    <form asp-action="EliminarImagen"
+                          method="post"
+                          id="delete-image-form-@imagen.Id"
+                          style="display: none;"
+                          onsubmit="return confirm('¿Querés eliminar esta imagen?');">
+
+                        <input type="hidden"
+                               name="id"
+                               value="@imagen.Id" />
+
+                    </form>
+                }
+            }
 
         </div>
+
     </div>
+
 </div>
 
+
 @section Scripts {
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
 }
