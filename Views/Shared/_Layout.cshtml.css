@@ -82,10 +82,14 @@ button.accept-policy {
     border-bottom: 1px solid #e5e5e5;
 
     box-shadow: 0 .15rem .4rem rgba(0, 0, 0, .04);
+
+    box-sizing: border-box;
 }
 
 
-/* PARTE IZQUIERDA */
+/* =========================================================
+   PARTE IZQUIERDA
+   ========================================================= */
 
 .navbar-left {
     display: flex;
@@ -102,10 +106,10 @@ button.accept-policy {
     width: 44px;
     height: 44px;
 
-    border: none;
+    border: 1px solid #dee2e6;
     border-radius: 8px;
 
-    background-color: transparent;
+    background-color: #ffffff;
 
     font-size: 25px;
     line-height: 1;
@@ -116,11 +120,14 @@ button.accept-policy {
     align-items: center;
     justify-content: center;
 
-    transition: background-color .2s ease;
+    transition:
+        background-color .2s ease,
+        border-color .2s ease;
 }
 
 .menu-button:hover {
-    background-color: #f1f1f1;
+    background-color: #f5f5f5;
+    border-color: #ced4da;
 }
 
 
@@ -129,7 +136,7 @@ button.accept-policy {
    ========================================================= */
 
 .navbar-brand-custom {
-    color: #222;
+    color: #222222;
 
     text-decoration: none;
 
@@ -138,7 +145,7 @@ button.accept-policy {
 }
 
 .navbar-brand-custom:hover {
-    color: #222;
+    color: #222222;
 }
 
 
@@ -148,7 +155,7 @@ button.accept-policy {
 
 .navbar-user {
     font-size: 15px;
-    color: #333;
+    color: #333333;
 }
 
 .navbar-user a {
@@ -156,8 +163,12 @@ button.accept-policy {
     text-decoration: none;
 }
 
+.navbar-user a:hover {
+    text-decoration: underline;
+}
+
 .user-role {
-    color: #666;
+    color: #666666;
 }
 
 
@@ -185,6 +196,8 @@ button.accept-policy {
     transition: transform .25s ease;
 
     overflow-y: auto;
+
+    box-sizing: border-box;
 }
 
 
@@ -212,10 +225,14 @@ button.accept-policy {
 
     font-size: 20px;
     font-weight: 500;
+
+    box-sizing: border-box;
 }
 
 
-/* BOTÓN CERRAR */
+/* =========================================================
+   BOTÓN CERRAR
+   ========================================================= */
 
 .close-menu {
     width: 40px;
@@ -224,7 +241,7 @@ button.accept-policy {
     border: none;
     border-radius: 8px;
 
-    background: transparent;
+    background-color: transparent;
 
     font-size: 30px;
     line-height: 1;
@@ -234,6 +251,8 @@ button.accept-policy {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    transition: background-color .2s ease;
 }
 
 .close-menu:hover {
@@ -272,7 +291,7 @@ button.accept-policy {
 
     background: transparent;
 
-    color: #333;
+    color: #333333;
 
     text-decoration: none;
 
@@ -281,11 +300,15 @@ button.accept-policy {
     cursor: pointer;
 
     box-sizing: border-box;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease;
 }
 
 .side-menu-link:hover {
     background-color: #f2f2f2;
-    color: #111;
+    color: #111111;
 }
 
 
@@ -353,18 +376,22 @@ button.accept-policy {
 
     padding: 9px 12px;
 
-    color: #555;
+    color: #555555;
 
     text-decoration: none;
 
     font-size: 14px;
 
     border-radius: 6px;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease;
 }
 
 .submenu a:hover {
     background-color: #f2f2f2;
-    color: #111;
+    color: #111111;
 }
 
 
@@ -443,10 +470,6 @@ button.accept-policy {
    ========================================================= */
 
 .footer {
-    position: absolute;
-
-    bottom: 0;
-
     width: 100%;
 
     white-space: nowrap;
@@ -476,5 +499,4 @@ button.accept-policy {
     .side-menu {
         width: 270px;
     }
-
 }

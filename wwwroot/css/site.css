@@ -1,31 +1,517 @@
+/* =========================================================
+   ESTILOS GENERALES
+   ========================================================= */
+
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    margin-bottom: 60px;
+    min-height: 100vh;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+
+/* =========================================================
+   FOCUS - BOOTSTRAP
+   ========================================================= */
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow:
+        0 0 0 0.1rem white,
+        0 0 0 0.25rem #258cfb;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+
+/* =========================================================
+   FORMULARIOS BOOTSTRAP
+   ========================================================= */
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+
+/* =========================================================
+   BARRA SUPERIOR
+   ========================================================= */
+
+.top-navbar {
+    width: 100%;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    background-color: #ffffff;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PARTE IZQUIERDA DEL NAVBAR
+   ========================================================= */
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+/* =========================================================
+   BOTÓN MENÚ
+   ========================================================= */
+
+.menu-button {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #dedede;
+    border-radius: 8px;
+
+    background-color: #ffffff;
+
+    color: #333333;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.menu-button:hover {
+    background-color: #f5f5f5;
+    border-color: #cccccc;
+}
+
+
+/* =========================================================
+   NOMBRE DE LA INMOBILIARIA
+   ========================================================= */
+
+.navbar-brand-custom {
+    color: #222222;
+
+    text-decoration: none;
+
+    font-size: 21px;
+    font-weight: 500;
+
+    letter-spacing: -0.2px;
+}
+
+.navbar-brand-custom:hover {
+    color: #222222;
+}
+
+
+/* =========================================================
+   USUARIO
+   ========================================================= */
+
+.navbar-user {
+    color: #444444;
+
+    font-size: 14px;
+}
+
+.navbar-user a {
+    color: #333333;
+
+    text-decoration: none;
+}
+
+.navbar-user a:hover {
+    color: #000000;
+
+    text-decoration: underline;
+}
+
+.user-role {
+    color: #777777;
+}
+
+
+/* =========================================================
+   MENÚ LATERAL
+   ========================================================= */
+
+.side-menu {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 285px;
+    height: 100vh;
+
+    background-color: #ffffff;
+
+    z-index: 1050;
+
+    box-shadow:
+        5px 0 20px rgba(0, 0, 0, 0.12);
+
+    transform: translateX(-100%);
+
+    transition: transform 0.25s ease;
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
+}
+
+
+/* MENÚ ABIERTO */
+
+.side-menu.menu-open {
+    transform: translateX(0);
+}
+
+
+/* =========================================================
+   CABECERA DEL MENÚ
+   ========================================================= */
+
+.side-menu-header {
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    font-size: 19px;
+    font-weight: 500;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BOTÓN CERRAR
+   ========================================================= */
+
+.close-menu {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: transparent;
+
+    color: #333333;
+
+    font-size: 29px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.close-menu:hover {
+    background-color: #f1f1f1;
+}
+
+
+/* =========================================================
+   CONTENIDO DEL MENÚ
+   ========================================================= */
+
+.side-menu-content {
+    padding: 14px 10px;
+}
+
+
+/* =========================================================
+   ENLACES DEL MENÚ
+   ========================================================= */
+
+.side-menu-link {
+    width: 100%;
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 13px;
+
+    margin-bottom: 3px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: transparent;
+
+    color: #333333;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.side-menu-link:hover {
+    background-color: #f2f2f2;
+
+    color: #111111;
+}
+
+
+/* =========================================================
+   ICONOS
+   ========================================================= */
+
+.menu-icon {
+    width: 25px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: #555555;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   DROPDOWN DEL MENÚ
+   ========================================================= */
+
+.menu-dropdown {
+    justify-content: flex-start;
+}
+
+.dropdown-arrow {
+    margin-left: auto;
+
+    color: #777777;
+
+    font-size: 21px;
+
+    transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.arrow-open {
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   SUBMENÚ
+   ========================================================= */
+
+.submenu {
+    display: none;
+
+    padding-left: 49px;
+
+    margin-bottom: 5px;
+}
+
+.submenu.submenu-open {
+    display: block;
+}
+
+
+/* OPCIONES DEL SUBMENÚ */
+
+.submenu a {
+    display: block;
+
+    padding: 9px 12px;
+
+    border-radius: 6px;
+
+    color: #666666;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.submenu a:hover {
+    background-color: #f2f2f2;
+
+    color: #222222;
+}
+
+
+/* =========================================================
+   SEPARADOR
+   ========================================================= */
+
+.menu-separator {
+    height: 1px;
+
+    margin: 13px 8px;
+
+    background-color: #e5e5e5;
+}
+
+
+/* =========================================================
+   CERRAR SESIÓN
+   ========================================================= */
+
+.logout-link {
+    color: #b02a37;
+}
+
+.logout-link .menu-icon {
+    color: #b02a37;
+}
+
+.logout-link:hover {
+    color: #b02a37;
+
+    background-color: #fff1f2;
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+.menu-overlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.35);
+
+    z-index: 1040;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.menu-overlay.overlay-open {
+    opacity: 1;
+
+    visibility: visible;
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+   ========================================================= */
+
+.main-container {
+    padding-top: 20px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+    width: 100%;
+
+    white-space: nowrap;
+
+    line-height: 60px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .top-navbar {
+        height: 65px;
+
+        padding: 0 12px;
+    }
+
+    .navbar-brand-custom {
+        font-size: 18px;
+    }
+
+    .navbar-user {
+        font-size: 13px;
+    }
+
+    .side-menu {
+        width: 270px;
+    }
 }

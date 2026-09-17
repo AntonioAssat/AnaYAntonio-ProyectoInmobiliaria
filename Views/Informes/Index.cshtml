@@ -18,19 +18,15 @@
             cupo = i.Cupo,
             precioPorDia = i.PrecioPorDia,
             estado = i.Estado,
-
             idPropietario = i.Duenio?.ID_propietario ?? 0,
-
             propietario = i.Duenio != null
                 ? $"{i.Duenio.Nombre} {i.Duenio.Apellido}"
                 : "Sin propietario",
-
             tipo = i.Tipo != null
                 ? i.Tipo.Nombre
                 : "Sin tipo"
         })
     );
-
 
     // ============================================================
     // PROPIETARIOS
@@ -48,131 +44,187 @@
 }
 
 
-<div id="app" class="container mt-4">
+<div id="informesApp" class="py-4">
 
-    <h2 class="mb-4">
-        Informes
-    </h2>
+    <!-- =========================================================
+         ENCABEZADO
+         ========================================================= -->
 
+    <div class="mb-4">
 
-    <div class="card shadow-sm">
+        <p class="text-uppercase text-secondary fw-semibold mb-2"
+           style="letter-spacing: 1.5px;">
 
-        <div class="card-body">
+            Gestión inmobiliaria
 
+        </p>
 
-            <!-- ================================================= -->
-            <!-- SELECTOR DE INFORME -->
-            <!-- ================================================= -->
+        <h1 class="fw-semibold mb-2">
 
-            <div class="mb-4">
+            Informes
 
-                <label class="form-label fw-bold">
-                    Seleccionar informe
-                </label>
+        </h1>
 
-                <select v-model="informeSeleccionado"
-                        class="form-select">
+        <p class="text-secondary mb-0">
 
-                    <option value="1">
-                        Informe 1 - Inmuebles + dueño
-                    </option>
+            Consultá información y estadísticas de
+            propiedades, reservas y pagos.
 
-                    <option value="2">
-                        Informe 2 - Inmuebles por propietario
-                    </option>
+        </p>
 
-                    <option value="3">
-                        Informe 3 - Inmuebles más reservados
-                    </option>
-
-                    <option value="4">
-                        Informe 4 - Inmuebles sin reservas
-                    </option>
-
-                    <option value="5">
-                        Informe 5 - Reservas vigentes
-                    </option>
-
-                    <option value="6">
-                        Informe 6 - Reservas que terminan
-                    </option>
-
-                    <option value="7">
-                        Informe 7 - Pagos de una reserva
-                    </option>
-
-                    <option value="8">
-                        Informe 8 - Inmuebles disponibles por fechas
-                    </option>
-
-                </select>
-
-            </div>
+    </div>
 
 
+    <!-- =========================================================
+         SELECTOR DE INFORME
+         ========================================================= -->
 
-            <!-- ================================================= -->
-            <!-- INFORME 1 -->
-            <!-- ================================================= -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <label class="form-label fw-semibold">
+
+                Seleccionar informe
+
+            </label>
+
+            <select v-model="informeSeleccionado"
+                    class="form-select">
+
+                <option value="1">
+                    Informe 1 - Inmuebles y propietario
+                </option>
+
+                <option value="2">
+                    Informe 2 - Inmuebles por propietario
+                </option>
+
+                <option value="3">
+                    Informe 3 - Inmuebles más reservados
+                </option>
+
+                <option value="4">
+                    Informe 4 - Inmuebles sin reservas
+                </option>
+
+                <option value="5">
+                    Informe 5 - Reservas vigentes
+                </option>
+
+                <option value="6">
+                    Informe 6 - Reservas que terminan
+                </option>
+
+                <option value="7">
+                    Informe 7 - Pagos de una reserva
+                </option>
+
+                <option value="8">
+                    Informe 8 - Inmuebles disponibles por fechas
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         CONTENEDOR DEL INFORME
+         ========================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4 p-lg-5">
+
+
+            <!-- =================================================
+                 INFORME 1
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '1'">
 
-                <h4 class="mb-3">
-                    Informe 1 - Inmuebles + dueño
-                </h4>
-
-                <p class="text-muted">
-                    Muestra todos los inmuebles junto con su propietario.
-                    La disponibilidad corresponde al estado del inmueble.
-                </p>
-
-
                 <div class="mb-4">
 
-                    <label class="form-label">
-                        Estado
-                    </label>
+                    <h2 class="h4 fw-semibold mb-2">
 
-                    <select v-model="filtroEstado"
-                            class="form-select">
+                        Inmuebles y propietario
 
-                        <option value="todos">
-                            Todos
-                        </option>
+                    </h2>
 
-                        <option value="disponibles">
-                            Disponibles
-                        </option>
+                    <p class="text-secondary mb-0">
 
-                        <option value="noDisponibles">
-                            No disponibles
-                        </option>
+                        Muestra todos los inmuebles junto con
+                        su propietario y estado actual.
 
-                    </select>
+                    </p>
 
                 </div>
 
 
+                <!-- FILTRO -->
+
+                <div class="row mb-4">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Estado
+
+                        </label>
+
+                        <select v-model="filtroEstado"
+                                class="form-select">
+
+                            <option value="todos">
+                                Todos
+                            </option>
+
+                            <option value="disponibles">
+                                Disponibles
+                            </option>
+
+                            <option value="noDisponibles">
+                                No disponibles
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABLA -->
+
                 <div class="table-responsive">
 
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-hover align-middle mb-0">
 
                         <thead class="table-light">
 
                             <tr>
 
                                 <th>ID</th>
+
                                 <th>Dirección</th>
-                                <th>Dueño</th>
+
+                                <th>Propietario</th>
+
                                 <th>Tipo</th>
+
                                 <th>Cupo</th>
+
                                 <th>Precio por día</th>
+
                                 <th>Estado</th>
 
                             </tr>
 
                         </thead>
-
 
                         <tbody>
 
@@ -206,14 +258,14 @@
                                 <td>
 
                                     <span v-if="inmueble.estado"
-                                          class="badge bg-success">
+                                          class="badge text-bg-success">
 
                                         Disponible
 
                                     </span>
 
                                     <span v-else
-                                          class="badge bg-danger">
+                                          class="badge text-bg-secondary">
 
                                         No disponible
 
@@ -227,7 +279,7 @@
                             <tr v-if="inmueblesFiltrados.length === 0">
 
                                 <td colspan="7"
-                                    class="text-center text-muted">
+                                    class="text-center text-secondary py-4">
 
                                     No hay inmuebles para el filtro seleccionado.
 
@@ -244,59 +296,76 @@
             </div>
 
 
-
-            <!-- ================================================= -->
-            <!-- INFORME 2 -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 INFORME 2
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '2'">
 
-                <h4 class="mb-3">
-                    Informe 2 - Inmuebles por propietario
-                </h4>
-
-                <p class="text-muted">
-                    Seleccione un propietario para consultar sus inmuebles.
-                </p>
-
-
                 <div class="mb-4">
 
-                    <label class="form-label">
-                        Propietario
-                    </label>
+                    <h2 class="h4 fw-semibold mb-2">
 
-                    <select v-model="propietarioSeleccionado"
-                            class="form-select">
+                        Inmuebles por propietario
 
-                        <option value="">
-                            Seleccione un propietario
-                        </option>
+                    </h2>
 
-                        <option v-for="propietario in propietarios"
-                                :key="propietario.id"
-                                :value="String(propietario.id)">
+                    <p class="text-secondary mb-0">
 
-                            {{ propietario.nombre }}
+                        Seleccioná un propietario para consultar
+                        los inmuebles que tiene registrados.
 
-                        </option>
-
-                    </select>
+                    </p>
 
                 </div>
 
 
-                <button class="btn btn-primary mb-4"
-                        v-if="propietarioSeleccionado !== ''"
-                        v-on:click="buscarInforme2">
+                <div class="row align-items-end g-3 mb-4">
 
-                    Buscar inmuebles
+                    <div class="col-md-6">
 
-                </button>
+                        <label class="form-label fw-semibold">
+
+                            Propietario
+
+                        </label>
+
+                        <select v-model="propietarioSeleccionado"
+                                class="form-select">
+
+                            <option value="">
+                                Seleccione un propietario
+                            </option>
+
+                            <option v-for="propietario in propietarios"
+                                    :key="propietario.id"
+                                    :value="String(propietario.id)">
+
+                                {{ propietario.nombre }}
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-auto">
+
+                        <button class="btn btn-dark"
+                                v-if="propietarioSeleccionado !== ''"
+                                v-on:click="buscarInforme2">
+
+                            Buscar inmuebles
+
+                        </button>
+
+                    </div>
+
+                </div>
 
 
                 <div v-if="cargando"
-                     class="alert alert-info">
+                     class="alert alert-light border">
 
                     Cargando resultados...
 
@@ -307,23 +376,27 @@
 
                     <div class="table-responsive">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-hover align-middle mb-0">
 
                             <thead class="table-light">
 
                                 <tr>
 
                                     <th>ID</th>
+
                                     <th>Dirección</th>
+
                                     <th>Tipo</th>
+
                                     <th>Cupo</th>
+
                                     <th>Precio por día</th>
+
                                     <th>Estado</th>
 
                                 </tr>
 
                             </thead>
-
 
                             <tbody>
 
@@ -353,14 +426,14 @@
                                     <td>
 
                                         <span v-if="inmueble.estado"
-                                              class="badge bg-success">
+                                              class="badge text-bg-success">
 
                                             Disponible
 
                                         </span>
 
                                         <span v-else
-                                              class="badge bg-danger">
+                                              class="badge text-bg-secondary">
 
                                             No disponible
 
@@ -374,9 +447,10 @@
                                 <tr v-if="resultadoInforme2.length === 0">
 
                                     <td colspan="6"
-                                        class="text-center text-muted">
+                                        class="text-center text-secondary py-4">
 
-                                        Este propietario no tiene inmuebles registrados.
+                                        Este propietario no tiene
+                                        inmuebles registrados.
 
                                     </td>
 
@@ -393,33 +467,39 @@
             </div>
 
 
-
-            <!-- ================================================= -->
-            <!-- INFORME 3 -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 INFORME 3
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '3'">
 
-                <h4 class="mb-3">
-                    Informe 3 - Inmuebles más reservados
-                </h4>
+                <div class="mb-4">
 
-                <p class="text-muted">
-                    Inmuebles ordenados por cantidad de reservas
-                    durante los últimos 365 días.
-                </p>
+                    <h2 class="h4 fw-semibold mb-2">
 
+                        Inmuebles más reservados
 
-                <button class="btn btn-primary mb-4"
-                        v-on:click="buscarInforme3">
+                    </h2>
 
-                    Buscar informe
+                    <p class="text-secondary mb-4">
 
-                </button>
+                        Inmuebles ordenados por cantidad de reservas
+                        durante los últimos 365 días.
+
+                    </p>
+
+                    <button class="btn btn-dark"
+                            v-on:click="buscarInforme3">
+
+                        Buscar informe
+
+                    </button>
+
+                </div>
 
 
                 <div v-if="cargando"
-                     class="alert alert-info">
+                     class="alert alert-light border">
 
                     Cargando resultados...
 
@@ -429,9 +509,10 @@
                 <div v-if="resultadoInforme3 !== null && !cargando">
 
                     <div v-if="resultadoInforme3.length === 0"
-                         class="alert alert-warning">
+                         class="alert alert-light border">
 
-                        No hay reservas registradas durante los últimos 365 días.
+                        No hay reservas registradas durante
+                        los últimos 365 días.
 
                     </div>
 
@@ -439,23 +520,27 @@
                     <div v-else
                          class="table-responsive">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-hover align-middle mb-0">
 
                             <thead class="table-light">
 
                                 <tr>
 
                                     <th>ID</th>
+
                                     <th>Dirección</th>
-                                    <th>Dueño</th>
+
+                                    <th>Propietario</th>
+
                                     <th>Tipo</th>
+
                                     <th>Cupo</th>
+
                                     <th>Precio por día</th>
 
                                 </tr>
 
                             </thead>
-
 
                             <tbody>
 
@@ -499,29 +584,38 @@
             </div>
 
 
-
-            <!-- ================================================= -->
-            <!-- INFORME 4 -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 INFORME 4
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '4'">
 
-                <h4 class="mb-3">
-                    Informe 4 - Inmuebles sin reservas
-                </h4>
+                <div class="mb-4">
 
-                <p class="text-muted">
-                    Muestra los inmuebles que no tuvieron reservas
-                    durante la cantidad de días indicada.
-                </p>
+                    <h2 class="h4 fw-semibold mb-2">
+
+                        Inmuebles sin reservas
+
+                    </h2>
+
+                    <p class="text-secondary">
+
+                        Muestra los inmuebles que no tuvieron
+                        reservas durante la cantidad de días indicada.
+
+                    </p>
+
+                </div>
 
 
-                <div class="row mb-4">
+                <div class="row align-items-end g-3 mb-4">
 
                     <div class="col-md-4">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
+
                             Cantidad de días
+
                         </label>
 
                         <input type="number"
@@ -531,19 +625,22 @@
 
                     </div>
 
+                    <div class="col-md-auto">
+
+                        <button class="btn btn-dark"
+                                v-on:click="buscarInforme4">
+
+                            Buscar informe
+
+                        </button>
+
+                    </div>
+
                 </div>
 
 
-                <button class="btn btn-primary mb-4"
-                        v-on:click="buscarInforme4">
-
-                    Buscar informe
-
-                </button>
-
-
                 <div v-if="cargando"
-                     class="alert alert-info">
+                     class="alert alert-light border">
 
                     Cargando resultados...
 
@@ -553,7 +650,7 @@
                 <div v-if="resultadoInforme4 !== null && !cargando">
 
                     <div v-if="resultadoInforme4.length === 0"
-                         class="alert alert-warning">
+                         class="alert alert-light border">
 
                         No se encontraron inmuebles sin reservas
                         durante el período seleccionado.
@@ -564,22 +661,25 @@
                     <div v-else
                          class="table-responsive">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-hover align-middle mb-0">
 
                             <thead class="table-light">
 
                                 <tr>
 
                                     <th>ID</th>
+
                                     <th>Dirección</th>
-                                    <th>Dueño</th>
+
+                                    <th>Propietario</th>
+
                                     <th>Tipo</th>
+
                                     <th>Estado</th>
 
                                 </tr>
 
                             </thead>
-
 
                             <tbody>
 
@@ -605,14 +705,14 @@
                                     <td>
 
                                         <span v-if="inmueble.estado"
-                                              class="badge bg-success">
+                                              class="badge text-bg-success">
 
                                             Disponible
 
                                         </span>
 
                                         <span v-else
-                                              class="badge bg-danger">
+                                              class="badge text-bg-secondary">
 
                                             No disponible
 
@@ -633,29 +733,38 @@
             </div>
 
 
-
-            <!-- ================================================= -->
-            <!-- INFORME 5 -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 INFORME 5
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '5'">
 
-                <h4 class="mb-3">
-                    Informe 5 - Reservas vigentes
-                </h4>
+                <div class="mb-4">
 
-                <p class="text-muted">
-                    Seleccione el período para consultar las reservas
-                    vigentes.
-                </p>
+                    <h2 class="h4 fw-semibold mb-2">
+
+                        Reservas vigentes
+
+                    </h2>
+
+                    <p class="text-secondary">
+
+                        Seleccioná el período para consultar
+                        las reservas vigentes.
+
+                    </p>
+
+                </div>
 
 
-                <div class="row mb-4">
+                <div class="row align-items-end g-3 mb-4">
 
                     <div class="col-md-4">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
+
                             Fecha desde
+
                         </label>
 
                         <input type="date"
@@ -667,8 +776,10 @@
 
                     <div class="col-md-4">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
+
                             Fecha hasta
+
                         </label>
 
                         <input type="date"
@@ -677,19 +788,23 @@
 
                     </div>
 
+
+                    <div class="col-md-auto">
+
+                        <button class="btn btn-dark"
+                                v-on:click="buscarInforme5">
+
+                            Buscar reservas
+
+                        </button>
+
+                    </div>
+
                 </div>
 
 
-                <button class="btn btn-primary mb-4"
-                        v-on:click="buscarInforme5">
-
-                    Buscar reservas
-
-                </button>
-
-
                 <div v-if="cargando"
-                     class="alert alert-info">
+                     class="alert alert-light border">
 
                     Cargando resultados...
 
@@ -699,9 +814,10 @@
                 <div v-if="resultadoInforme5 !== null && !cargando">
 
                     <div v-if="resultadoInforme5.length === 0"
-                         class="alert alert-warning">
+                         class="alert alert-light border">
 
-                        No hay reservas vigentes para las fechas seleccionadas.
+                        No hay reservas vigentes para
+                        las fechas seleccionadas.
 
                     </div>
 
@@ -709,23 +825,27 @@
                     <div v-else
                          class="table-responsive">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-hover align-middle mb-0">
 
                             <thead class="table-light">
 
                                 <tr>
 
                                     <th>Reserva</th>
+
                                     <th>Inquilino</th>
+
                                     <th>Inmueble</th>
+
                                     <th>Fecha inicio</th>
+
                                     <th>Fecha fin</th>
+
                                     <th>Monto por día</th>
 
                                 </tr>
 
                             </thead>
-
 
                             <tbody>
 
@@ -769,29 +889,38 @@
             </div>
 
 
-
-            <!-- ================================================= -->
-            <!-- INFORME 6 -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 INFORME 6
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '6'">
 
-                <h4 class="mb-3">
-                    Informe 6 - Reservas que terminan
-                </h4>
+                <div class="mb-4">
 
-                <p class="text-muted">
-                    Muestra las reservas que terminan dentro del
-                    plazo indicado.
-                </p>
+                    <h2 class="h4 fw-semibold mb-2">
+
+                        Reservas que terminan
+
+                    </h2>
+
+                    <p class="text-secondary">
+
+                        Muestra las reservas que terminan dentro
+                        del plazo indicado.
+
+                    </p>
+
+                </div>
 
 
-                <div class="row mb-4">
+                <div class="row align-items-end g-3 mb-4">
 
                     <div class="col-md-4">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
+
                             Terminan dentro de
+
                         </label>
 
                         <div class="input-group">
@@ -802,26 +931,32 @@
                                    class="form-control">
 
                             <span class="input-group-text">
+
                                 días
+
                             </span>
 
                         </div>
 
                     </div>
 
+
+                    <div class="col-md-auto">
+
+                        <button class="btn btn-dark"
+                                v-on:click="buscarInforme6">
+
+                            Buscar reservas
+
+                        </button>
+
+                    </div>
+
                 </div>
 
 
-                <button class="btn btn-primary mb-4"
-                        v-on:click="buscarInforme6">
-
-                    Buscar reservas
-
-                </button>
-
-
                 <div v-if="cargando"
-                     class="alert alert-info">
+                     class="alert alert-light border">
 
                     Cargando resultados...
 
@@ -831,7 +966,7 @@
                 <div v-if="resultadoInforme6 !== null && !cargando">
 
                     <div v-if="resultadoInforme6.length === 0"
-                         class="alert alert-warning">
+                         class="alert alert-light border">
 
                         No hay reservas que terminen dentro
                         del plazo indicado.
@@ -842,23 +977,27 @@
                     <div v-else
                          class="table-responsive">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-hover align-middle mb-0">
 
                             <thead class="table-light">
 
                                 <tr>
 
                                     <th>Reserva</th>
+
                                     <th>Inquilino</th>
+
                                     <th>Inmueble</th>
+
                                     <th>Inicio</th>
+
                                     <th>Fin</th>
+
                                     <th>Monto por día</th>
 
                                 </tr>
 
                             </thead>
-
 
                             <tbody>
 
@@ -902,39 +1041,53 @@
             </div>
 
 
-
-            <!-- ================================================= -->
-            <!-- INFORME 7 -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 INFORME 7
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '7'">
 
-                <h4 class="mb-3">
-                    Informe 7 - Pagos de una reserva
-                </h4>
+                <div class="mb-4">
 
-                <p class="text-muted">
-                    Busque una reserva para consultar sus pagos.
-                </p>
+                    <h2 class="h4 fw-semibold mb-2">
+
+                        Pagos de una reserva
+
+                    </h2>
+
+                    <p class="text-secondary">
+
+                        Buscá una reserva para consultar
+                        sus pagos registrados.
+
+                    </p>
+
+                </div>
 
 
-                <!-- Búsqueda de reservas -->
+                <!-- BÚSQUEDA -->
 
-                <div class="mb-3">
+                <div class="row align-items-end g-3 mb-4">
 
-                    <label class="form-label">
-                        Buscar reserva
-                    </label>
+                    <div class="col-md-7">
 
-                    <div class="d-flex gap-2"
-                        style="max-width: 600px;">
+                        <label class="form-label fw-semibold">
+
+                            Buscar reserva
+
+                        </label>
 
                         <input type="text"
-                            v-model="textoBusquedaReserva"
-                            class="form-control"
-                            placeholder="Ingrese ID de reserva, inquilino o inmueble">
+                               v-model="textoBusquedaReserva"
+                               class="form-control"
+                               placeholder="ID de reserva, inquilino o inmueble">
 
-                        <button class="btn btn-primary"
+                    </div>
+
+
+                    <div class="col-md-auto">
+
+                        <button class="btn btn-dark"
                                 v-on:click="buscarReservasInforme7">
 
                             Buscar
@@ -946,21 +1099,24 @@
                 </div>
 
 
-                <!-- Resultados de búsqueda -->
+                <!-- RESULTADOS DE BÚSQUEDA -->
 
                 <div v-if="reservasEncontradas.length > 0"
-                    class="mb-4">
+                     class="mb-4">
 
-                    <label class="form-label">
+                    <label class="form-label fw-semibold">
+
                         Seleccione una reserva
+
                     </label>
 
                     <select class="form-select"
-                            v-model.number="idReservaInforme7"
-                            style="max-width: 600px;">
+                            v-model.number="idReservaInforme7">
 
                         <option :value="null">
+
                             -- Seleccione una reserva --
+
                         </option>
 
                         <option v-for="reserva in reservasEncontradas"
@@ -981,17 +1137,17 @@
 
 
                 <div v-if="busquedaRealizada &&
-                        reservasEncontradas.length === 0"
-                    class="alert alert-warning">
+                          reservasEncontradas.length === 0"
+                     class="alert alert-light border">
 
                     No se encontraron reservas con ese criterio.
 
                 </div>
 
 
-                <!-- Consultar pagos -->
+                <!-- CONSULTAR PAGOS -->
 
-                <button class="btn btn-primary mb-4"
+                <button class="btn btn-dark mb-4"
                         v-if="idReservaInforme7"
                         v-on:click="buscarInforme7">
 
@@ -1001,26 +1157,30 @@
 
 
                 <div v-if="cargando"
-                    class="alert alert-info">
+                     class="alert alert-light border">
 
                     Cargando resultados...
 
                 </div>
 
 
-                <!-- Pagos -->
+                <!-- PAGOS -->
 
                 <div v-if="resultadoInforme7 !== null && !cargando">
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex flex-wrap justify-content-between
+                                align-items-center gap-3 mb-3">
 
-                        <h5>
-                            Pagos de la reserva #{{ idReservaInforme7 }}
-                        </h5>
+                        <h3 class="h5 fw-semibold mb-0">
+
+                            Pagos de la reserva
+                            #{{ idReservaInforme7 }}
+
+                        </h3>
 
 
                         <a class="btn btn-success"
-                        :href="'/Pago/Create?idReserva=' + idReservaInforme7">
+                           :href="'/Pago/Create?idReserva=' + idReservaInforme7">
 
                             + Nuevo pago
 
@@ -1030,7 +1190,7 @@
 
 
                     <div v-if="resultadoInforme7.length === 0"
-                        class="alert alert-warning">
+                         class="alert alert-light border">
 
                         Esta reserva no tiene pagos registrados.
 
@@ -1038,24 +1198,27 @@
 
 
                     <div v-else
-                        class="table-responsive">
+                         class="table-responsive">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-hover align-middle mb-0">
 
                             <thead class="table-light">
 
                                 <tr>
 
                                     <th>ID</th>
+
                                     <th>Concepto</th>
+
                                     <th>Fecha</th>
+
                                     <th>Monto</th>
+
                                     <th>Estado</th>
 
                                 </tr>
 
                             </thead>
-
 
                             <tbody>
 
@@ -1081,14 +1244,14 @@
                                     <td>
 
                                         <span v-if="pago.estado"
-                                            class="badge bg-success">
+                                              class="badge text-bg-success">
 
                                             Realizado
 
                                         </span>
 
                                         <span v-else
-                                            class="badge bg-danger">
+                                              class="badge text-bg-secondary">
 
                                             Anulado
 
@@ -1109,29 +1272,38 @@
             </div>
 
 
-
-            <!-- ================================================= -->
-            <!-- INFORME 8 -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 INFORME 8
+                 ================================================= -->
 
             <div v-if="informeSeleccionado === '8'">
 
-                <h4 class="mb-3">
-                    Informe 8 - Inmuebles disponibles por fechas
-                </h4>
+                <div class="mb-4">
 
-                <p class="text-muted">
-                    Seleccione las fechas de la posible reserva
-                    para encontrar inmuebles que no estén ocupados.
-                </p>
+                    <h2 class="h4 fw-semibold mb-2">
+
+                        Inmuebles disponibles por fechas
+
+                    </h2>
+
+                    <p class="text-secondary">
+
+                        Seleccioná las fechas de una posible reserva
+                        para encontrar inmuebles que no estén ocupados.
+
+                    </p>
+
+                </div>
 
 
-                <div class="row mb-4">
+                <div class="row align-items-end g-3 mb-4">
 
                     <div class="col-md-4">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
+
                             Fecha de inicio
+
                         </label>
 
                         <input type="date"
@@ -1143,8 +1315,10 @@
 
                     <div class="col-md-4">
 
-                        <label class="form-label">
+                        <label class="form-label fw-semibold">
+
                             Fecha de fin
+
                         </label>
 
                         <input type="date"
@@ -1153,19 +1327,23 @@
 
                     </div>
 
+
+                    <div class="col-md-auto">
+
+                        <button class="btn btn-dark"
+                                v-on:click="buscarInforme8">
+
+                            Buscar inmuebles
+
+                        </button>
+
+                    </div>
+
                 </div>
 
 
-                <button class="btn btn-primary mb-4"
-                        v-on:click="buscarInforme8">
-
-                    Buscar inmuebles
-
-                </button>
-
-
                 <div v-if="cargando"
-                     class="alert alert-info">
+                     class="alert alert-light border">
 
                     Cargando resultados...
 
@@ -1175,7 +1353,7 @@
                 <div v-if="resultadoInforme8 !== null && !cargando">
 
                     <div v-if="resultadoInforme8.length === 0"
-                         class="alert alert-warning">
+                         class="alert alert-light border">
 
                         No hay inmuebles disponibles para esas fechas.
 
@@ -1185,23 +1363,27 @@
                     <div v-else
                          class="table-responsive">
 
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-hover align-middle mb-0">
 
                             <thead class="table-light">
 
                                 <tr>
 
                                     <th>ID</th>
+
                                     <th>Dirección</th>
-                                    <th>Dueño</th>
+
+                                    <th>Propietario</th>
+
                                     <th>Tipo</th>
+
                                     <th>Cupo</th>
+
                                     <th>Precio por día</th>
 
                                 </tr>
 
                             </thead>
-
 
                             <tbody>
 
@@ -1252,75 +1434,70 @@
 </div>
 
 
-
 @section Scripts {
-
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     <script>
 
-        const { createApp } = Vue;
 
-
-        createApp({
+        Vue.createApp({
 
             data() {
 
                 return {
 
-                    // =========================================
+                    // =================================================
                     // GENERAL
-                    // =========================================
+                    // =================================================
 
                     informeSeleccionado: '1',
 
                     cargando: false,
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 1
-                    // =========================================
+                    // =================================================
 
                     filtroEstado: 'todos',
 
                     inmuebles: @Html.Raw(inmueblesJson),
 
 
-                    // =========================================
+                    // =================================================
                     // PROPIETARIOS
-                    // =========================================
+                    // =================================================
 
                     propietarios: @Html.Raw(propietariosJson),
 
                     propietarioSeleccionado: '',
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 2
-                    // =========================================
+                    // =================================================
 
                     resultadoInforme2: null,
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 3
-                    // =========================================
+                    // =================================================
 
                     resultadoInforme3: null,
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 4
-                    // =========================================
+                    // =================================================
 
                     diasInforme4: 30,
 
                     resultadoInforme4: null,
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 5
-                    // =========================================
+                    // =================================================
 
                     fechaInicioInforme5: '',
 
@@ -1329,18 +1506,18 @@
                     resultadoInforme5: null,
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 6
-                    // =========================================
+                    // =================================================
 
                     diasInforme6: 7,
 
                     resultadoInforme6: null,
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 7
-                    // =========================================
+                    // =================================================
 
                     textoBusquedaReserva: '',
 
@@ -1353,9 +1530,9 @@
                     resultadoInforme7: null,
 
 
-                    // =========================================
+                    // =================================================
                     // INFORME 8
-                    // =========================================
+                    // =================================================
 
                     fechaInicioInforme8: '',
 
@@ -1370,9 +1547,9 @@
 
             computed: {
 
-                // =========================================
+                // =================================================
                 // INFORME 1
-                // =========================================
+                // =================================================
 
                 inmueblesFiltrados() {
 
@@ -1403,9 +1580,9 @@
 
             methods: {
 
-                // =========================================
+                // =================================================
                 // INFORME 2
-                // =========================================
+                // =================================================
 
                 async buscarInforme2() {
 
@@ -1441,13 +1618,11 @@
                             await respuesta.json();
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1457,9 +1632,9 @@
                 },
 
 
-                // =========================================
+                // =================================================
                 // INFORME 3
-                // =========================================
+                // =================================================
 
                 async buscarInforme3() {
 
@@ -1488,13 +1663,11 @@
                             await respuesta.json();
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1504,9 +1677,9 @@
                 },
 
 
-                // =========================================
+                // =================================================
                 // INFORME 4
-                // =========================================
+                // =================================================
 
                 async buscarInforme4() {
 
@@ -1547,13 +1720,11 @@
                             await respuesta.json();
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1563,9 +1734,9 @@
                 },
 
 
-                // =========================================
+                // =================================================
                 // INFORME 5
-                // =========================================
+                // =================================================
 
                 async buscarInforme5() {
 
@@ -1618,13 +1789,11 @@
                             await respuesta.json();
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1634,9 +1803,9 @@
                 },
 
 
-                // =========================================
+                // =================================================
                 // INFORME 6
-                // =========================================
+                // =================================================
 
                 async buscarInforme6() {
 
@@ -1677,13 +1846,11 @@
                             await respuesta.json();
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1693,18 +1860,21 @@
                 },
 
 
-                // =========================================
+                // =================================================
                 // INFORME 7
-                // =========================================
+                // =================================================
 
                 async buscarInforme7() {
 
                     if (!this.idReservaInforme7 ||
                         this.idReservaInforme7 <= 0) {
 
-                        alert('Seleccione una reserva válida.');
+                        alert(
+                            'Seleccione una reserva válida.'
+                        );
 
                         return;
+
                     }
 
 
@@ -1733,13 +1903,11 @@
                             await respuesta.json();
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1747,14 +1915,23 @@
                     }
 
                 },
+
+
+                // =================================================
+                // BUSCAR RESERVAS - INFORME 7
+                // =================================================
+
                 async buscarReservasInforme7() {
 
                     if (!this.textoBusquedaReserva ||
                         !this.textoBusquedaReserva.trim()) {
 
-                        alert('Ingrese un criterio de búsqueda.');
+                        alert(
+                            'Ingrese un criterio de búsqueda.'
+                        );
 
                         return;
+
                     }
 
 
@@ -1796,13 +1973,11 @@
                         this.busquedaRealizada = true;
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1811,9 +1986,10 @@
 
                 },
 
-                // =========================================
+
+                // =================================================
                 // INFORME 8
-                // =========================================
+                // =================================================
 
                 async buscarInforme8() {
 
@@ -1866,13 +2042,11 @@
                             await respuesta.json();
 
                     }
-
                     catch (error) {
 
                         alert(error.message);
 
                     }
-
                     finally {
 
                         this.cargando = false;
@@ -1883,7 +2057,7 @@
 
             }
 
-        }).mount('#app');
+        }).mount('#informesApp');
 
     </script>
 

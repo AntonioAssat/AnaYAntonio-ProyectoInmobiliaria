@@ -7,7 +7,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Models
         [Key]
         public int ID_tipo { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$",
+            ErrorMessage = "El nombre solo puede contener letras.")]
         public string Nombre { get; set; } 
 
         [Required]
