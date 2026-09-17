@@ -1,48 +1,480 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+﻿/* =========================================================
+   ESTILOS GENERALES
+   ========================================================= */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+html {
+    font-size: 14px;
 }
 
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   ENLACES Y BOOTSTRAP
+   ========================================================= */
+
 a {
-  color: #0077cc;
+    color: #0077cc;
+}
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
 }
 
+
+/* =========================================================
+   BARRA SUPERIOR
+   ========================================================= */
+
+.top-navbar {
+    height: 72px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    background-color: #ffffff;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    box-shadow: 0 .15rem .4rem rgba(0, 0, 0, .04);
+}
+
+
+/* PARTE IZQUIERDA */
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+
+/* =========================================================
+   BOTÓN HAMBURGUESA
+   ========================================================= */
+
+.menu-button {
+    width: 44px;
+    height: 44px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: transparent;
+
+    font-size: 25px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background-color .2s ease;
+}
+
+.menu-button:hover {
+    background-color: #f1f1f1;
+}
+
+
+/* =========================================================
+   NOMBRE DE LA INMOBILIARIA
+   ========================================================= */
+
+.navbar-brand-custom {
+    color: #222;
+
+    text-decoration: none;
+
+    font-size: 21px;
+    font-weight: 500;
+}
+
+.navbar-brand-custom:hover {
+    color: #222;
+}
+
+
+/* =========================================================
+   USUARIO
+   ========================================================= */
+
+.navbar-user {
+    font-size: 15px;
+    color: #333;
+}
+
+.navbar-user a {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+.user-role {
+    color: #666;
+}
+
+
+/* =========================================================
+   MENÚ LATERAL
+   ========================================================= */
+
+.side-menu {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 280px;
+    height: 100vh;
+
+    background-color: #ffffff;
+
+    z-index: 1050;
+
+    box-shadow: 4px 0 18px rgba(0, 0, 0, .12);
+
+    transform: translateX(-100%);
+
+    transition: transform .25s ease;
+
+    overflow-y: auto;
+}
+
+
+/* MENÚ ABIERTO */
+
+.side-menu.menu-open {
+    transform: translateX(0);
+}
+
+
+/* =========================================================
+   CABECERA DEL MENÚ
+   ========================================================= */
+
+.side-menu-header {
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    font-size: 20px;
+    font-weight: 500;
+}
+
+
+/* BOTÓN CERRAR */
+
+.close-menu {
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    font-size: 30px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-menu:hover {
+    background-color: #f1f1f1;
+}
+
+
+/* =========================================================
+   CONTENIDO DEL MENÚ
+   ========================================================= */
+
+.side-menu-content {
+    padding: 14px 10px;
+}
+
+
+/* =========================================================
+   ENLACES DEL MENÚ
+   ========================================================= */
+
+.side-menu-link {
+    width: 100%;
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    margin-bottom: 3px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #333;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+.side-menu-link:hover {
+    background-color: #f2f2f2;
+    color: #111;
+}
+
+
+/* =========================================================
+   ICONOS
+   ========================================================= */
+
+.menu-icon {
+    width: 24px;
+
+    text-align: center;
+
+    font-size: 18px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   SUBMENÚS
+   ========================================================= */
+
+.menu-dropdown {
+    justify-content: flex-start;
+}
+
+.dropdown-arrow {
+    margin-left: auto;
+
+    font-size: 21px;
+
+    transition: transform .2s ease;
+}
+
+
+/* FLECHA GIRADA */
+
+.dropdown-arrow.arrow-open {
+    transform: rotate(90deg);
+}
+
+
+/* SUBMENÚ CERRADO */
+
+.submenu {
+    display: none;
+
+    padding-left: 48px;
+
+    margin-bottom: 4px;
+}
+
+
+/* SUBMENÚ ABIERTO */
+
+.submenu.submenu-open {
+    display: block;
+}
+
+
+/* OPCIONES DEL SUBMENÚ */
+
+.submenu a {
+    display: block;
+
+    padding: 9px 12px;
+
+    color: #555;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    border-radius: 6px;
+}
+
+.submenu a:hover {
+    background-color: #f2f2f2;
+    color: #111;
+}
+
+
+/* =========================================================
+   SEPARADOR
+   ========================================================= */
+
+.menu-separator {
+    height: 1px;
+
+    background-color: #e5e5e5;
+
+    margin: 12px 8px;
+}
+
+
+/* =========================================================
+   CERRAR SESIÓN
+   ========================================================= */
+
+.logout-link {
+    color: #dc3545;
+}
+
+.logout-link:hover {
+    color: #dc3545;
+    background-color: #fff0f0;
+}
+
+
+/* =========================================================
+   FONDO OSCURO
+   ========================================================= */
+
+.menu-overlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, .35);
+
+    z-index: 1040;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity .25s ease,
+        visibility .25s ease;
+}
+
+
+/* OVERLAY VISIBLE */
+
+.menu-overlay.overlay-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+   ========================================================= */
+
+.main-container {
+    padding-top: 20px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+    position: absolute;
+
+    bottom: 0;
+
+    width: 100%;
+
+    white-space: nowrap;
+
+    line-height: 60px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .top-navbar {
+        padding: 0 12px;
+    }
+
+    .navbar-brand-custom {
+        font-size: 18px;
+    }
+
+    .navbar-user {
+        font-size: 13px;
+    }
+
+    .side-menu {
+        width: 270px;
+    }
+
 }

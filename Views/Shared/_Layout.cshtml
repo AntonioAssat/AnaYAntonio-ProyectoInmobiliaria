@@ -1,18 +1,20 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
+
     <meta charset="utf-8" />
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0" />
 
     <title>@ViewData["Title"] - Inmobiliaria A&A</title>
 
-    <script type="importmap"></script>
-
+    <!-- Bootstrap -->
     <link rel="stylesheet"
           href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
+    <!-- CSS del proyecto -->
     <link rel="stylesheet"
           href="~/css/site.css"
           asp-append-version="true" />
@@ -20,280 +22,982 @@
     <link rel="stylesheet"
           href="~/AnaYAntonio_ProyectoInmobiliaria.styles.css"
           asp-append-version="true" />
+
+
+    <!-- =====================================================
+         ESTILOS DEL MENÚ
+         ===================================================== -->
+
+    <style>
+
+        /* ==============================
+           GENERAL
+           ============================== */
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #ffffff;
+            color: #333333;
+        }
+
+
+        /* ==============================
+           BARRA SUPERIOR
+           ============================== */
+
+        .top-navbar {
+            height: 64px;
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 24px;
+
+            background: #ffffff;
+
+            border-bottom: 1px solid #dddddd;
+
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+            box-sizing: border-box;
+        }
+
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+
+        /* ==============================
+           BOTÓN HAMBURGUESA
+           ============================== */
+
+        .menu-button {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+
+            border: 1px solid #dddddd;
+            border-radius: 7px;
+
+            background: #ffffff;
+
+            color: #333333;
+
+            font-size: 23px;
+
+            cursor: pointer;
+
+            transition: background 0.2s;
+        }
+
+
+        .menu-button:hover {
+            background: #f2f2f2;
+        }
+
+
+        /* ==============================
+           NOMBRE
+           ============================== */
+
+        .navbar-brand-custom {
+            color: #222222;
+
+            text-decoration: none;
+
+            font-size: 21px;
+            font-weight: 500;
+        }
+
+
+        .navbar-brand-custom:hover {
+            color: #222222;
+        }
+
+
+        /* ==============================
+           USUARIO
+           ============================== */
+
+        .navbar-user {
+            font-size: 15px;
+            color: #333333;
+        }
+
+
+        .navbar-user a {
+            color: #0077cc;
+            text-decoration: none;
+        }
+
+
+        .user-role {
+            color: #666666;
+        }
+
+
+        /* ==============================
+           FONDO OSCURO
+           ============================== */
+
+        .menu-overlay {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background: rgba(0, 0, 0, 0.35);
+
+            z-index: 1040;
+
+            opacity: 0;
+            visibility: hidden;
+
+            transition:
+                opacity 0.25s ease,
+                visibility 0.25s ease;
+        }
+
+
+        .menu-overlay.overlay-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* ==============================
+           MENÚ LATERAL
+           ============================== */
+
+        .side-menu {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 280px;
+            height: 100vh;
+
+            background: #ffffff;
+
+            z-index: 1050;
+
+            box-shadow: 5px 0 20px rgba(0,0,0,0.15);
+
+            transform: translateX(-100%);
+
+            transition: transform 0.25s ease;
+
+            overflow-y: auto;
+        }
+
+
+        .side-menu.menu-open {
+            transform: translateX(0);
+        }
+
+
+        /* ==============================
+           CABECERA MENÚ
+           ============================== */
+
+        .side-menu-header {
+            height: 64px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 18px;
+
+            border-bottom: 1px solid #dddddd;
+
+            font-size: 20px;
+            font-weight: 500;
+
+            box-sizing: border-box;
+        }
+
+
+        .close-menu {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+
+            border: none;
+            border-radius: 7px;
+
+            background: transparent;
+
+            color: #333333;
+
+            font-size: 28px;
+
+            cursor: pointer;
+        }
+
+
+        .close-menu:hover {
+            background: #f1f1f1;
+        }
+
+
+        /* ==============================
+           CONTENIDO MENÚ
+           ============================== */
+
+        .side-menu-content {
+            padding: 12px 10px;
+        }
+
+
+        /* ==============================
+           LINKS
+           ============================== */
+
+        .side-menu-link {
+            width: 100%;
+            min-height: 46px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 9px 12px;
+
+            margin-bottom: 3px;
+
+            border: none;
+            border-radius: 7px;
+
+            background: transparent;
+
+            color: #333333;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            cursor: pointer;
+
+            box-sizing: border-box;
+
+            text-align: left;
+        }
+
+
+        .side-menu-link:hover {
+            background: #f2f2f2;
+            color: #111111;
+        }
+
+
+        /* ==============================
+           ICONOS
+           ============================== */
+
+        .menu-icon {
+            width: 25px;
+
+            flex-shrink: 0;
+
+            text-align: center;
+
+            font-size: 18px;
+        }
+
+
+        /* ==============================
+           DROPDOWN
+           ============================== */
+
+        .menu-dropdown {
+            justify-content: flex-start;
+        }
+
+
+        .dropdown-arrow {
+            margin-left: auto;
+
+            font-size: 20px;
+
+            transition: transform 0.2s ease;
+        }
+
+
+        .dropdown-arrow.arrow-open {
+            transform: rotate(90deg);
+        }
+
+
+        /* ==============================
+           SUBMENÚ
+           ============================== */
+
+        .submenu {
+            display: none;
+
+            padding-left: 49px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .submenu.submenu-open {
+            display: block;
+        }
+
+
+        .submenu a {
+            display: block;
+
+            padding: 9px 12px;
+
+            border-radius: 6px;
+
+            color: #555555;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+
+        .submenu a:hover {
+            background: #f2f2f2;
+
+            color: #111111;
+        }
+
+
+        /* ==============================
+           SEPARADOR
+           ============================== */
+
+        .menu-separator {
+            height: 1px;
+
+            background: #dddddd;
+
+            margin: 12px 8px;
+        }
+
+
+        /* ==============================
+           LOGOUT
+           ============================== */
+
+        .logout-link {
+            color: #dc3545;
+        }
+
+
+        .logout-link:hover {
+            color: #dc3545;
+
+            background: #fff0f0;
+        }
+
+
+        /* ==============================
+           CONTENIDO
+           ============================== */
+
+        .main-container {
+            padding-top: 20px;
+        }
+
+
+        /* ==============================
+           RESPONSIVE
+           ============================== */
+
+        @@media (max-width: 600px) {
+
+            .top-navbar {
+                padding: 0 12px;
+            }
+
+
+            .navbar-brand-custom {
+                font-size: 18px;
+            }
+
+
+            .navbar-user {
+                font-size: 13px;
+            }
+
+
+            .side-menu {
+                width: 270px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-    <header>
+    <div id="app">
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
 
-            <div class="container-fluid">
+        <!-- =================================================
+             BARRA SUPERIOR
+             ================================================= -->
 
-                <a class="navbar-brand"
-                   asp-area=""
+        <header>
+
+            <nav class="top-navbar">
+
+                <div class="navbar-left">
+
+                    <button type="button"
+                            class="menu-button"
+                            aria-label="Abrir menú"
+                            @@click="abrirMenu">
+
+                        ☰
+
+                    </button>
+
+
+                    <a class="navbar-brand-custom"
+                       asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                        Inmobiliaria A&A
+
+                    </a>
+
+                </div>
+
+
+                <!-- USUARIO -->
+
+                <div class="navbar-user">
+
+                    @if (User.Identity != null &&
+                         User.Identity.IsAuthenticated)
+                    {
+
+                        <span>
+
+                            Hola,
+                            @(User.FindFirst("FullName")?.Value
+                              ?? User.Identity.Name)
+
+                            <span class="user-role">
+
+                                (@User.FindFirst(
+                                    System.Security.Claims.ClaimTypes.Role
+                                )?.Value)
+
+                            </span>
+
+                        </span>
+
+                    }
+                    else
+                    {
+
+                        <a asp-controller="Usuario"
+                           asp-action="Login">
+
+                            Iniciar sesión
+
+                        </a>
+
+                    }
+
+                </div>
+
+            </nav>
+
+        </header>
+
+
+        <!-- =================================================
+             OVERLAY
+             ================================================= -->
+
+        <div class="menu-overlay"
+             :class="{ 'overlay-open': menuAbierto }"
+             @@click="cerrarMenu">
+        </div>
+
+
+        <!-- =================================================
+             MENÚ LATERAL
+             ================================================= -->
+
+        <aside class="side-menu"
+               :class="{ 'menu-open': menuAbierto }">
+
+
+            <!-- CABECERA -->
+
+            <div class="side-menu-header">
+
+                <span>
+
+                    Menú
+
+                </span>
+
+
+                <button type="button"
+                        class="close-menu"
+                        aria-label="Cerrar menú"
+                        @@click="cerrarMenu">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <!-- OPCIONES -->
+
+            <div class="side-menu-content">
+
+
+                <!-- INICIO -->
+
+                <a class="side-menu-link"
                    asp-controller="Home"
-                   asp-action="Index">
+                   asp-action="Index"
+                   @@click="cerrarMenu">
 
-                    Inmobiliaria A&A
+                    <span class="menu-icon">
+
+                        ⌂
+
+                    </span>
+
+                    <span>
+
+                        Inicio
+
+                    </span>
 
                 </a>
 
 
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
+                <!-- =========================================
+                     PERSONAS
+                     ========================================= -->
 
-                    <span class="navbar-toggler-icon"></span>
+                <div class="menu-group">
 
-                </button>
+                    <button type="button"
+                            class="side-menu-link menu-dropdown"
+                            @@click="personasAbierto = !personasAbierto">
 
+                        <span class="menu-icon">
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            ♙
 
-                    <!-- MENÚ PRINCIPAL -->
+                        </span>
 
-                    <ul class="navbar-nav flex-grow-1">
+                        <span>
 
-                        <li class="nav-item">
+                            Personas
 
-                            <a class="nav-link text-dark"
-                               asp-controller="Home"
-                               asp-action="Index">
+                        </span>
 
-                                Home
+                        <span class="dropdown-arrow"
+                              :class="{ 'arrow-open': personasAbierto }">
 
-                            </a>
+                            ›
 
-                        </li>
+                        </span>
 
+                    </button>
 
-                        <li class="nav-item">
 
-                            <a class="nav-link text-dark"
-                               asp-controller="Propietarios"
-                               asp-action="Index">
+                    <div class="submenu"
+                         :class="{ 'submenu-open': personasAbierto }">
 
-                                Propietarios
+                        <a asp-controller="Propietarios"
+                           asp-action="Index"
+                           @@click="cerrarMenu">
 
-                            </a>
+                            Propietarios
 
-                        </li>
+                        </a>
 
 
-                        <li class="nav-item">
+                        <a asp-controller="Inquilinos"
+                           asp-action="Index"
+                           @@click="cerrarMenu">
 
-                            <a class="nav-link text-dark"
-                               asp-controller="Inquilinos"
-                               asp-action="Index">
+                            Inquilinos
 
-                                Inquilinos
+                        </a>
 
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link text-dark"
-                               asp-controller="Inmuebles"
-                               asp-action="Index">
-
-                                Inmuebles
-
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link text-dark"
-                               asp-controller="TipoInmuebles"
-                               asp-action="Index">
-
-                                Tipos de Inmuebles
-
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link text-dark"
-                               asp-controller="Reserva"
-                               asp-action="Index">
-
-                                Reservas
-
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link text-dark"
-                               asp-controller="Pago"
-                               asp-action="Index">
-
-                                Pagos
-
-                            </a>
-
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                            asp-controller="Informes"
-                            asp-action="Index">
-                                Informes
-                            </a>
-                        </li>
-
-
-                        @if (User.Identity != null &&
-                             User.Identity.IsAuthenticated &&
-                             User.IsInRole("Administrador"))
-                        {
-                            <li class="nav-item">
-
-                                <a class="nav-link text-dark"
-                                   asp-controller="Usuario"
-                                   asp-action="Index">
-
-                                    Usuarios
-
-                                </a>
-
-                            </li>
-                        }
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                asp-controller="Usuario"
-                                asp-action="Perfil">
-                                    Mi Perfil
-                                </a>
-                            </li>
-                        }
-                    </ul>
-
-
-                    <!-- USUARIO / LOGIN -->
-
-                    <ul class="navbar-nav">
-
-                        @if (User.Identity != null &&
-                             User.Identity.IsAuthenticated)
-                        {
-
-                            <li class="nav-item d-flex align-items-center">
-
-                                <span class="nav-link text-dark">
-
-                                    Hola,
-                                    @(User.FindFirst("FullName")?.Value
-                                        ?? User.Identity.Name)
-
-                                    (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)
-
-                                </span>
-
-                            </li>
-
-
-                            <li class="nav-item">
-
-                                <a class="nav-link text-danger"
-                                   asp-controller="Usuario"
-                                   asp-action="Logout">
-
-                                    Cerrar sesión
-
-                                </a>
-
-                            </li>
-
-                        }
-                        else
-                        {
-
-                            <li class="nav-item">
-
-                                <a class="nav-link text-primary"
-                                   asp-controller="Usuario"
-                                   asp-action="Login">
-
-                                    Iniciar sesión
-
-                                </a>
-
-                            </li>
-
-                        }
-
-                    </ul>
+                    </div>
 
                 </div>
 
+
+                <!-- =========================================
+                     INMUEBLES
+                     ========================================= -->
+
+                <div class="menu-group">
+
+                    <button type="button"
+                            class="side-menu-link menu-dropdown"
+                            @@click="inmueblesAbierto = !inmueblesAbierto">
+
+                        <span class="menu-icon">
+
+                            ⌂
+
+                        </span>
+
+                        <span>
+
+                            Inmuebles
+
+                        </span>
+
+                        <span class="dropdown-arrow"
+                              :class="{ 'arrow-open': inmueblesAbierto }">
+
+                            ›
+
+                        </span>
+
+                    </button>
+
+
+                    <div class="submenu"
+                         :class="{ 'submenu-open': inmueblesAbierto }">
+
+                        <a asp-controller="Inmuebles"
+                           asp-action="Index"
+                           @@click="cerrarMenu">
+
+                            Inmuebles
+
+                        </a>
+
+
+                        <a asp-controller="TipoInmuebles"
+                           asp-action="Index"
+                           @@click="cerrarMenu">
+
+                            Tipos de Inmuebles
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     RESERVAS
+                     ========================================= -->
+
+                <a class="side-menu-link"
+                   asp-controller="Reserva"
+                   asp-action="Index"
+                   @@click="cerrarMenu">
+
+                    <span class="menu-icon">
+
+                        ▣
+
+                    </span>
+
+                    <span>
+
+                        Reservas
+
+                    </span>
+
+                </a>
+
+
+                <!-- =========================================
+                     PAGOS
+                     ========================================= -->
+
+                <a class="side-menu-link"
+                   asp-controller="Pago"
+                   asp-action="Index"
+                   @@click="cerrarMenu">
+
+                    <span class="menu-icon">
+
+                        $
+
+                    </span>
+
+                    <span>
+
+                        Pagos
+
+                    </span>
+
+                </a>
+
+
+                <!-- =========================================
+                     INFORMES
+                     ========================================= -->
+
+                @if (User.Identity != null &&
+     User.Identity.IsAuthenticated &&
+     User.IsInRole("Administrador"))
+{
+    <a class="side-menu-link"
+       asp-controller="Informes"
+       asp-action="Index"
+       @@click="cerrarMenu">
+
+        <span class="menu-icon">
+            ▤
+        </span>
+
+        <span>
+            Informes
+        </span>
+
+    </a>
+}
+
+
+                <!-- =========================================
+                     USUARIOS - SOLO ADMIN
+                     ========================================= -->
+
+                @if (User.Identity != null &&
+                     User.Identity.IsAuthenticated &&
+                     User.IsInRole("Administrador"))
+                {
+
+                    <a class="side-menu-link"
+                       asp-controller="Usuario"
+                       asp-action="Index"
+                       @@click="cerrarMenu">
+
+                        <span class="menu-icon">
+
+                            ♙
+
+                        </span>
+
+                        <span>
+
+                            Usuarios
+
+                        </span>
+
+                    </a>
+
+                }
+
+
+                <!-- SEPARADOR -->
+
+                <div class="menu-separator"></div>
+
+
+                <!-- =========================================
+                     PERFIL
+                     ========================================= -->
+
+                @if (User.Identity != null &&
+                     User.Identity.IsAuthenticated)
+                {
+
+                    <a class="side-menu-link"
+                       asp-controller="Usuario"
+                       asp-action="Perfil"
+                       @@click="cerrarMenu">
+
+                        <span class="menu-icon">
+
+                            ◉
+
+                        </span>
+
+                        <span>
+
+                            Mi Perfil
+
+                        </span>
+
+                    </a>
+
+
+                    <!-- CERRAR SESIÓN -->
+
+                    <a class="side-menu-link logout-link"
+                       asp-controller="Usuario"
+                       asp-action="Logout">
+
+                        <span class="menu-icon">
+
+                            ↪
+
+                        </span>
+
+                        <span>
+
+                            Cerrar sesión
+
+                        </span>
+
+                    </a>
+
+                }
+
             </div>
 
-        </nav>
-
-    </header>
+        </aside>
 
 
-    <!-- CONTENIDO PRINCIPAL -->
+        <!-- =================================================
+             CONTENIDO
+             ================================================= -->
 
-    <div class="container">
+        <div class="container main-container">
 
-        <main role="main"
-              class="pb-3">
+            <main role="main"
+                  class="pb-3">
 
-            @RenderBody()
+                @RenderBody()
 
-        </main>
+            </main>
+
+        </div>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="border-top footer text-muted">
+
+            <div class="container">
+
+                &copy; 2026 - AnaYAntonio_ProyectoInmobiliaria -
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Privacy">
+
+                    Privacy
+
+                </a>
+
+            </div>
+
+        </footer>
+
 
     </div>
 
 
-    <!-- FOOTER -->
-
-    <footer class="border-top footer text-muted">
-
-        <div class="container">
-
-            &copy; 2026 - AnaYAntonio_ProyectoInmobiliaria -
-
-            <a asp-area=""
-               asp-controller="Home"
-               asp-action="Privacy">
-
-                Privacy
-
-            </a>
-
-        </div>
-
-    </footer>
-
-
-    <!-- SCRIPTS -->
+    <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
+
+    <!-- VUE 3 -->
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+
     <script src="~/js/site.js"
             asp-append-version="true"></script>
+
+
+    <!-- =====================================================
+         VUE - MENÚ
+         ===================================================== -->
+
+    <script>
+
+        const { createApp } = Vue;
+
+
+        createApp({
+
+            data() {
+
+                return {
+
+                    menuAbierto: false,
+
+                    personasAbierto: false,
+
+                    inmueblesAbierto: false
+
+                };
+
+            },
+
+
+            methods: {
+
+                abrirMenu() {
+
+                    this.menuAbierto = true;
+
+                },
+
+
+                cerrarMenu() {
+
+                    this.menuAbierto = false;
+
+                    this.personasAbierto = false;
+
+                    this.inmueblesAbierto = false;
+
+                }
+
+            }
+
+        }).mount("#app");
+
+    </script>
+
 
     @await RenderSectionAsync(
         "Scripts",
