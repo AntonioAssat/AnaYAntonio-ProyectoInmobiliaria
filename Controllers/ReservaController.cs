@@ -650,6 +650,29 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Activate(int id)
         {
+            var reserva = repositorio.ObtenerPorId(id);
+
+            if (reserva == null)
+            {
+                return NotFound();
+            }
+
+            if (reserva.Estado)
+            {
+                TempData["Mensaje"] = "La reserva ya se encuentra activa.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verificar que no exista otra reserva activa
+            // que se superponga con esta reserva.
+            if (repositorio.ExisteReservaSuperpuesta(reserva, reserva.ID_reserva))
+            {
+                TempData["Mensaje"] =
+                    "No se puede activar la reserva porque el inmueble ya tiene otra reserva activa en ese período.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
             repositorio.AltaEstado(id);
 
             TempData["Mensaje"] = "Reserva activada correctamente.";
