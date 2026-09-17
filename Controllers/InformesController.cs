@@ -4,7 +4,7 @@ using AnaYAntonio_ProyectoInmobiliaria.Models;
 
 namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "Administrador")]
     public class InformesController : Controller
     {
         private readonly IRepositorioInmueble repositorioInmueble;

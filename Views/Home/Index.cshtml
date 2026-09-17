@@ -1,8 +1,448 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <div class="row align-items-center py-4 py-lg-5 mb-5">
+
+        <!-- TEXTO -->
+
+        <div class="col-lg-7 pe-lg-5">
+
+            <p class="text-uppercase text-secondary fw-semibold mb-3"
+               style="letter-spacing: 2px;">
+
+                Sistema de gestión inmobiliaria
+
+            </p>
+
+            <h1 class="display-2 fw-semibold mb-4">
+
+                Inmobiliaria A&A
+
+            </h1>
+
+            <p class="lead text-secondary mb-4"
+               style="max-width: 650px;">
+
+                Gestioná propiedades, propietarios,
+                inquilinos, reservas y pagos de
+                alquileres temporales desde un solo lugar.
+
+            </p>
+
+
+            <div class="d-flex gap-3 flex-wrap">
+
+                <a asp-controller="Inmuebles"
+                   asp-action="Index"
+                   class="btn btn-dark btn-lg px-4">
+
+                    Ver inmuebles
+
+                </a>
+
+
+                <a asp-controller="Reserva"
+                   asp-action="Index"
+                   class="btn btn-outline-dark btn-lg px-4">
+
+                    Ver reservas
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGO -->
+
+        <div class="col-lg-5 mt-5 mt-lg-0">
+
+            <div class="bg-light rounded-4 p-4 p-lg-5 text-center shadow-sm">
+
+                <img src="~/Uploads/inmo.png"
+                     alt="Inmobiliaria A&A"
+                     class="img-fluid"
+                     style="width: 100%; max-width: 320px; height: auto;">
+
+
+                <div class="mt-4">
+
+                    <h3 class="fw-semibold mb-2">
+
+                        Alquileres temporales
+
+                    </h3>
+
+                    <p class="text-secondary mb-0">
+
+                        Encontrá y gestioná el lugar
+                        ideal para cada estadía.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEPARADOR
+         ===================================================== -->
+
+    <hr class="my-5">
+
+
+    <!-- =====================================================
+         ACCESOS RÁPIDOS
+         ===================================================== -->
+
+    <div class="mb-4">
+
+        <h2 class="fw-semibold mb-2">
+
+            Accesos rápidos
+
+        </h2>
+
+        <p class="text-secondary">
+
+            Accedé directamente a las principales
+            funciones del sistema.
+
+        </p>
+
+    </div>
+
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- =================================================
+             PROPIETARIOS
+             ================================================= -->
+
+        <div class="col-md-6 col-lg-4">
+
+            <a asp-controller="Propietarios"
+               asp-action="Index"
+               class="text-decoration-none text-dark">
+
+                <div class="card h-100 border shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="mb-3">
+
+                            <span class="fs-3">
+                                👤
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+
+                            Propietarios
+
+                        </h5>
+
+                        <p class="text-secondary mb-0">
+
+                            Administrá los datos de los
+                            propietarios de los inmuebles.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             INQUILINOS
+             ================================================= -->
+
+        <div class="col-md-6 col-lg-4">
+
+            <a asp-controller="Inquilinos"
+               asp-action="Index"
+               class="text-decoration-none text-dark">
+
+                <div class="card h-100 border shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="mb-3">
+
+                            <span class="fs-3">
+                                👥
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+
+                            Inquilinos
+
+                        </h5>
+
+                        <p class="text-secondary mb-0">
+
+                            Consultá y gestioná la información
+                            de los inquilinos.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             INMUEBLES
+             ================================================= -->
+
+        <div class="col-md-6 col-lg-4">
+
+            <a asp-controller="Inmuebles"
+               asp-action="Index"
+               class="text-decoration-none text-dark">
+
+                <div class="card h-100 border shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="mb-3">
+
+                            <span class="fs-3">
+                                🏠
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+
+                            Inmuebles
+
+                        </h5>
+
+                        <p class="text-secondary mb-0">
+
+                            Administrá las propiedades
+                            disponibles para alquiler.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             RESERVAS
+             ================================================= -->
+
+        <div class="col-md-6 col-lg-4">
+
+            <a asp-controller="Reserva"
+               asp-action="Index"
+               class="text-decoration-none text-dark">
+
+                <div class="card h-100 border shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="mb-3">
+
+                            <span class="fs-3">
+                                📅
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+
+                            Reservas
+
+                        </h5>
+
+                        <p class="text-secondary mb-0">
+
+                            Gestioná las reservas y alquileres
+                            temporales.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             PAGOS
+             ================================================= -->
+
+        <div class="col-md-6 col-lg-4">
+
+            <a asp-controller="Pago"
+               asp-action="Index"
+               class="text-decoration-none text-dark">
+
+                <div class="card h-100 border shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="mb-3">
+
+                            <span class="fs-3">
+                                💳
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+
+                            Pagos
+
+                        </h5>
+
+                        <p class="text-secondary mb-0">
+
+                            Registrá y consultá los pagos
+                            asociados a las reservas.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             TIPOS DE INMUEBLE
+             ================================================= -->
+
+        <div class="col-md-6 col-lg-4">
+
+            <a asp-controller="TipoInmuebles"
+               asp-action="Index"
+               class="text-decoration-none text-dark">
+
+                <div class="card h-100 border shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="mb-3">
+
+                            <span class="fs-3">
+                                🏢
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+
+                            Tipos de inmuebles
+
+                        </h5>
+
+                        <p class="text-secondary mb-0">
+
+                            Administrá los tipos de propiedades
+                            disponibles.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BLOQUE FINAL
+         ===================================================== -->
+
+    <div class="bg-light rounded-4 p-4 p-lg-5 mt-5 mb-4">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-8">
+
+                <p class="text-uppercase text-secondary fw-semibold mb-2"
+                   style="letter-spacing: 1.5px;">
+
+                    Inmobiliaria A&A
+
+                </p>
+
+                <h3 class="fw-semibold mb-3">
+
+                    Una gestión simple y organizada
+
+                </h3>
+
+                <p class="text-secondary mb-0">
+
+                    Centralizá la información de propiedades,
+                    personas, reservas y pagos para facilitar
+                    la gestión diaria de los alquileres temporales.
+
+                </p>
+
+            </div>
+
+
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+
+                <a asp-controller="Inmuebles"
+                   asp-action="Index"
+                   class="btn btn-dark px-4">
+
+                    Explorar inmuebles
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>

@@ -16,8 +16,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             this.repositorio = repositorio;
         }
 
+
+        // =====================================================
         // LOGIN
-   
+        // =====================================================
 
         [AllowAnonymous]
         [HttpGet]
@@ -43,7 +45,9 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return View(login);
             }
 
-            var usuario =repositorio.ObtenerPorEmail(login.Usuario);
+
+            var usuario = repositorio.ObtenerPorEmail(login.Usuario);
+
 
             if (usuario == null ||
                 !usuario.Estado ||
@@ -57,11 +61,11 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                     "El email o la contraseña son incorrectos."
                 );
 
-                ViewBag.ReturnUrl =
-                    returnUrl;
+                ViewBag.ReturnUrl = returnUrl;
 
                 return View(login);
             }
+
 
             var claims = new List<Claim>
             {
@@ -86,19 +90,23 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 )
             };
 
+
             var claimsIdentity =
                 new ClaimsIdentity(
                     claims,
                     CookieAuthenticationDefaults.AuthenticationScheme
                 );
 
+
             var claimsPrincipal =
                 new ClaimsPrincipal(claimsIdentity);
+
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 claimsPrincipal
             );
+
 
             if (!string.IsNullOrEmpty(returnUrl) &&
                 Url.IsLocalUrl(returnUrl))
@@ -106,14 +114,17 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return Redirect(returnUrl);
             }
 
+
             return RedirectToAction(
                 "Index",
                 "Home"
             );
         }
 
-        // LOGOUT
 
+        // =====================================================
+        // LOGOUT
+        // =====================================================
 
         [Authorize]
         public async Task<IActionResult> Logout()
@@ -128,149 +139,228 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             );
         }
 
-// PERFIL PROPIO
-// Cualquier usuario autenticado puede ver su propio perfil
+
+        // =====================================================
+        // ACCESO DENEGADO
+        // =====================================================
+
+        [AllowAnonymous]
+        public IActionResult AccesoDenegado()
+        {
+            return View();
+        }
+
+
+        // =====================================================
+        // PERFIL PROPIO
+        // Cualquier usuario autenticado puede ver su propio perfil
+        // =====================================================
 
         [Authorize]
         [HttpGet]
         public IActionResult Perfil()
         {
-            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var claimId =
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
 
             if (!int.TryParse(claimId, out int id))
             {
                 return Unauthorized();
             }
 
-            var usuario = repositorio.ObtenerPorId(id);
 
-            if (usuario == null || !usuario.Estado)
+            var usuario =
+                repositorio.ObtenerPorId(id);
+
+
+            if (usuario == null ||
+                !usuario.Estado)
             {
                 return NotFound();
             }
 
+
             return View(usuario);
         }
-    
+
+
+        // =====================================================
         // EDITAR PERFIL PROPIO
+        // =====================================================
 
         [Authorize]
         [HttpGet]
         public IActionResult EditPerfil()
         {
-            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var claimId =
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
 
             if (!int.TryParse(claimId, out int id))
             {
                 return Unauthorized();
             }
 
-            var usuario = repositorio.ObtenerPorId(id);
 
-            if (usuario == null || !usuario.Estado)
+            var usuario =
+                repositorio.ObtenerPorId(id);
+
+
+            if (usuario == null ||
+                !usuario.Estado)
             {
                 return NotFound();
             }
+
 
             return View(usuario);
         }
 
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPerfil(Usuario usuario, [FromServices] IWebHostEnvironment environment)
+        public async Task<IActionResult> EditPerfil(
+            Usuario usuario,
+            [FromServices] IWebHostEnvironment environment)
         {
-            var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var claimId =
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
 
             if (!int.TryParse(claimId, out int id))
             {
                 return Unauthorized();
             }
 
-            // Buscamos el usuario real
-            var usuarioActual = repositorio.ObtenerPorId(id);
 
-            if (usuarioActual == null || !usuarioActual.Estado)
+            // Buscamos el usuario real
+            var usuarioActual =
+                repositorio.ObtenerPorId(id);
+
+
+            if (usuarioActual == null ||
+                !usuarioActual.Estado)
             {
                 return NotFound();
             }
 
-            // El usuario solamente puede modificar su propio perfil
+
+            // El usuario solamente puede modificar
+            // su propio perfil
             usuario.Id = id;
+
 
             // No puede modificar su rol
             usuario.Rol = usuarioActual.Rol;
 
+
             // Conservamos el estado
             usuario.Estado = usuarioActual.Estado;
 
+
+            // =================================================
             // CONTRASEÑA
+            // =================================================
+
             ModelState.Remove(nameof(usuario.Clave));
+
+
             if (string.IsNullOrWhiteSpace(usuario.Clave))
             {
-                usuario.Clave = usuarioActual.Clave;
+                usuario.Clave =
+                    usuarioActual.Clave;
 
-                // La contraseña no se está modificando.
-                // Eliminamos el error de validación generado por [Required].
                 ModelState.Remove("Clave");
             }
             else
             {
-                usuario.Clave = PasswordHelper.HashPassword(usuario.Clave);
+                usuario.Clave =
+                    PasswordHelper.HashPassword(
+                        usuario.Clave
+                    );
             }
 
+
+            // =================================================
             // AVATAR
+            // =================================================
+
             if (usuario.AvatarFile != null &&
                 usuario.AvatarFile.Length > 0)
             {
-                string path = Path.Combine(
-                    environment.WebRootPath,
-                    "Uploads",
-                    "Usuarios",
-                    id.ToString()
-                );
+                string path =
+                    Path.Combine(
+                        environment.WebRootPath,
+                        "Uploads",
+                        "Usuarios",
+                        id.ToString()
+                    );
+
 
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
 
+
                 string extension =
-                    Path.GetExtension(usuario.AvatarFile.FileName);
+                    Path.GetExtension(
+                        usuario.AvatarFile.FileName
+                    );
+
 
                 string nombreArchivo =
                     $"{Guid.NewGuid()}{extension}";
 
+
                 string rutaArchivo =
-                    Path.Combine(path, nombreArchivo);
-
-                using (var stream = new FileStream(
-                    rutaArchivo,
-                    FileMode.Create))
-                {
-                    await usuario.AvatarFile.CopyToAsync(stream);
-                }
-
-                // Eliminar avatar anterior si existe
-                if (!string.IsNullOrWhiteSpace(usuarioActual.Avatar))
-                {
-                    string avatarAnterior = Path.Combine(
-                        environment.WebRootPath,
-                        usuarioActual.Avatar
-                            .TrimStart('/')
-                            .Replace(
-                                "/",
-                                Path.DirectorySeparatorChar.ToString()
-                            )
+                    Path.Combine(
+                        path,
+                        nombreArchivo
                     );
 
-                    if (System.IO.File.Exists(avatarAnterior))
+
+                using (var stream =
+                    new FileStream(
+                        rutaArchivo,
+                        FileMode.Create))
+                {
+                    await usuario.AvatarFile
+                        .CopyToAsync(stream);
+                }
+
+
+                // Eliminar avatar anterior si existe
+                if (!string.IsNullOrWhiteSpace(
+                    usuarioActual.Avatar))
+                {
+                    string avatarAnterior =
+                        Path.Combine(
+                            environment.WebRootPath,
+                            usuarioActual.Avatar
+                                .TrimStart('/')
+                                .Replace(
+                                    "/",
+                                    Path.DirectorySeparatorChar
+                                        .ToString()
+                                )
+                        );
+
+
+                    if (System.IO.File.Exists(
+                        avatarAnterior))
                     {
-                        System.IO.File.Delete(avatarAnterior);
+                        System.IO.File.Delete(
+                            avatarAnterior
+                        );
                     }
                 }
 
-                // Guardamos la ruta en la base de datos
+
+                // Guardamos la ruta
+                // en la base de datos
                 usuario.Avatar =
                     $"/Uploads/Usuarios/{id}/{nombreArchivo}";
             }
@@ -278,34 +368,52 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             {
                 // Si no seleccionó una imagen nueva,
                 // mantenemos el avatar actual
-                usuario.Avatar = usuarioActual.Avatar;
+                usuario.Avatar =
+                    usuarioActual.Avatar;
             }
+
+
+            // =================================================
+            // VALIDACIÓN
+            // =================================================
 
             if (!ModelState.IsValid)
             {
                 return View(usuario);
             }
 
+
             repositorio.Modificacion(usuario);
+
 
             TempData["Mensaje"] =
                 "Perfil modificado correctamente.";
 
-            return RedirectToAction(nameof(Perfil));
+
+            return RedirectToAction(
+                nameof(Perfil)
+            );
         }
+
+
+        // =====================================================
         // GESTIÓN DE USUARIOS
         // SOLO ADMINISTRADOR
-
+        // =====================================================
 
         [Authorize(Policy = "Administrador")]
         public IActionResult Index()
         {
-            var lista = repositorio.ObtenerLista();
+            var lista =
+                repositorio.ObtenerLista();
 
             return View(lista);
         }
+
+
+        // =====================================================
         // CREAR USUARIO
-  
+        // =====================================================
 
         [Authorize(Policy = "Administrador")]
         [HttpGet]
@@ -325,24 +433,40 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Roles =Usuario.ObtenerRoles();
+                ViewBag.Roles =
+                    Usuario.ObtenerRoles();
 
                 return View(usuario);
             }
-            // Convertimos la contraseña en un hash antes de guardarla
-            usuario.Clave = PasswordHelper.HashPassword(usuario.Clave);
+
+
+            // Convertimos la contraseña
+            // en un hash antes de guardarla
+            usuario.Clave =
+                PasswordHelper.HashPassword(
+                    usuario.Clave
+                );
+
 
             usuario.Estado = true;
 
+
             repositorio.Alta(usuario);
 
-            TempData["Mensaje"] ="Usuario registrado correctamente.";
+
+            TempData["Mensaje"] =
+                "Usuario registrado correctamente.";
+
 
             return RedirectToAction(
                 nameof(Index)
             );
         }
+
+
+        // =====================================================
         // MODIFICAR USUARIO
+        // =====================================================
 
         [Authorize(Policy = "Administrador")]
         [HttpGet]
@@ -351,13 +475,16 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
             var usuario =
                 repositorio.ObtenerPorId(id);
 
+
             if (usuario == null)
             {
                 return NotFound();
             }
 
+
             ViewBag.Roles =
                 Usuario.ObtenerRoles();
+
 
             return View(usuario);
         }
@@ -368,23 +495,28 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Usuario usuario)
         {
-            // Obtenemos el usuario actual desde la base de datos
+            // Obtenemos el usuario actual
+            // desde la base de datos
             var usuarioActual =
-                repositorio.ObtenerPorId(usuario.Id);
+                repositorio.ObtenerPorId(
+                    usuario.Id
+                );
+
 
             if (usuarioActual == null)
             {
                 return NotFound();
             }
 
+
             // Si la contraseña quedó vacía,
-            // conservamos la contraseña que ya tenía
-            if (string.IsNullOrWhiteSpace(usuario.Clave))
+            // conservamos la contraseña anterior
+            if (string.IsNullOrWhiteSpace(
+                usuario.Clave))
             {
                 usuario.Clave =
                     usuarioActual.Clave;
 
-                // Quitamos la validación Required de Clave
                 ModelState.Remove("Clave");
             }
             else
@@ -397,6 +529,7 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                     );
             }
 
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Roles =
@@ -405,16 +538,23 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
                 return View(usuario);
             }
 
+
             repositorio.Modificacion(usuario);
+
 
             TempData["Mensaje"] =
                 "Usuario modificado correctamente.";
+
 
             return RedirectToAction(
                 nameof(Index)
             );
         }
+
+
+        // =====================================================
         // BAJA DE USUARIO
+        // =====================================================
 
         [Authorize(Policy = "Administrador")]
         [HttpPost]
@@ -423,16 +563,21 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             repositorio.Baja(id);
 
+
             TempData["Mensaje"] =
                 "Usuario dado de baja correctamente.";
+
 
             return RedirectToAction(
                 nameof(Index)
             );
         }
 
+
+        // =====================================================
         // REACTIVAR USUARIO
-        
+        // =====================================================
+
         [Authorize(Policy = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -440,8 +585,10 @@ namespace AnaYAntonio_ProyectoInmobiliaria.Controllers
         {
             repositorio.AltaEstado(id);
 
+
             TempData["Mensaje"] =
                 "Usuario activado correctamente.";
+
 
             return RedirectToAction(
                 nameof(Index)
